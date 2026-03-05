@@ -31,67 +31,78 @@
     }
 
     /* Sidebar Styling */
-    .sidebar {
-      width: 280px;
-      background: var(--sidebar-bg);
-      height: 100vh;
-      position: fixed;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      z-index: 1000;
-    }
+.sidebar {
+  width: 280px;
+  background: #1a2233; 
+  height: 100vh;
+  position: fixed;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
 
-    .logo-area {
-      padding: 2rem 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
+.logo-area {
+  padding: 1.25rem 1.5rem 0.75rem; /* Tightened top/bottom padding */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-    .logo-icon {
-      width: 35px;
-      height: 35px;
-      background: white;
-      color: var(--primary-color);
-      border-radius: 8px;
-      display: grid;
-      place-items: center;
-      font-size: 1rem;
-    }
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: white;
+  color: #2563eb;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+}
 
-    .nav-group-label {
-      padding: 1.5rem 1.5rem 0.5rem;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: rgba(255, 255, 255, 0.4);
-      font-weight: 700;
-    }
+.nav-group-label {
+  /* Reduced top padding significantly to move it closer to the button */
+  padding: 0.75rem 1.5rem 0.5rem; 
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 700;
+}
 
-    .nav-link {
-      padding: 0.8rem 1.5rem;
-      color: rgba(255, 255, 255, 0.6);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 500;
-      transition: all 0.2s;
-      text-decoration: none;
-    }
+.nav-link {
+  padding: 0.85rem 1.5rem;
+  color: #94a3b8; /* Muted text */
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
 
-    .nav-link:hover {
-      color: white;
-      background: rgba(255, 255, 255, 0.05);
-    }
+.nav-link i {
+  width: 20px;
+  text-align: center;
+  font-size: 1.1rem;
+}
 
-    .nav-link.active {
-      color: white;
-      background: var(--primary-color);
-      border-radius: 0 50px 50px 0;
-      margin-right: 1.5rem;
-    }
+.nav-link:hover {
+  color: #ffffff;
+}
+
+.nav-link.active {
+  color: #ffffff;
+  background: #2563eb; /* Vibrant blue from image */
+  border-radius: 0 50px 50px 0;
+  margin-right: 1.25rem;
+}
+
+.nav-link.text-danger {
+  color: #ef4444 !important;
+  margin-top: 1rem;
+}
 
     /* Main Content */
     .main-content {
@@ -226,25 +237,32 @@
       color: #cbd5e1;
       font-size: 1.5rem;
     }
+    #adminBackBtnContainer {
+  margin-top: 1.5rem; /* Pushes button down from the logo */
+  margin-bottom: -1rem; /* Space before Core Dashboard label */
+}
 
-    .back-to-admin {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 10px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-decoration: none;
-      margin: 0 1.5rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s;
-    }
+.back-to-admin {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff !important;
+  padding: 0.7rem 0.75rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  margin: 0 1.25rem; /* Side margins only */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.2s;
+}
+
+.back-to-admin i {
+  font-size: 0.75rem; /* Slightly smaller chevron to match image */
+}
 
     .back-to-admin:hover {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
+      background: rgba(255, 255, 255, 0.15);
     }
   </style>
 </head>
@@ -259,6 +277,9 @@
         <small class="text-white-50">Supply Chain Management</small>
       </div>
     </div>
+
+    <!-- Conditional Back Button Container -->
+    <div id="adminBackBtnContainer"></div>
 
     <div class="py-4">
       <div class="nav-group-label">Core Dashboard</div>
@@ -451,6 +472,18 @@
   <script src="../js/auth_guard.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      // Check for Admin Role and show back button
+      const session = JSON.parse(localStorage.getItem('it3b_session'));
+      const role = session ? session.role : null;
+      const backBtnContainer = document.getElementById('adminBackBtnContainer');
+      if (role === 'admin' && backBtnContainer) {
+        backBtnContainer.innerHTML = `
+          <a href="../../admin/all-erp.html" class="back-to-admin">
+        <i class="fas fa-chevron-left"></i> Back to Admin Central
+      </a>
+        `;
+      }
+
       if (!window.Store) return;
 
       // Update stats from real data

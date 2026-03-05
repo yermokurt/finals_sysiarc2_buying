@@ -21,7 +21,7 @@
       :root {
         --primary-color: #2563eb;
         --primary-hover: #1d4ed8;
-        --sidebar-bg: #1e293b;
+        --sidebar-bg: #1a2233;
         --bg-color: #badcfd;
         --text-dark: #1e293b;
         --text-muted: #64748b;
@@ -42,61 +42,99 @@
         background: var(--sidebar-bg);
         height: 100vh;
         position: fixed;
-        color: white;
+        color: #ffffff;
         display: flex;
         flex-direction: column;
         z-index: 1000;
       }
 
       .logo-area {
-        padding: 2rem 1.5rem;
+        padding: 1.25rem 1.5rem 0.75rem;
         display: flex;
         align-items: center;
         gap: 12px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .logo-icon {
-        width: 35px;
-        height: 35px;
+        width: 40px;
+        height: 40px;
         background: white;
         color: var(--primary-color);
         border-radius: 8px;
         display: grid;
         place-items: center;
-        font-size: 1rem;
+        font-size: 1.2rem;
       }
 
       .nav-group-label {
-        padding: 1.5rem 1.5rem 0.5rem;
-        font-size: 0.75rem;
+        padding: 0.75rem 1.5rem 0.5rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.08em;
         color: rgba(255, 255, 255, 0.4);
         font-weight: 700;
       }
 
       .nav-link {
-        padding: 0.8rem 1.5rem;
-        color: rgba(255, 255, 255, 0.6);
+        padding: 0.85rem 1.5rem;
+        color: #94a3b8;
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
         font-weight: 500;
         transition: all 0.2s;
         text-decoration: none;
+        font-size: 0.95rem;
+      }
+
+      .nav-link i {
+        width: 20px;
+        text-align: center;
+        font-size: 1.1rem;
       }
 
       .nav-link:hover {
-        color: white;
-        background: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
       }
 
       .nav-link.active {
-        color: white;
+        color: #ffffff;
         background: var(--primary-color);
         border-radius: 0 50px 50px 0;
-        margin-right: 1.5rem;
+        margin-right: 1.25rem;
+      }
+      
+      .nav-link.text-danger {
+        color: #ef4444 !important;
+        margin-top: 1rem;
+      }
+
+      #adminBackBtnContainer {
+        margin-top: 1.5rem;
+        margin-bottom: -1rem;
+      }
+
+      .back-to-admin {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff !important;
+        padding: 0.7rem 0.75rem;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        margin: 0 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+
+      .back-to-admin i {
+        font-size: 0.75rem;
+      }
+
+      .back-to-admin:hover {
+        background: rgba(255, 255, 255, 0.15);
       }
 
       .main-content {
@@ -241,6 +279,12 @@
           <h6 class="mb-0 fw-bold">IT3B Inc.</h6>
           <small class="text-white-50">Customer Relations</small>
         </div>
+      </div>
+
+      <div id="adminBackBtnContainer">
+        <a href="../admin/all-erp.html" class="back-to-admin">
+          <i class="fas fa-chevron-left"></i> Back to Admin Central
+        </a>
       </div>
 
       <div class="py-4">

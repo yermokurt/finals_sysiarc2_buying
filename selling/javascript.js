@@ -637,9 +637,9 @@ function initSidebarLayout() {
     const sidebar = document.createElement('aside');
     sidebar.id = 'sidebar';
 
-    const userStr = sessionStorage.getItem('user');
-    const user = userStr ? JSON.parse(userStr) : { username: 'Administrator', role: 'admin' };
-    const role = user.role;
+    const sessionStr = localStorage.getItem('it3b_session');
+    const session = sessionStr ? JSON.parse(sessionStr) : null;
+    const role = session ? session.role : 'user';
 
     let navContent = `
         <div class="brand">
@@ -650,6 +650,14 @@ function initSidebarLayout() {
             </div>
         </div>
     `;
+
+    if (role === 'admin') {
+        navContent += `
+        <a href="../admin/all-erp.html" class="nav-link" style="margin-bottom: 0.5rem; color: #94a3b8; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1rem;">
+            <i class="fas fa-chevron-left" style="font-size: 0.75rem; margin-right: 8px;"></i> Back to Admin Central
+        </a>
+        `;
+    }
 
     if (role === 'admin') {
         navContent += `
