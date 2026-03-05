@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service System - Issue Type Master Data</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+   
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --sidebar-bg: #1e293b;
+      --bg-color: #badcfd;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --card-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    html, body {
+    
+      height: 100%;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: var(--bg-color);
+      color: var(--text-dark);
+    }
+
+    /* ===== LAYOUT ===== */
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR FRAME ===== */
+    .sidebar-frame {
+      width: 280px;
+      height: 100vh;
+      border: none;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    /* your "brand" area is Buying Dashboard "logo-area" */
+    .brand {
+      padding: 2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 0;
+    }
+
+    .brand .logo {
+      width: 35px;
+      height: 35px;
+      background: white;
+      color: var(--primary-color);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      font-weight: 800;
+      border: none;
+    }
+
+    .brand .t1 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.1;
+      color: #fff;
+    }
+
+    .brand .t2 {
+      margin-top: 3px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 600;
+    }
+
+    /* navigation area */
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 1rem 0;
+      flex: 1;
+    }
+
+    .nav .section-label {
+      padding: 1.5rem 1.5rem 0.5rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .nav a {
+      padding: 0.8rem 1.5rem;
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      border-radius: 0;
+      border: none;
+      font-size: 14px;
+      position: relative;
+      overflow: hidden;
+      transform: translateX(0);
+    }
+
+    .nav a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .nav a:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(4px);
+      padding-left: 2rem;
+    }
+
+    .nav a:hover::before {
+      left: 100%;
+    }
+
+    .nav a:active {
+      transform: translateX(2px) scale(0.98);
+      transition: all 0.1s ease;
+    }
+
+    .nav a.active {
+      color: white;
+      background: var(--primary-color);
+      border-radius: 0 50px 50px 0;
+      margin-right: 1.5rem;
+      transform: translateX(0);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      animation: activeSlide 0.4s ease;
+    }
+
+    .nav a.active::before {
+      display: none;
+    }
+
+    @keyframes activeSlide {
+      0% {
+        transform: translateX(-20px);
+        opacity: 0.7;
+      }
+      50% {
+        transform: translateX(8px);
+      }
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Icon animations */
+    .nav .icon {
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      background: transparent;
+      display: inline;
+      place-items: unset;
+      color: inherit;
+      font-size: 14px;
+      transition: transform 0.3s ease;
+    }
+
+    .nav a:hover .icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .nav a.active .icon {
+      transform: scale(1.1);
+      animation: iconBounce 0.6s ease;
+    }
+
+    @keyframes iconBounce {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.2); }
+      50% { transform: scale(0.95); }
+      75% { transform: scale(1.05); }
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    @keyframes slideOut {
+      0% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(-20px);
+        opacity: 0.5;
+      }
+    }
+
+    /* Back button area (your .signout) */
+    .signout {
+      padding: 10px 0 0;
+      border-top: none;
+      margin-top: auto;
+    }
+
+    .signout a {
+      padding: 0.8rem 1.5rem;
+      color: #ff6b6b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 0;
+    }
+
+    .signout a:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ff6b6b;
+    }
+
+    /* ===== MAIN CONTENT (mapped to your HTML) ===== */
+    .main {
+      padding: 2.5rem;
+      overflow-y: auto;
+      max-height: 100vh;
+      margin-left: 0;
+      min-height: 100vh;
+    }
+
+    /* top header area */
+    .topbar {
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .title h1 {
+      font-weight: 700;
+      color: var(--text-dark);
+      font-size: 1.75rem;
+      margin: 0 0 0.25rem;
+      letter-spacing: 0;
+    }
+
+    .title p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* ===== FORM CONTAINER ===== */
+    .form-container {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+      border: none;
+      margin-bottom: 2rem;
+    }
+
+    .form-container h2 {
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+    }
+
+    .form-container .sub {
+      margin: 0 0 24px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* ===== FORM STYLES ===== */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid rgba(30, 41, 59, 0.12);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-dark);
+      background: #fff;
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    /* ===== ACTIONS (added) ===== */
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 10px rgba(0,0,0,.08);
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .btn-primary { background: var(--primary-color); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-soft { background: #eff6ff; color: var(--primary-color); border: 1px solid rgba(37,99,235,.25); }
+    .btn-soft:hover { background: #dbeafe; }
+
+    .btn-success { background: #10b981; color: #fff; }
+    .btn-success:hover { background: #059669; }
+
+    /* ===== TABLE ===== */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(30,41,59,0.12);
+      margin-top: 2rem;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .data-table th {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+      color: white;
+      padding: 12px 10px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 2px solid var(--primary-hover);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(30,41,59,0.10);
+      color: var(--text-dark);
+      vertical-align: middle;
+    }
+
+    .data-table td:nth-child(1) {
+      font-weight: 800;
+      text-align: center;
+      background: #eff6ff;
+      color: var(--primary-color);
+      font-size: 11px;
+    }
+
+    .data-table tr:nth-child(even) td:nth-child(1) {
+      background: #dbeafe;
+    }
+
+    .data-table tr:hover td {
+      border-color: rgba(37,99,235,0.35);
+      background: rgba(37,99,235,0.04);
+    }
+
+    /* ===== SEARCH BAR ===== */
+    .search-container {
+      margin-bottom: 16px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .search-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid rgba(37,99,235,0.2);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+    .search-input:focus {
+      border-color: var(--primary-color);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; }
+      .main { max-height: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .actions { justify-content: flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <iframe src="sidebar.html" class="sidebar-frame" frameborder="0"></iframe>
+
+    <main class="main" id="main-content">
+      <!-- ISSUE TYPE MASTER DATA -->
+      <section class="view active" id="view-issue-type">
+        <div class="topbar">
+          <div class="title">
+            <h1>⚠️ Issue Type Master Data</h1>
+            <p>Manage issue types with auto-generated IDs (SIT0001 format)</p>
+          </div>
+          <div class="actions">
+            <a class="btn btn-soft" href="dashboard-standalone.html">⌂ Dashboard</a>
+            <a class="btn btn-soft" href="service-type-master.html">🛠️ Service Type</a>
+          </div>
+        </div>
+
+        <!-- ISSUE TYPE FORM -->
+        <div class="form-container">
+          <h2>Add New Issue Type</h2>
+          <p class="sub">Enter issue type details below</p>
+          
+          <form id="issueTypeForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="issue_type_id">Issue Type ID</label>
+                <input type="text" id="issue_type_id" name="issue_type_id" value="SIT0001" readonly>
+              </div>
+              <div class="form-group">
+                <label for="type_name_issue">Type Name (Issue)</label>
+                <input type="text" id="type_name_issue" name="type_name_issue" placeholder="Enter issue type name" required>
+              </div>
+            </div>
+            
+            <div class="actions">
+              <button type="submit" class="btn btn-primary">💾 Save Issue Type</button>
+              <button type="button" class="btn btn-soft" onclick="clearIssueTypeForm()">🔄 Clear</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ISSUE TYPE TABLE -->
+        <div class="form-container">
+          <h2>Issue Types List</h2>
+          <p class="sub">Current issue types in the system</p>
+          
+          <div class="search-container">
+            <input type="text" id="searchInput" placeholder="🔍 Search " class="search-input">
+          </div>
+          <div class="table-container">
+            <table class="data-table" id="issueTypeTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Issue Type ID</th>
+                  <th>Type Name</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="issueTypeTableBody">
+                <!-- Issue types will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ---------- ISSUE TYPE DATA ----------
+    let issueTypes = JSON.parse(localStorage.getItem('issueTypes') || 'null');
+    if (!Array.isArray(issueTypes)) {
+      issueTypes = [
+        {issue_type_id: "SIT0001", type_name_issue: "Installation", created_at: "2026-01-30 9:00:00"},
+        {issue_type_id: "SIT0002", type_name_issue: "Maintenance", created_at: "2026-01-30 9:15:00"},
+        {issue_type_id: "SIT0003", type_name_issue: "Consultation", created_at: "2026-01-30 9:30:00"}
+      ];
+      localStorage.setItem('issueTypes', JSON.stringify(issueTypes));
+    }
+
+    function saveIssueTypes() {
+      localStorage.setItem('issueTypes', JSON.stringify(issueTypes));
+    }
+
+    // ---------- HELPER FUNCTIONS ----------
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    function escapeHtml(s) { return String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m]); }
+
+    // ---------- ID GENERATION ----------
+    function generateIssueTypeId() {
+      if (issueTypes.length === 0) return "SIT0001";
+      const maxId = issueTypes.reduce((max, item) => {
+        const num = parseInt(item.issue_type_id.replace('SIT', ''));
+        return num > max ? num : max;
+      }, 0);
+      const nextId = maxId + 1;
+      return `SIT${nextId.toString().padStart(4, '0')}`;
+    }
+
+    // ---------- FORM FUNCTIONS ----------
+    let editingIndex = -1; // Track if we're editing an existing record
+
+    function clearIssueTypeForm() {
+      $('#issueTypeForm').reset();
+      $('#issue_type_id').value = generateIssueTypeId();
+      editingIndex = -1;
+      
+      // Update button text
+      const submitBtn = $('#issueTypeForm button[type="submit"]');
+      if (submitBtn) submitBtn.innerHTML = '💾 Save Issue Type';
+    }
+
+    function editIssueType(index) {
+      const issueType = issueTypes[index];
+      $('#issue_type_id').value = issueType.issue_type_id;
+      $('#type_name_issue').value = issueType.type_name_issue;
+      editingIndex = index;
+      
+      // Update button text
+      const submitBtn = $('#issueTypeForm button[type="submit"]');
+      if (submitBtn) submitBtn.innerHTML = '💾 Update Issue Type';
+      
+      // Scroll to form
+      $('#issueTypeForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function deleteIssueType(index) {
+      if (confirm(`Are you sure you want to delete issue type "${issueTypes[index].type_name_issue}"?`)) {
+        issueTypes.splice(index, 1);
+        saveIssueTypes();
+        renderIssueTypeTable();
+        clearIssueTypeForm();
+        alert('Issue Type deleted successfully!');
+      }
+    }
+
+    // ---------- TABLE FUNCTIONS ----------
+    function renderIssueTypeTable() {
+      const tbody = $('#issueTypeTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = issueTypes.map((issue, index) => `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${escapeHtml(issue.issue_type_id)}</td>
+          <td>${escapeHtml(issue.type_name_issue)}</td>
+          <td>
+            <button class="btn btn-soft" onclick="editIssueType(${index})" style="padding: 6px 10px; font-size: 11px;">
+              ✏️ Edit
+            </button>
+            <button class="btn btn-soft" onclick="deleteIssueType(${index})" style="padding: 6px 10px; font-size: 11px; background: #fef2f2; color: #dc2626; border-color: rgba(220,38,38,0.25); margin-left: 5px;">
+              🗑️ Delete
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ---------- SEARCH FUNCTIONALITY ----------
+    function initializeSearch() {
+      const searchInput = $('#searchInput');
+      if (!searchInput) return;
+
+      const positive = ['completed','closed','approved','success','resolved','active'];
+      const neutral = ['pending','open','in progress','scheduled','waiting','on hold','received','verified'];
+      const negative = ['cancelled','rejected','failed','error'];
+
+      function updateColor(term) {
+        const t = term.toLowerCase();
+        if (positive.some(w => t.includes(w))) return 'green';
+        if (neutral.some(w => t.includes(w))) return 'yellow';
+        if (negative.some(w => t.includes(w))) return 'red';
+        return '';
+      }
+
+      function doFilter() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const rows = document.querySelectorAll('#issueTypeTableBody tr');
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+        searchInput.style.borderColor = updateColor(searchInput.value) || '';
+      }
+
+      searchInput.addEventListener('input', doFilter);
+      searchInput.addEventListener('focus', () => {
+        searchInput.style.borderColor = updateColor(searchInput.value) || '';
+      });
+    }
+
+    // ---------- FORM SUBMISSION ----------
+    function handleIssueTypeSubmit(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const issueTypeData = {
+        issue_type_id: formData.get('issue_type_id'),
+        type_name_issue: formData.get('type_name_issue'),
+        created_at: new Date().toLocaleString()
+      };
+
+      if (editingIndex >= 0) {
+        // Update existing record
+        issueTypes[editingIndex] = {
+          ...issueTypes[editingIndex],
+          type_name_issue: issueTypeData.type_name_issue
+        };
+        saveIssueTypes();
+        renderIssueTypeTable();
+        clearIssueTypeForm();
+        alert('Issue Type updated successfully!');
+      } else {
+        // Add new record
+        // Check for duplicate ID
+        if (issueTypes.some(it => it.issue_type_id === issueTypeData.issue_type_id)) {
+          alert('Issue Type ID already exists!');
+          return;
+        }
+
+        issueTypes.push(issueTypeData);
+        saveIssueTypes();
+        renderIssueTypeTable();
+        clearIssueTypeForm();
+        
+        // Update the ID field for next entry
+        $('#issue_type_id').value = generateIssueTypeId();
+        
+        alert('Issue Type added successfully!');
+      }
+    }
+
+    // ---------- INITIALIZATION ----------
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize form
+      $('#issue_type_id').value = generateIssueTypeId();
+
+      // Bind form submit event
+      $('#issueTypeForm').addEventListener('submit', handleIssueTypeSubmit);
+
+      // Render initial table
+      renderIssueTypeTable();
+      // Initialize search functionality
+      initializeSearch();
+      
+      // Initialize navigation
+      initNav();
+    });
+
+    // Navigation functionality
+    function initNav() {
+      const nav = document.getElementById('nav');
+      if (!nav) return;
+
+      nav.addEventListener('click', e => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        
+        // Add ripple effect
+        createRippleEffect(a, e);
+        
+        // Handle navigation
+        if (a.href.includes('.html')) {
+          // External link - just add visual feedback
+          setTimeout(() => {
+            window.location.href = a.href;
+          }, 200);
+        }
+      });
+
+      // Add hover sound effect (visual feedback)
+      nav.addEventListener('mouseenter', e => {
+        const a = e.target.closest('a');
+        if (a && !a.classList.contains('active')) {
+          a.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        }
+      }, true);
+    }
+
+    function createRippleEffect(element, event) {
+      const ripple = document.createElement('span');
+      const rect = element.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = event.clientX - rect.left - size / 2;
+      const y = event.clientY - rect.top - size / 2;
+      
+      ripple.style.cssText = `
+        position: absolute;
+        width: ${size}px;
+        height: ${size}px;
+        left: ${x}px;
+        top: ${y}px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: scale(0);
+        animation: ripple 0.6s ease-out;
+        pointer-events: none;
+      `;
+      
+      element.style.position = 'relative';
+      element.style.overflow = 'hidden';
+      element.appendChild(ripple);
+      
+      setTimeout(() => {
+        ripple.remove();
+      }, 600);
+    }
+  </script>
+</body>
+</html>

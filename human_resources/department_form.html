@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Department Master - IT3B Inc.</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --sidebar-bg: #1e293b;
+        --bg-color: #badcfd;
+        --text-dark: #1e293b;
+        --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: var(--bg-color);
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+      }
+      .sidebar { width: 280px; background: var(--sidebar-bg); height: 100vh; position: fixed; color: white; display: flex; flex-direction: column; z-index: 1000; }
+      .logo-area { padding: 2rem 1.5rem; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+      .logo-icon { width: 35px; height: 35px; background: white; color: var(--primary-color); border-radius: 8px; display: grid; place-items: center; font-size: 1rem; }
+      .nav-link { padding: 0.8rem 1.5rem; color: rgba(255, 255, 255, 0.6); display: flex; align-items: center; gap: 12px; font-weight: 500; transition: all 0.2s; text-decoration: none; }
+      .nav-link:hover { color: white; background: rgba(255, 255, 255, 0.05); }
+      .nav-link.active { color: white; background: var(--primary-color); border-radius: 0 50px 50px 0; margin-right: 1.5rem; }
+      
+      .main-content { margin-left: 280px; padding: 2.5rem; flex: 1; }
+      .form-card { background: white; border-radius: 24px; box-shadow: var(--card-shadow); border: none; overflow: hidden; margin-bottom: 2rem; }
+      .form-header { background: #f8fafc; padding: 2rem; border-bottom: 1px solid #e2e8f0; }
+      .form-body { padding: 2.5rem; }
+      
+      .form-label { font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem; font-size: 0.9rem; }
+      .form-control, .form-select { border-radius: 12px; padding: 0.75rem 1rem; border: 1px solid #e2e8f0; }
+      
+      .badge-active { background-color: #198754; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+      .btn-view-action { color: var(--primary-color); border: 1px solid var(--primary-color); background: white; padding: 4px 12px; border-radius: 8px; font-size: 0.85rem; transition: all 0.2s; font-weight: 600; }
+      .btn-view-action:hover { background: var(--primary-color); color: white; }
+    </style>
+  </head>
+  <body>
+    <nav class="sidebar">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fa-solid fa-sitemap"></i></div>
+        <div>
+          <h6 class="mb-0 fw-bold">IT3B Inc.</h6>
+          <small class="text-white-50">HR Management</small>
+        </div>
+      </div>
+      <div class="py-4">
+        <a href="hr_dashboard.html" class="nav-link"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+        <div class="px-3 mt-4 mb-2 small text-uppercase opacity-50 fw-bold">Personnel</div>
+        <a href="employee_master_form.html" class="nav-link"><i class="fa-solid fa-id-card"></i> Employee Master</a>
+        <a href="department_form.html" class="nav-link active"><i class="fa-solid fa-building-user"></i> Department List</a>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <div class="form-card">
+        <div class="form-header">
+          <h4 class="fw-bold mb-1">Department (Master Record)</h4>
+          <p class="text-muted mb-0 small">Define organizational units and assign leadership roles.</p>
+        </div>
+        <div class="form-body">
+          <form id="deptForm" class="needs-validation" novalidate>
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="form-label">Department ID</label>
+                <input type="text" id="deptID" class="form-control" placeholder="e.g. DEPT-ENG-001" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Department Name</label>
+                <input type="text" id="deptName" class="form-control" placeholder="e.g. Software Engineering" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Department Head (Employee FK)</label>
+                <select id="deptHead" class="form-select" required>
+                  <option value="" selected disabled>Select Employee ID...</option>
+                </select>
+                <div id="headNameFeedback" class="form-text text-primary fw-bold mt-1"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Parent Department (Optional)</label>
+                <select id="parentDept" class="form-select">
+                  <option value="None (Top Level)" selected>None (Top Level)</option>
+                  <option>Executive Office</option>
+                  <option>Operations Division</option>
+                  <option>Corporate Services</option>
+                </select>
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Associated Cost Center</label>
+                <input type="text" id="costCenter" class="form-control" placeholder="e.g. CC-2026-OPS" required />
+              </div>
+            </div>
+
+            <div class="mt-5 d-flex justify-content-end gap-3">
+              <button type="reset" class="btn btn-light px-4 py-2 fw-bold" style="border-radius: 12px">Reset</button>
+              <button type="submit" class="btn btn-primary px-5 py-2 fw-bold" style="border-radius: 12px">Save Record</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-body">
+          <h5 class="fw-bold mb-1">Organizational Directory</h5>
+          <p class="text-muted small mb-4">View and manage established organizational units.</p>
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="bg-light">
+                <tr class="small text-uppercase fw-bold text-muted">
+                  <th class="py-3">Dept ID</th>
+                  <th class="py-3">Name</th>
+                  <th class="py-3">Head / Cost Center</th>
+                  <th class="py-3">Status</th>
+                  <th class="py-3 text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="modal fade" id="deptViewModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 24px; border: none;">
+          <div class="modal-header border-0 pt-4 px-4">
+            <h5 class="fw-bold mb-0">Department Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4" id="modalContent"></div>
+          <div class="modal-footer border-0 pb-4 px-4">
+            <button type="button" class="btn btn-light fw-bold w-100" style="border-radius: 12px" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+  // 1. Initialize Databases using the specific keys from your other forms
+  let departmentDb = JSON.parse(localStorage.getItem('hr_department_records')) || [];
+  // Using 'hr_employee_records' as the source
+  const empDb = JSON.parse(localStorage.getItem('hr_employee_records')) || []; 
+  const deptModal = new bootstrap.Modal(document.getElementById('deptViewModal'));
+
+  // DOM Elements
+  const deptHeadSelect = document.getElementById('deptHead');
+  const feedback = document.getElementById('headNameFeedback');
+  const tableBody = document.getElementById("tableBody");
+  const deptForm = document.getElementById("deptForm");
+
+  // Load data on page ready
+  window.onload = () => {
+    populateEmployeeDropdown();
+    renderDeptTable();
+  };
+
+  // 2. Populate the dropdown using logic from payroll_form.html
+  function populateEmployeeDropdown() {
+    // Note: ID in HTML is 'deptHead', not 'empSelect'
+    const select = document.getElementById("deptHead"); 
+    select.innerHTML = '<option value="" selected disabled>Select Employee ID...</option>';
+    
+    if (empDb.length === 0) {
+      const opt = document.createElement("option");
+      opt.textContent = "No employees found in Master Records";
+      opt.disabled = true;
+      select.appendChild(opt);
+      return;
+    }
+
+    empDb.forEach(emp => {
+      const opt = document.createElement("option");
+      // Applying your specific property names: .id and .name
+      opt.value = emp.id; 
+      opt.textContent = `${emp.id} - ${emp.name}`; 
+      select.appendChild(opt);
+    });
+  }
+
+  // 3. Show Employee Name when ID is selected
+  deptHeadSelect.addEventListener('change', function() {
+    // Matching against emp.id
+    const foundEmployee = empDb.find(emp => emp.id === this.value);
+    if (foundEmployee) {
+      feedback.textContent = `Name: ${foundEmployee.name}`; 
+      this.classList.remove('is-invalid');
+      this.classList.add('is-valid');
+    } else {
+      feedback.textContent = "";
+    }
+  });
+
+  function renderDeptTable() {
+    tableBody.innerHTML = "";
+    departmentDb.forEach((dept, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><span class="fw-bold text-primary">#${dept.id}</span></td>
+        <td class="fw-medium">${dept.name}</td>
+        <td class="small">Head: ${dept.head}<br><span class="text-muted">${dept.cc}</span></td>
+        <td><span class="badge-active">Active</span></td>
+        <td class="text-end">
+          <button class="btn btn-view-action me-2" onclick="viewDept(${index})">View</button>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    });
+  }
+
+  function viewDept(index) {
+    const dept = departmentDb[index];
+    document.getElementById("modalContent").innerHTML = `
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="bg-primary text-white rounded-3 p-3">
+          <i class="fa-solid fa-building-user fa-xl"></i>
+        </div>
+        <div>
+          <h4 class="fw-bold mb-0">${dept.name}</h4>
+          <span class="text-muted small">ID: ${dept.id}</span>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-12 p-3 bg-light rounded-4 border">
+          <div class="row g-3">
+            <div class="col-6">
+              <label class="text-muted small d-block">Dept Head</label>
+              <span class="fw-bold text-dark">${dept.head}</span>
+            </div>
+            <div class="col-6">
+              <label class="text-muted small d-block">Parent Unit</label>
+              <span class="fw-bold text-dark">${dept.parent || 'N/A'}</span>
+            </div>
+            <div class="col-12">
+              <label class="text-muted small d-block">Cost Center</label>
+              <span class="fw-bold text-primary font-monospace">${dept.cc}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    deptModal.show();
+  }
+
+  deptForm.onsubmit = (e) => {
+    e.preventDefault();
+    
+    const selectedID = deptHeadSelect.value;
+    const headExists = empDb.some(emp => emp.id === selectedID);
+
+    if (deptForm.checkValidity() && headExists) {
+      const newDept = {
+        id: document.getElementById("deptID").value,
+        name: document.getElementById("deptName").value,
+        head: selectedID,
+        parent: document.getElementById("parentDept").value,
+        cc: document.getElementById("costCenter").value
+      };
+
+      departmentDb.push(newDept);
+      localStorage.setItem('hr_department_records', JSON.stringify(departmentDb));
+
+      renderDeptTable();
+      alert("Department record saved successfully!");
+      
+      deptForm.reset();
+      feedback.textContent = "";
+      deptForm.classList.remove("was-validated");
+      deptHeadSelect.classList.remove("is-valid");
+    } else {
+      if (!headExists) alert("Error: Please select a valid Department Head.");
+      deptForm.classList.add("was-validated");
+    }
+  };
+</script>
+  </body>
+</html>

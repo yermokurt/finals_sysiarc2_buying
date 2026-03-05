@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service System - Warranty Form</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --sidebar-bg: #1e293b;
+      --bg-color: #badcfd;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --card-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: var(--bg-color);
+      color: var(--text-dark);
+    }
+
+    /* ===== LAYOUT ===== */
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR FRAME ===== */
+    .sidebar-frame {
+      width: 280px;
+      height: 100vh;
+      border: none;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+      /* ===== MAIN CONTENT (mapped to your HTML) ===== */
+    .main {
+      padding: 2.5rem;
+      overflow-y: auto;
+      max-height: 100vh;
+      margin-left: 0;
+      min-height: 100vh;
+    }
+
+    /* top header area */
+    .topbar {
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .title h1 {
+      font-weight: 700;
+      color: var(--text-dark);
+      font-size: 1.75rem;
+      margin: 0 0 0.25rem;
+      letter-spacing: 0;
+    }
+
+    .title p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+     .search-container {
+      margin-bottom: 16px;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid rgba(37,99,235,0.2);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+    
+    .search-input:focus {
+      border-color: var(--primary-color);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    /* ===== FORM CONTAINER ===== */
+    .form-container {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+      border: none;
+      margin-bottom: 2rem;
+    }
+
+    .form-container h2 {
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+    }
+
+    .form-container .sub {
+      margin: 0 0 24px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* ===== FORM STYLES ===== */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid rgba(30, 41, 59, 0.12);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-dark);
+      background: #fff;
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .form-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    /* ===== TABLE ===== */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(30,41,59,0.12);
+      margin-top: 2rem;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .data-table th {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+      color: white;
+      padding: 12px 10px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 2px solid var(--primary-hover);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(30,41,59,0.10);
+      color: var(--text-dark);
+      vertical-align: middle;
+    }
+
+    .data-table td:nth-child(1) {
+      font-weight: 800;
+      text-align: center;
+      background: #eff6ff;
+      color: var(--primary-color);
+      font-size: 11px;
+    }
+
+    .data-table tr:nth-child(even) td:nth-child(1) {
+      background: #dbeafe;
+    }
+
+    .data-table tr:hover td {
+      border-color: rgba(37,99,235,0.35);
+      background: rgba(37,99,235,0.04);
+    }
+
+    .form-full {
+      grid-column: span 2;
+    }
+
+    /* ===== ACTIONS (added) ===== */
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 10px rgba(0,0,0,.08);
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .btn-primary { background: var(--primary-color); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-soft { background: #eff6ff; color: var(--primary-color); border: 1px solid rgba(37,99,235,.25); }
+    .btn-soft:hover { background: #dbeafe; }
+
+    .btn-success { background: #10b981; color: #fff; }
+    .btn-success:hover { background: #059669; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; }
+      .main { max-height: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .form-row-3 { grid-template-columns: 1fr; }
+      .form-full { grid-column: span 1; }
+      .actions { justify-content: flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <iframe src="sidebar.html" class="sidebar-frame" frameborder="0"></iframe>
+
+
+    <main class="main" id="main-content">
+      <!-- WARRANTY FORM -->
+      <section class="view active" id="view-form-warranty">
+        <div class="topbar">
+          <div class="title">
+            <h1>🛡️ Warranty Form</h1>
+            <p>Add new Warranty Claim entry with complete details</p>
+          </div>
+          <div class="actions">
+            <a class="btn btn-soft" href="dashboard-standalone.html">⌂ Dashboard</a>
+            <a class="btn btn-soft" href="warranty-standalone.html">📋 Warranty Records</a>
+          </div>
+        </div>
+
+        <!-- WARRANTY FORM -->
+        <div class="form-container">
+          <h2>Add New Warranty Claim</h2>
+          <p class="sub">Enter warranty claim details below. Fields follow the same order as the table columns.</p>
+          
+          <form id="warrantyForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="warranty_claim_id">Warranty Claim ID</label>
+                <input type="text" id="warranty_claim_id" name="warranty_claim_id" placeholder="e.g. SWC0021" pattern="^SWC\d{4}$" title="Format: SWC#### (e.g. SWC0021)" readonly required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="customer_id">Customer ID</label>
+                <select id="customer_id" name="customer_id" required>
+                  <option value="">Select Customer</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="sales_invoice_id">Sales Invoice ID</label>
+                <select id="sales_invoice_id" name="sales_invoice_id" required>
+                  <option value="">Select Invoice</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="issue_type_id">Issue Type ID</label>
+                <select id="issue_type_id" name="issue_type_id" required>
+                  <option value="">Select Issue Type</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="status_id">Status</label>
+                <select id="status_id" name="status_id" required>
+                  <option value="">Select Status</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="claim_date">Claim Date</label>
+                <input type="datetime-local" id="claim_date" name="claim_date" required>
+              </div>
+            </div>
+            
+            <div class="actions">
+              <button type="submit" class="btn btn-primary">✅ Save Claim</button>
+              <button type="reset" class="btn btn-soft">🔄 Clear Form</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- WARRANTY TABLE -->
+        <div class="form-container">
+          <h2>🛡️ Warranty Claims List</h2>
+          <p class="sub">Current warranty claims in the system</p>
+          <div class="search-container">
+            <input type="text" id="searchInput" placeholder="🔍 Search " class="search-input">
+          </div>
+          <div class="table-container">
+            <table class="data-table" id="warrantyTable">
+              <thead>
+                <tr>
+                      <th>#</th>
+                  <th>Claim ID</th>
+                  <th>Customer ID</th>
+                  <th>Sales Invoice ID</th>
+                  <th>Issue Type ID</th>
+                  <th>Status</th>
+                  <th>Claim Date</th>
+                  <th>Created At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="warrantyTableBody">
+                <!-- rows go here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ---------- HELPER FUNCTIONS ----------
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+
+    // ---------- WARRANTY DATA ----------
+    let warrantyClaims = JSON.parse(localStorage.getItem('warrantyClaims') || 'null');
+    if (!Array.isArray(warrantyClaims)) {
+      warrantyClaims = [];
+      localStorage.setItem('warrantyClaims', JSON.stringify(warrantyClaims));
+    }
+
+    // dropdown options
+    const customerIds = Array.from({length:20},(_,i)=>`SC${String(i+1).padStart(4,'0')}`);
+    const salesInvoiceIds = Array.from({length:20},(_,i)=>`ASI${String(i+1).padStart(4,'0')}`);
+    const statuses = [
+      'Pending','Approved','Rejected','In Progress','Completed','Cancelled','On Hold','For Review',
+      'Under Verification','Verified','Returned','Resubmitted','Processing','Failed','Successful',
+      'Archived','Expired','Draft','Active','Inactive'
+    ];
+
+    // issue types stored by issue-type-master page
+    let issueTypes = JSON.parse(localStorage.getItem('issueTypes') || 'null');
+    if (!Array.isArray(issueTypes)) issueTypes = [];
+    function saveWarrantyClaims() {
+      localStorage.setItem('warrantyClaims', JSON.stringify(warrantyClaims));
+    }
+    function generateWarrantyClaimId() {
+      if (warrantyClaims.length === 0) return 'SWC0001';
+      const max = warrantyClaims.reduce((m,v)=>{
+        const num = parseInt(v.warranty_claim_id.replace('SWC',''));
+        return num>m?num:m;
+      },0);
+      return `SWC${String(max+1).padStart(4,'0')}`;
+    }
+
+    // ---------- FORM SUBMISSION ----------
+    function handleWarrantySubmit(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const warrantyData = {
+        warranty_claim_id: formData.get('warranty_claim_id'),
+        customer_id: formData.get('customer_id'),
+        sales_invoice_id: formData.get('sales_invoice_id'),
+        issue_type_id: formData.get('issue_type_id'),
+        status: formData.get('status_id'),
+        claim_date: formData.get('claim_date'),
+        created_at: new Date().toISOString().slice(0,16)
+      };
+
+      const editing = editingIndex >= 0;
+      if (editing) {
+        warrantyClaims[editingIndex] = warrantyData;
+        alert('Warranty Claim updated successfully!');
+        editingIndex = -1;
+      } else {
+        warrantyClaims.push(warrantyData);
+        alert('Warranty Claim submitted successfully!');
+      }
+      saveWarrantyClaims();
+      renderWarrantyTable();
+
+      e.target.reset();
+      $('#warranty_claim_id').value = generateWarrantyClaimId();
+      $('#claim_date').value = new Date().toISOString().slice(0,16);
+    }
+
+    let editingIndex = -1;
+    
+    // ---------- TABLE FUNCTIONS ----------
+    function renderWarrantyTable() {
+      const tbody = $('#warrantyTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = warrantyClaims.map((w,i)=>`
+        <tr>
+          <td>${i+1}</td>
+          <td>${w.warranty_claim_id}</td>
+          <td>${w.customer_id}</td>
+          <td>${w.sales_invoice_id}</td>
+          <td>${w.issue_type_id}</td>
+          <td>${w.status}</td>
+          <td>${w.claim_date}</td>
+          <td>${w.created_at}</td>
+          <td>
+            <button class="btn btn-soft" onclick="editWarranty(${i})" style="padding:4px 8px;font-size:11px;">✏️ Edit</button>
+            <button class="btn btn-soft" onclick="deleteWarranty(${i})" style="padding:4px 8px;font-size:11px;margin-left:4px;background:#fef2f2;color:#b91c1c;">🗑 Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ---------- SEARCH FUNCTIONALITY ----------
+    function initializeSearch() {
+      const searchInput = $('#searchInput');
+      if (!searchInput) return;
+
+      const positive = ['completed','closed','approved','success','resolved','active'];
+      const neutral = ['pending','open','in progress','scheduled','waiting','on hold','received','verified'];
+      const negative = ['cancelled','rejected','failed','error'];
+
+      function updateColor(term) {
+        const t = term.toLowerCase();
+        if (positive.some(w => t.includes(w))) return 'green';
+        if (neutral.some(w => t.includes(w))) return 'yellow';
+        if (negative.some(w => t.includes(w))) return 'red';
+        return '';
+      }
+
+      function doFilter() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const rows = document.querySelectorAll('#warrantyTableBody tr');
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+        searchInput.style.borderColor = updateColor(searchInput.value) || '';
+      }
+
+      searchInput.addEventListener('input', doFilter);
+      searchInput.addEventListener('focus', () => {
+        searchInput.style.borderColor = updateColor(searchInput.value) || '';
+      });
+    }
+
+    function editWarranty(i) {
+      const w = warrantyClaims[i];
+      editingIndex = i;
+      $('#warranty_claim_id').value = w.warranty_claim_id;
+      $('#customer_id').value = w.customer_id;
+      $('#sales_invoice_id').value = w.sales_invoice_id;
+      $('#issue_type_id').value = w.issue_type_id;
+      $('#status_id').value = w.status;
+      $('#claim_date').value = w.claim_date;
+      const btn = $('#warrantyForm button[type="submit"]');
+      if (btn) btn.textContent='✅ Update Claim';
+    }
+
+    function deleteWarranty(i) {
+      if (confirm('Delete this warranty claim?')) {
+        warrantyClaims.splice(i,1);
+        saveWarrantyClaims();
+        renderWarrantyTable();
+        alert('Warranty claim deleted');
+      }
+    }
+
+    // ---------- INITIALIZATION ----------
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize form
+      $('#warranty_claim_id').value = generateWarrantyClaimId();
+      $('#claim_date').value = new Date().toISOString().slice(0,16);
+
+      // populate customer selector
+      const custSel = $('#customer_id');
+      customerIds.forEach(id => custSel.append(new Option(id, id)));
+
+      // populate sales invoice selector
+      const invSel = $('#sales_invoice_id');
+      salesInvoiceIds.forEach(id => invSel.append(new Option(id, id)));
+
+      // populate status selector
+      const statusSel = $('#status_id');
+      statuses.forEach(s => statusSel.append(new Option(s, s)));
+
+      // populate issue type selector from master data
+      const typeSel = $('#issue_type_id');
+      issueTypes.forEach(it => {
+        const txt = `${it.issue_type_id} - ${it.type_name_issue}`;
+        typeSel.append(new Option(txt, it.issue_type_id));
+      });
+
+      // Bind form submit event
+      $('#warrantyForm').addEventListener('submit', handleWarrantySubmit);
+
+      // Render initial table
+      renderWarrantyTable();
+      // Initialize search functionality
+      initializeSearch();
+      
+      // Initialize navigation
+      initNav();
+    });
+
+    // Navigation functionality
+    function initNav() {
+      const nav = document.getElementById('nav');
+      if (!nav) return;
+
+      nav.addEventListener('click', e => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        
+        // Add ripple effect
+        createRippleEffect(a, e);
+        
+        // Handle navigation
+        if (a.href.includes('.html')) {
+          // External link - just add visual feedback
+          setTimeout(() => {
+            window.location.href = a.href;
+          }, 200);
+        }
+      });
+
+      // Add hover sound effect (visual feedback)
+      nav.addEventListener('mouseenter', e => {
+        const a = e.target.closest('a');
+        if (a && !a.classList.contains('active')) {
+          a.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        }
+      }, true);
+    }
+
+    function createRippleEffect(element, event) {
+      const ripple = document.createElement('span');
+      const rect = element.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = event.clientX - rect.left - size / 2;
+      const y = event.clientY - rect.top - size / 2;
+      
+      ripple.style.cssText = `
+        position: absolute;
+        width: ${size}px;
+        height: ${size}px;
+        left: ${x}px;
+        top: ${y}px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: scale(0);
+        animation: ripple 0.6s ease-out;
+        pointer-events: none;
+      `;
+      
+      element.style.position = 'relative';
+      element.style.overflow = 'hidden';
+      element.appendChild(ripple);
+      
+      setTimeout(() => {
+        ripple.remove();
+      }, 600);
+    }
+
+    const now = new Date();
+    const dateTimeLocal = now.toISOString().slice(0, 16);
+    $('#claim_date').value = dateTimeLocal;
+  </script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Balance - IT3B Inc.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Exact same CSS for perfect consistency --- */
+        :root { --sidebar-bg: #1e293b; --sidebar-text: #94a3b8; --sidebar-text-active: #ffffff; --primary-blue: #2563eb; --content-bg: #eef2f6; --card-bg: #ffffff; --text-dark: #1e293b; --text-muted: #64748b; --danger-red: #ef4444; --success-green: #10b981; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { display: flex; height: 100vh; overflow: hidden; background-color: var(--content-bg); }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
+        .brand { display: flex; align-items: center; margin-bottom: 40px; color: var(--sidebar-text-active); }
+        .brand-icon { font-size: 24px; margin-right: 10px; }
+        .brand-text h1 { font-size: 16px; font-weight: 700; }
+        .brand-text p { font-size: 10px; opacity: 0.7; }
+        .menu-group-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-top: 20px; font-weight: 600; }
+        .nav-link { display: flex; align-items: center; text-decoration: none; color: var(--sidebar-text); padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-size: 14px; font-weight: 500; }
+        .nav-link i { margin-right: 15px; font-size: 16px; width: 20px; text-align: center; }
+        .nav-link:hover { background-color: rgba(255,255,255,0.05); color: var(--sidebar-text-active); }
+        .nav-link.active { background-color: var(--primary-blue); color: white; }
+        .text-danger { color: var(--danger-red); }
+        .text-danger:hover { background-color: rgba(239, 68, 68, 0.1); color: var(--danger-red); }
+        .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header h2 { font-size: 24px; color: var(--text-dark); font-weight: 700; }
+        .header p { color: var(--text-muted); font-size: 14px; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: 500; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-primary { background-color: var(--primary-blue); color: white; }
+        .btn-primary:hover { background-color: #1d4ed8; }
+        .card { background-color: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; }
+        .table-toolbar { padding: 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .search-box { padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 8px; width: 300px; outline: none; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .data-table th { background-color: #f8fafc; color: var(--text-muted); font-weight: 600; font-size: 12px; padding: 15px 20px; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
+        .data-table td { padding: 15px 20px; border-bottom: 1px solid #e2e8f0; color: var(--text-dark); font-size: 14px; }
+        .data-table tr:hover { background-color: #f8fafc; }
+        .action-icon-btn { background: none; border: none; cursor: pointer; font-size: 16px; margin-right: 10px; transition: 0.2s; }
+        .edit-btn { color: var(--success-green); }
+        .edit-btn:hover { color: #059669; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.6); align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-content { background-color: var(--card-bg); width: 450px; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-header { padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-weight: 600; color: var(--text-dark); }
+        .close-btn { cursor: pointer; color: var(--text-muted); font-size: 20px; }
+        .modal-body { padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 500; color: var(--text-dark); }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; }
+        .form-control:focus { border-color: var(--primary-blue); }
+        .form-control[readonly] { background-color: #f8fafc; cursor: not-allowed; }
+        .modal-footer { padding: 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px; background-color: #f8fafc; }
+        .btn-secondary { background-color: white; border: 1px solid #e2e8f0; color: var(--text-dark); }
+        .btn-secondary:hover { background-color: #f1f5f9; }
+        
+        /* Stock specific styles */
+        .stock-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .stock-low { background-color: #fee2e2; color: #b91c1c; }
+        .stock-good { background-color: #d1fae5; color: #047857; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fas fa-cube"></i></div>
+            <div class="brand-text"><h1>IT3B Inc.</h1><p>Supply Chain Management</p></div>
+        </div>
+
+        <div class="menu-group-label">Core Dashboard</div>
+        <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-pie"></i> Overview</a>
+
+        <div class="menu-group-label">Distribution Data</div>
+        <a href="items.html" class="nav-link"><i class="fas fa-box-open"></i> Items Master</a>
+        <a href="warehouses.html" class="nav-link"><i class="fas fa-warehouse"></i> Warehouses</a>
+
+        <div class="menu-group-label">Operations</div>
+        <a href="stock.html" class="nav-link active"><i class="fas fa-chart-line"></i> Stock Balance</a>
+        <a href="receipts.html" class="nav-link"><i class="fas fa-file-invoice-dollar"></i> Purchase Receipts</a>
+        <a href="delivery.html" class="nav-link"><i class="fas fa-truck-fast"></i> Delivery Notes</a>
+
+        <a href="../login.html" class="nav-link text-danger" style="margin-top: auto;">
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+        </a>
+    </nav>
+
+    <main class="main-content">
+        <div class="header">
+            <div>
+                <h2>Stock Balance</h2>
+                <p>Monitor and adjust inventory levels across all facilities.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="table-toolbar">
+                <input type="text" class="search-box" placeholder="Search items or warehouses..." id="searchInput" onkeyup="filterTable()">
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Item Code</th>
+                        <th>Item Name</th>
+                        <th>Location</th>
+                        <th>Quantity Available</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="stockTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="stockModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Adjust Inventory Level</h3>
+                <i class="fas fa-times close-btn" onclick="closeModal()"></i>
+            </div>
+            <div class="modal-body">
+                <form id="stockForm">
+                    <input type="hidden" id="adjustItemId">
+                    <div class="form-group">
+                        <label>Item</label>
+                        <input type="text" id="displayItemName" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Location</label>
+                        <input type="text" id="displayWarehouse" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Adjustment Action</label>
+                        <select id="adjustmentType" class="form-control">
+                            <option value="add">Add to Stock (+)</option>
+                            <option value="subtract">Remove from Stock (-)</option>
+                            <option value="set">Set Exact Amount (=)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" id="adjustmentQty" class="form-control" min="0" required placeholder="Enter quantity...">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveStock()">Confirm Adjustment</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Load Shared Items Data ---
+        let itemsData = JSON.parse(localStorage.getItem('it3b_items')) || [];
+
+        // Safety feature: Make sure every item has a 'stock' property even if it's new
+        let needsSave = false;
+        itemsData.forEach(item => {
+            if (item.stock === undefined) {
+                item.stock = 0; // Default new items to 0 stock
+                needsSave = true;
+            }
+        });
+        if (needsSave) {
+            localStorage.setItem('it3b_items', JSON.stringify(itemsData));
+        }
+
+        // --- 2. Render Table ---
+        function renderTable() {
+            const tbody = document.getElementById('stockTableBody');
+            tbody.innerHTML = ''; 
+            
+            if (itemsData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No items found. Please add items in the Items Master first.</td></tr>';
+                return;
+            }
+
+            itemsData.forEach(item => {
+                // Visual styling for low stock
+                let stockBadgeClass = item.stock <= 10 ? 'stock-low' : 'stock-good';
+                let stockText = item.stock <= 10 ? `${item.stock} (Low)` : item.stock;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${item.id}</strong></td>
+                        <td>${item.name}</td>
+                        <td>${item.warehouse}</td>
+                        <td><span class="stock-badge ${stockBadgeClass}">${stockText}</span></td>
+                        <td>
+                            <button class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;" onclick="openAdjustModal('${item.id}')">
+                                <i class="fas fa-sliders-h"></i> Adjust
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- 3. Modal Functions ---
+        const modal = document.getElementById('stockModal');
+
+        function openAdjustModal(id) {
+            const item = itemsData.find(i => i.id === id);
+            if (item) {
+                document.getElementById('stockForm').reset();
+                document.getElementById('adjustItemId').value = item.id;
+                document.getElementById('displayItemName').value = item.name;
+                document.getElementById('displayWarehouse').value = item.warehouse;
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        function saveStock() {
+            const idInput = document.getElementById('adjustItemId').value;
+            const actionType = document.getElementById('adjustmentType').value;
+            const qtyInput = parseInt(document.getElementById('adjustmentQty').value);
+
+            if (isNaN(qtyInput) || qtyInput < 0) {
+                alert("Please enter a valid positive number.");
+                return;
+            }
+
+            const index = itemsData.findIndex(i => i.id === idInput);
+            if(index !== -1) {
+                let currentStock = parseInt(itemsData[index].stock) || 0;
+
+                if (actionType === 'add') {
+                    itemsData[index].stock = currentStock + qtyInput;
+                } else if (actionType === 'subtract') {
+                    if (currentStock - qtyInput < 0) {
+                        alert("Cannot remove more stock than is currently available!");
+                        return;
+                    }
+                    itemsData[index].stock = currentStock - qtyInput;
+                } else if (actionType === 'set') {
+                    itemsData[index].stock = qtyInput;
+                }
+
+                // Save the updated stock back to the shared items database!
+                localStorage.setItem('it3b_items', JSON.stringify(itemsData)); 
+                closeModal();
+                renderTable();
+            }
+        }
+
+        // --- 4. Search Filter ---
+        function filterTable() {
+            const filter = document.getElementById('searchInput').value.toUpperCase();
+            const rows = document.getElementById('stockTableBody').getElementsByTagName('tr');
+            for (let i = 0; i < rows.length; i++) {
+                const textValue = rows[i].textContent || rows[i].innerText;
+                rows[i].style.display = textValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        }
+
+        // Initial Load
+        renderTable();
+    </script>
+</body>
+</html>

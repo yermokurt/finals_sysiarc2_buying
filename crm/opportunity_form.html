@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Opportunity - IT3B Inc.</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../universal.css" />
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --sidebar-bg: #1e293b;
+        --bg-color: #badcfd;
+        --text-dark: #1e293b;
+        --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: var(--bg-color);
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+      }
+      .sidebar {
+        width: 280px;
+        background: var(--sidebar-bg);
+        height: 100vh;
+        position: fixed;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+      }
+      .logo-area {
+        padding: 2rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .logo-icon {
+        width: 35px;
+        height: 35px;
+        background: white;
+        color: var(--primary-color);
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-size: 1rem;
+      }
+      .nav-link {
+        padding: 0.8rem 1.5rem;
+        color: rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 500;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+      .nav-link:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .nav-link.active {
+        color: white;
+        background: var(--primary-color);
+        border-radius: 0 50px 50px 0;
+        margin-right: 1.5rem;
+      }
+      .main-content {
+        margin-left: 280px;
+        padding: 2.5rem;
+        flex: 1;
+      }
+      .form-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: var(--card-shadow);
+        border: none;
+        overflow: hidden;
+        margin-bottom: 2rem;
+      }
+      .form-header {
+        background: #f0f7ff;
+        padding: 2rem;
+        border-bottom: 1px solid #e1e8f0;
+      }
+      .form-label {
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+      .form-control,
+      .form-select {
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s;
+      }
+      .form-control:focus,
+      .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+      }
+      .btn-primary {
+        background: var(--primary-color);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+      }
+      .input-group-text {
+        border-radius: 12px 0 0 12px;
+        background: #f8fafc;
+        border-color: #e2e8f0;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+      .input-group .form-control {
+        border-radius: 0 12px 12px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="sidebar">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fa-solid fa-cube"></i></div>
+        <div>
+          <h6 class="mb-0 fw-bold">IT3B Inc.</h6>
+          <small class="text-white-50">Deal Pipeline</small>
+        </div>
+      </div>
+      <div class="py-4">
+        <a href="crm.html" class="nav-link">
+          <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+        <div class="px-3 mt-4 mb-2 small text-uppercase opacity-50 fw-bold">
+          CRM Cycle
+        </div>
+        <a href="lead_form.html" class="nav-link">
+          <i class="fa-solid fa-magnet"></i> Lead
+        </a>
+        <a href="opportunity_form.html" class="nav-link active">
+          <i class="fa-solid fa-handshake"></i> Opportunity
+        </a>
+        <a href="activity_log_form.html" class="nav-link">
+          <i class="fa-solid fa-timeline"></i> Activity Log
+        </a>
+        <a href="sales_quotation_form.html" class="nav-link">
+          <i class="fa-solid fa-file-invoice-dollar"></i> Sales Quotation
+        </a>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <div class="form-card">
+        <div class="form-header">
+          <h4 class="fw-bold mb-1">Opportunity</h4>
+          <p class="text-muted mb-0 small">
+            Track qualified deals in the sales pipeline (crm_opportunity).
+          </p>
+        </div>
+        <div class="form-body p-4">
+          <form id="oppForm" class="needs-validation" novalidate>
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="form-label">Opportunity Code</label>
+                <input
+                  type="text"
+                  name="opportunity_code"
+                  class="form-control"
+                  placeholder="e.g., CO0001"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Opportunity Date</label>
+                <input
+                  type="date"
+                  id="oppDate"
+                  name="opportunity_date"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Linked Lead ID (FK)</label>
+                <input
+                  type="text"
+                  name="lead_id"
+                  class="form-control"
+                  placeholder="CL0001"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Customer ID (FK)</label>
+                <input
+                  type="text"
+                  name="customer_id"
+                  class="form-control"
+                  placeholder="CC0001"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Estimated Value (PHP)</label>
+                <div class="input-group">
+                  <span class="input-group-text">₱</span>
+                  <input
+                    type="number"
+                    name="estimated_value"
+                    class="form-control"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Expected Close Date</label>
+                <input
+                  type="date"
+                  name="expected_close_date"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Sales Stage</label>
+                <select name="sales_stage" class="form-select" required>
+                  <option value="">-- Select Stage --</option>
+                  <option value="Prospecting">Prospecting</option>
+                  <option value="Qualification">Qualification</option>
+                  <option value="Needs Analysis">Needs Analysis</option>
+                  <option value="Value Proposition">Value Proposition</option>
+                  <option value="Proposal/Quote">Proposal / Quote</option>
+                  <option value="Negotiation">Negotiation</option>
+                  <option value="Closed Won">Closed Won</option>
+                  <option value="Closed Lost">Closed Lost</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Win Probability (%)</label>
+                <input
+                  type="number"
+                  name="win_probability"
+                  class="form-control"
+                  placeholder="0 – 100"
+                  min="0"
+                  max="100"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Assigned To (Employee ID)</label>
+                <input
+                  type="text"
+                  name="assigned_employee_id"
+                  class="form-control"
+                  placeholder="EMP0001"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Status</label>
+                <select name="opportunity_status_id" class="form-select" required>
+                  <option value="COS0001">Open</option>
+                  <option value="COS0002">Won</option>
+                  <option value="COS0003">Lost</option>
+                  <option value="COS0004">On Hold</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Remarks</label>
+                <textarea
+                  name="remarks"
+                  class="form-control"
+                  rows="2"
+                  placeholder="Additional notes on the opportunity..."
+                ></textarea>
+              </div>
+            </div>
+            <div class="mt-5 d-flex justify-content-end gap-3">
+              <button
+                type="reset"
+                class="btn btn-light px-4 py-2 fw-bold"
+                style="border-radius: 12px"
+              >
+                Reset
+              </button>
+              <button type="submit" class="btn btn-primary px-5 py-2">
+                Save Opportunity
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      document.getElementById("oppDate").valueAsDate = new Date();
+      document.getElementById("oppForm").onsubmit = (e) => {
+        e.preventDefault();
+        if (e.target.checkValidity())
+          alert("Opportunity saved to the pipeline!");
+        e.target.classList.add("was-validated");
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

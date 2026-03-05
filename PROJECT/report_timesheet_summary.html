@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report: Timesheet Summary - IT3B Inc.</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="../universal.css" />
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --sidebar-bg: #1e293b;
+            --bg-color: #badcfd;
+            --text-dark: #1e293b;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: "Plus Jakarta Sans", sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            height: 100vh;
+            position: fixed;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .logo-area {
+            padding: 2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-icon {
+            width: 35px;
+            height: 35px;
+            background: white;
+            color: var(--primary-color);
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-size: 1rem;
+        }
+
+        .nav-link {
+            padding: 0.8rem 1.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link.active {
+            color: white;
+            background: var(--primary-color);
+            border-radius: 0 50px 50px 0;
+            margin-right: 1.5rem;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 2.5rem;
+            flex: 1;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            border: none;
+            overflow: hidden;
+        }
+
+        .report-header {
+            background: #1e293b;
+            color: white;
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toolbar {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            max-width: 320px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn-export {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-export:hover {
+            background: #1d4ed8;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table thead th {
+            background: #f8fafc;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #475569;
+            padding: 0.9rem 1.25rem;
+            border-bottom: 2px solid #e2e8f0;
+            white-space: nowrap;
+        }
+
+        .table tbody td {
+            padding: 0.85rem 1.25rem;
+            vertical-align: middle;
+            font-size: 0.875rem;
+            color: #374151;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 0.3rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .s-draft {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .s-submitted {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .s-approved {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .s-rejected {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .record-count {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-left: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="sidebar">
+        <div class="logo-area">
+            <div class="logo-icon"><i class="fa-solid fa-diagram-project"></i></div>
+            <div>
+                <h6 class="mb-0 fw-bold">IT3B Inc.</h6><small class="text-white-50">Project Management</small>
+            </div>
+        </div>
+        <div class="py-4">
+            <a href="project_dashboard.html" class="nav-link"><i class="fa-solid fa-arrow-left"></i> Back to
+                Dashboard</a>
+            <div class="px-3 mt-4 mb-2 small text-uppercase opacity-50 fw-bold">Reports</div>
+            <a href="report_project_list.html" class="nav-link"><i class="fa-solid fa-folder-open"></i> Project List</a>
+            <a href="report_task_list.html" class="nav-link"><i class="fa-solid fa-clipboard-list"></i> Task List</a>
+            <a href="report_timesheet_summary.html" class="nav-link active"><i class="fa-solid fa-calendar-check"></i>
+                Timesheet Summary</a>
+            <a href="report_timesheet_details.html" class="nav-link"><i class="fa-solid fa-table"></i> Timesheet
+                Details</a>
+        </div>
+    </nav>
+    <main class="main-content">
+        <div class="report-card">
+            <div class="report-header">
+                <div>
+                    <h4 class="fw-bold mb-1"><i class="fa-solid fa-calendar-check me-2"></i>Timesheet Summary</h4>
+                    <p class="mb-0 small opacity-75">proj_timesheet JOIN proj_user JOIN proj_timesheet_status</p>
+                </div>
+                <button class="btn-export" id="btnExport"><i class="fa-solid fa-download me-1"></i> Export CSV</button>
+            </div>
+            <div class="toolbar">
+                <input type="text" class="search-input" id="searchInput" placeholder="🔍  Search timesheets..." />
+                <span class="record-count" id="recordCount"></span>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Timesheet ID</th>
+                            <th>Employee ID</th>
+                            <th>Week Start Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        if (localStorage.getItem('project_logged_in') !== 'true') window.location.href = '../login.html';
+
+        const data = [
+            { timesheet_id: 1, employee_id: 'EMP-001', week_start_date: '2025-01-06', status_name: 'Approved' },
+            { timesheet_id: 2, employee_id: 'EMP-002', week_start_date: '2025-01-06', status_name: 'Approved' },
+            { timesheet_id: 3, employee_id: 'EMP-003', week_start_date: '2025-01-06', status_name: 'Submitted' },
+            { timesheet_id: 4, employee_id: 'EMP-001', week_start_date: '2025-01-13', status_name: 'Approved' },
+            { timesheet_id: 5, employee_id: 'EMP-002', week_start_date: '2025-01-13', status_name: 'Submitted' },
+            { timesheet_id: 6, employee_id: 'EMP-003', week_start_date: '2025-01-13', status_name: 'Rejected' },
+            { timesheet_id: 7, employee_id: 'EMP-004', week_start_date: '2025-01-13', status_name: 'Draft' },
+            { timesheet_id: 8, employee_id: 'EMP-001', week_start_date: '2025-01-20', status_name: 'Submitted' },
+            { timesheet_id: 9, employee_id: 'EMP-002', week_start_date: '2025-01-20', status_name: 'Draft' },
+            { timesheet_id: 10, employee_id: 'EMP-003', week_start_date: '2025-01-20', status_name: 'Draft' },
+        ];
+
+        const statusClass = { 'Draft': 's-draft', 'Submitted': 's-submitted', 'Approved': 's-approved', 'Rejected': 's-rejected' };
+
+        function render(rows) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = rows.length ? rows.map(r => `<tr>
+          <td><strong>TS-${String(r.timesheet_id).padStart(3, '0')}</strong></td>
+          <td>${r.employee_id}</td>
+          <td>${r.week_start_date}</td>
+          <td><span class="badge-status ${statusClass[r.status_name] || 's-draft'}">${r.status_name}</span></td>
+        </tr>`).join('') : '<tr><td colspan="4" class="text-center text-muted py-4">No records found.</td></tr>';
+            document.getElementById('recordCount').textContent = `${rows.length} record${rows.length !== 1 ? 's' : ''}`;
+        }
+
+        render(data);
+
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const q = this.value.toLowerCase();
+            render(data.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q))));
+        });
+
+        document.getElementById('btnExport').addEventListener('click', () => alert('Export is demo only'));
+    </script>
+</body>
+
+</html>

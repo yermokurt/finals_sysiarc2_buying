@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouses - IT3B Inc.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Exact same CSS as items.html for perfect consistency --- */
+        :root { --sidebar-bg: #1e293b; --sidebar-text: #94a3b8; --sidebar-text-active: #ffffff; --primary-blue: #2563eb; --content-bg: #eef2f6; --card-bg: #ffffff; --text-dark: #1e293b; --text-muted: #64748b; --danger-red: #ef4444; --success-green: #10b981; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { display: flex; height: 100vh; overflow: hidden; background-color: var(--content-bg); }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
+        .brand { display: flex; align-items: center; margin-bottom: 40px; color: var(--sidebar-text-active); }
+        .brand-icon { font-size: 24px; margin-right: 10px; }
+        .brand-text h1 { font-size: 16px; font-weight: 700; }
+        .brand-text p { font-size: 10px; opacity: 0.7; }
+        .menu-group-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-top: 20px; font-weight: 600; }
+        .nav-link { display: flex; align-items: center; text-decoration: none; color: var(--sidebar-text); padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-size: 14px; font-weight: 500; }
+        .nav-link i { margin-right: 15px; font-size: 16px; width: 20px; text-align: center; }
+        .nav-link:hover { background-color: rgba(255,255,255,0.05); color: var(--sidebar-text-active); }
+        .nav-link.active { background-color: var(--primary-blue); color: white; }
+        .text-danger { color: var(--danger-red); }
+        .text-danger:hover { background-color: rgba(239, 68, 68, 0.1); color: var(--danger-red); }
+        .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header h2 { font-size: 24px; color: var(--text-dark); font-weight: 700; }
+        .header p { color: var(--text-muted); font-size: 14px; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: 500; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-primary { background-color: var(--primary-blue); color: white; }
+        .btn-primary:hover { background-color: #1d4ed8; }
+        .card { background-color: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; }
+        .table-toolbar { padding: 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .search-box { padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 8px; width: 300px; outline: none; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .data-table th { background-color: #f8fafc; color: var(--text-muted); font-weight: 600; font-size: 12px; padding: 15px 20px; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
+        .data-table td { padding: 15px 20px; border-bottom: 1px solid #e2e8f0; color: var(--text-dark); font-size: 14px; }
+        .data-table tr:hover { background-color: #f8fafc; }
+        .action-icon-btn { background: none; border: none; cursor: pointer; font-size: 16px; margin-right: 10px; transition: 0.2s; }
+        .edit-btn { color: var(--primary-blue); }
+        .edit-btn:hover { color: #1e3a8a; }
+        .delete-btn { color: var(--danger-red); }
+        .delete-btn:hover { color: #b91c1c; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.6); align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-content { background-color: var(--card-bg); width: 450px; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-header { padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-weight: 600; color: var(--text-dark); }
+        .close-btn { cursor: pointer; color: var(--text-muted); font-size: 20px; }
+        .modal-body { padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 500; color: var(--text-dark); }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; }
+        .form-control:focus { border-color: var(--primary-blue); }
+        .modal-footer { padding: 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px; background-color: #f8fafc; }
+        .btn-secondary { background-color: white; border: 1px solid #e2e8f0; color: var(--text-dark); }
+        .btn-secondary:hover { background-color: #f1f5f9; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fas fa-cube"></i></div>
+            <div class="brand-text"><h1>IT3B Inc.</h1><p>Supply Chain Management</p></div>
+        </div>
+
+        <div class="menu-group-label">Core Dashboard</div>
+        <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-pie"></i> Overview</a>
+
+        <div class="menu-group-label">Distribution Data</div>
+        <a href="items.html" class="nav-link"><i class="fas fa-box-open"></i> Items Master</a>
+        <a href="warehouses.html" class="nav-link active"><i class="fas fa-warehouse"></i> Warehouses</a>
+
+        <div class="menu-group-label">Operations</div>
+        <a href="stock.html" class="nav-link"><i class="fas fa-chart-line"></i> Stock Balance</a>
+        <a href="receipts.html" class="nav-link"><i class="fas fa-file-invoice-dollar"></i> Purchase Receipts</a>
+        <a href="delivery.html" class="nav-link"><i class="fas fa-truck-fast"></i> Delivery Notes</a>
+
+        <a href="../login.html" class="nav-link text-danger" style="margin-top: auto;">
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+        </a>
+    </nav>
+
+    <main class="main-content">
+        <div class="header">
+            <div>
+                <h2>Warehouses</h2>
+                <p>Manage all active warehouse locations and branches.</p>
+            </div>
+            <button class="btn btn-primary" onclick="openModal()"><i class="fas fa-plus"></i> Add Warehouse</button>
+        </div>
+
+        <div class="card">
+            <div class="table-toolbar">
+                <input type="text" class="search-box" placeholder="Search locations..." id="searchInput" onkeyup="filterTable()">
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>WH Code</th>
+                        <th>Warehouse Name</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="warehouseTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="warehouseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add Warehouse</h3>
+                <i class="fas fa-times close-btn" onclick="closeModal()"></i>
+            </div>
+            <div class="modal-body">
+                <form id="warehouseForm">
+                    <input type="hidden" id="editWhId">
+                    <input type="hidden" id="oldWhName">
+                    <div class="form-group">
+                        <label>Warehouse Name</label>
+                        <input type="text" id="whName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>City / Location</label>
+                        <input type="text" id="whLocation" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveWarehouse()">Save Warehouse</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Load Data ---
+        let whData = JSON.parse(localStorage.getItem('it3b_warehouses'));
+
+        if (!whData || whData.length === 0) {
+            whData = [
+                { id: 'WH-1001', name: 'Central Warehouse', location: 'New York' },
+                { id: 'WH-1002', name: 'East Coast Depot', location: 'Boston' },
+                { id: 'WH-1003', name: 'West Coast Hub', location: 'Los Angeles' }
+            ];
+            localStorage.setItem('it3b_warehouses', JSON.stringify(whData));
+        }
+
+        // --- Helper: Find the lowest missing ID ---
+        function getNextAvailableId() {
+            if (whData.length === 0) return 'WH-1001';
+            const existingNumbers = whData.map(w => parseInt(w.id.replace('WH-', ''))).sort((a, b) => a - b);
+            let nextNumber = 1001;
+            for (let i = 0; i < existingNumbers.length; i++) {
+                if (existingNumbers[i] === nextNumber) { nextNumber++; } 
+                else if (existingNumbers[i] > nextNumber) { break; }
+            }
+            return 'WH-' + nextNumber;
+        }
+
+        // --- 2. Render Table ---
+        function renderTable() {
+            const tbody = document.getElementById('warehouseTableBody');
+            tbody.innerHTML = ''; 
+            
+            whData.forEach(wh => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${wh.id}</strong></td>
+                        <td>${wh.name}</td>
+                        <td>${wh.location}</td>
+                        <td>
+                            <button class="action-icon-btn edit-btn" onclick="editWarehouse('${wh.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+                            <button class="action-icon-btn delete-btn" onclick="deleteWarehouse('${wh.id}', '${wh.name}')" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- 3. Add/Edit Functions ---
+        const modal = document.getElementById('warehouseModal');
+        const modalTitle = document.getElementById('modalTitle');
+
+        function openModal() {
+            document.getElementById('warehouseForm').reset();
+            document.getElementById('editWhId').value = '';
+            document.getElementById('oldWhName').value = '';
+            modalTitle.innerText = "Add New Warehouse";
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        function saveWarehouse() {
+            const idInput = document.getElementById('editWhId').value;
+            const oldName = document.getElementById('oldWhName').value;
+            const name = document.getElementById('whName').value;
+            const location = document.getElementById('whLocation').value;
+
+            if(!name) { alert("Please enter a warehouse name."); return; }
+
+            if (idInput) {
+                // Editing existing warehouse
+                const index = whData.findIndex(w => w.id === idInput);
+                if(index !== -1) {
+                    whData[index].name = name;
+                    whData[index].location = location;
+                    
+                    // --- CASCADING UPDATE FOR ITEMS ---
+                    // If the warehouse name changed, update all items sitting in that warehouse!
+                    if (oldName !== name) {
+                        let itemsData = JSON.parse(localStorage.getItem('it3b_items')) || [];
+                        let itemsUpdated = false;
+                        itemsData.forEach(item => {
+                            if (item.warehouse === oldName) {
+                                item.warehouse = name; // Update to the new name
+                                itemsUpdated = true;
+                            }
+                        });
+                        if(itemsUpdated) localStorage.setItem('it3b_items', JSON.stringify(itemsData));
+                    }
+                }
+            } else {
+                // Adding new warehouse
+                const newId = getNextAvailableId();
+                whData.push({ id: newId, name, location });
+                whData.sort((a, b) => parseInt(a.id.replace('WH-', '')) - parseInt(b.id.replace('WH-', '')));
+            }
+
+            localStorage.setItem('it3b_warehouses', JSON.stringify(whData));
+            closeModal();
+            renderTable();
+        }
+
+        function editWarehouse(id) {
+            const wh = whData.find(w => w.id === id);
+            if (wh) {
+                document.getElementById('editWhId').value = wh.id;
+                document.getElementById('oldWhName').value = wh.name; // Track old name
+                document.getElementById('whName').value = wh.name;
+                document.getElementById('whLocation').value = wh.location;
+                modalTitle.innerText = "Edit Warehouse";
+                modal.style.display = 'flex';
+            }
+        }
+
+        function deleteWarehouse(id, name) {
+            if (confirm(`Are you sure you want to delete ${name}? Any items in this warehouse will be marked as "Unassigned".`)) {
+                whData = whData.filter(w => w.id !== id);
+                localStorage.setItem('it3b_warehouses', JSON.stringify(whData));
+                
+                // --- CASCADING DELETE FOR ITEMS ---
+                let itemsData = JSON.parse(localStorage.getItem('it3b_items')) || [];
+                let itemsUpdated = false;
+                itemsData.forEach(item => {
+                    if (item.warehouse === name) {
+                        item.warehouse = 'Unassigned'; // Evict items from deleted warehouse
+                        itemsUpdated = true;
+                    }
+                });
+                if(itemsUpdated) localStorage.setItem('it3b_items', JSON.stringify(itemsData));
+
+                renderTable();
+            }
+        }
+
+        // --- 4. Simple Search Filter ---
+        function filterTable() {
+            const filter = document.getElementById('searchInput').value.toUpperCase();
+            const rows = document.getElementById('warehouseTableBody').getElementsByTagName('tr');
+            for (let i = 0; i < rows.length; i++) {
+                const textValue = rows[i].textContent || rows[i].innerText;
+                rows[i].style.display = textValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        }
+
+        renderTable();
+    </script>
+</body>
+</html>

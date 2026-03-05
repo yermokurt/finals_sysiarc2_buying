@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service System - Maintenance Service Report</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --sidebar-bg: #1e293b;
+      --bg-color: #badcfd;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --card-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: var(--bg-color);
+      color: var(--text-dark);
+    }
+
+    /* ===== LAYOUT ===== */
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR FRAME ===== */
+    .sidebar-frame {
+      width: 280px;
+      height: 100vh;
+      border: none;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand {
+      padding: 2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 0;
+    }
+
+    .brand .logo {
+      width: 35px;
+      height: 35px;
+      background: white;
+      color: var(--primary-color);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      font-weight: 800;
+      border: none;
+    }
+
+    .brand .t1 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.1;
+      color: #fff;
+    }
+
+    .brand .t2 {
+      margin-top: 3px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 600;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 1rem 0;
+      flex: 1;
+    }
+
+    .nav .section-label {
+      padding: 1.5rem 1.5rem 0.5rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .nav a {
+      padding: 0.8rem 1.5rem;
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      border-radius: 0;
+      border: none;
+      font-size: 14px;
+      position: relative;
+      overflow: hidden;
+      transform: translateX(0);
+    }
+
+    .nav a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .nav a:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(4px);
+      padding-left: 2rem;
+    }
+
+    .nav a:hover::before {
+      left: 100%;
+    }
+
+    .nav a:active {
+      transform: translateX(2px) scale(0.98);
+      transition: all 0.1s ease;
+    }
+
+    .nav a.active {
+      color: white;
+      background: var(--primary-color);
+      border-radius: 0 50px 50px 0;
+      margin-right: 1.5rem;
+      transform: translateX(0);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      animation: activeSlide 0.4s ease;
+    }
+
+    .nav a.active::before {
+      display: none;
+    }
+
+    @keyframes activeSlide {
+      0% {
+        transform: translateX(-20px);
+        opacity: 0.7;
+      }
+      50% {
+        transform: translateX(8px);
+      }
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Icon animations */
+    .nav .icon {
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      background: transparent;
+      display: inline;
+      place-items: unset;
+      color: inherit;
+      font-size: 14px;
+      transition: transform 0.3s ease;
+    }
+
+    .nav a:hover .icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .nav a.active .icon {
+      transform: scale(1.1);
+      animation: iconBounce 0.6s ease;
+    }
+
+    @keyframes iconBounce {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.2); }
+      50% { transform: scale(0.95); }
+      75% { transform: scale(1.05); }
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    @keyframes slideOut {
+      0% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(-20px);
+        opacity: 0.5;
+      }
+    }
+
+    .signout {
+      padding: 10px 0 0;
+      border-top: none;
+      margin-top: auto;
+    }
+
+    .signout a {
+      padding: 0.8rem 1.5rem;
+      color: #ff6b6b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 0;
+    }
+
+    .signout a:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ff6b6b;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main {
+      padding: 2.5rem;
+      overflow-y: auto;
+      max-height: 100vh;
+      margin-left: 0;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .title h1 {
+      font-weight: 700;
+      color: var(--text-dark);
+      font-size: 1.75rem;
+      margin: 0 0 0.25rem;
+      letter-spacing: 0;
+    }
+
+    .title p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* ===== PANELS ===== */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+      border: none;
+    }
+
+    .panel h2 {
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+    }
+
+    .panel .sub {
+      margin: 0 0 12px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .chart-wrap {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    canvas {
+      width: 240px;
+      height: 240px;
+      border-radius: 16px;
+      border: 1px solid rgba(30, 41, 59, 0.12);
+      background: #fff;
+    }
+
+    .legend {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 240px;
+      overflow: auto;
+      padding-right: 6px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid rgba(30, 41, 59, 0.10);
+      border-radius: 14px;
+      background: #f8fafc;
+    }
+
+    .legend-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .swatch { width: 12px; height: 12px; border-radius: 4px; border: 1px solid rgba(2,6,23,.10); }
+    .legend-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-dark);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 240px;
+    }
+    .legend-count { font-size: 12px; font-weight: 800; color: var(--text-dark); white-space: nowrap; }
+
+    /* ===== BAR SECTIONS ===== */
+    .bar-section {
+      margin: 24px 0 10px;
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+      border: none;
+    }
+
+    .bar-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dark);
+    }
+
+    .bar-title span { font-size: 22px; }
+
+    .bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bar-label {
+      width: 200px;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-dark);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .bar-fill-bg {
+      flex: 1;
+      height: 30px;
+      background: #eaf1ff;
+      border-radius: 40px;
+      overflow: hidden;
+      border: 1px solid rgba(37,99,235,0.25);
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--primary-color);
+      width: 0%;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-right: 12px;
+      color: white;
+      font-weight: 800;
+      font-size: 12px;
+      transition: width 0.2s;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .bar-count {
+      min-width: 90px;
+      text-align: right;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    /* ===== TABLE ===== */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(30,41,59,0.12);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .data-table th {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+      color: white;
+      padding: 12px 10px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 2px solid var(--primary-hover);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(30,41,59,0.10);
+      color: var(--text-dark);
+      vertical-align: middle;
+    }
+
+    .data-table td:nth-child(1) {
+      font-weight: 800;
+      text-align: center;
+      background: #eff6ff;
+      color: var(--primary-color);
+      font-size: 11px;
+    }
+
+    .data-table tr:nth-child(even) td:nth-child(1) {
+      background: #dbeafe;
+    }
+
+    .data-table tr:hover td {
+      border-color: rgba(37,99,235,0.35);
+      background: rgba(37,99,235,0.04);
+    }
+
+    /* ===== ACTIONS ===== */
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 10px rgba(0,0,0,.08);
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .btn-primary { background: var(--primary-color); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-soft { background: #eff6ff; color: var(--primary-color); border: 1px solid rgba(37,99,235,.25); }
+    .btn-soft:hover { background: #dbeafe; }
+
+    /* little pill badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 11px;
+      border: 1px solid rgba(30,41,59,.12);
+      background: #f8fafc;
+      white-space: nowrap;
+    }
+    .badge.ok { background: #ecfdf5; border-color: rgba(16,185,129,.25); color: #047857; }
+    .badge.warn { background: #fff7ed; border-color: rgba(249,115,22,.25); color: #9a3412; }
+    .badge.off { background: #fef2f2; border-color: rgba(239,68,68,.25); color: #b91c1c; }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; }
+      .main { max-height: none; }
+      .grid { grid-template-columns: 1fr; }
+      .chart-wrap { grid-template-columns: 1fr; }
+      canvas { width: 100%; height: auto; max-height: 280px; }
+      .bar-label { width: 140px; }
+      .actions { justify-content: flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <iframe src="sidebar.html" class="sidebar-frame" frameborder="0"></iframe>
+
+    <main class="main" id="main-content">
+      <!-- REPORT: MAINTENANCE SERVICE -->
+      <section class="view active" id="view-report-maintenance-service">
+        <div class="topbar">
+          <div class="title">
+            <h1>🛠 Maintenance Service Report</h1>
+            <p>Summary + full list of Maintenance Services</p>
+          </div>
+          <div class="actions">
+            <a class="btn btn-soft" href="dashboard-standalone.html">⌂ Dashboard</a>
+          </div>
+        </div>
+
+        <div class="grid">
+          <section class="panel">
+            <h2>Maintenance Service Status</h2>
+            <p class="sub">maintenance service statuses</p>
+            <div class="chart-wrap">
+              <canvas id="maintenanceServiceStatusPie" width="240" height="240"></canvas>
+              <div class="legend" id="maintenanceServiceStatusLegend"></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>Maintenance Service Type</h2>
+            <p class="sub">maintenance service types</p>
+            <div class="chart-wrap">
+              <canvas id="maintenanceServiceTypePie" width="240" height="240"></canvas>
+              <div class="legend" id="maintenanceServiceTypeLegend"></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="bar-section">
+          <div class="bar-title"><span>📊</span> Maintenance Service Status Summary</div>
+          <div class="bar-container" id="reportMaintenanceServiceStatusBars"></div>
+        </div>
+
+        <div class="bar-section">
+          <div class="bar-title"><span>📋</span> All Maintenance Services</div>
+          <div class="table-container" id="reportMaintenanceServiceTable"></div>
+          <div class="actions" style="margin-top: 16px; justify-content: center;">
+            <button class="btn btn-primary" onclick="printActiveTables()">🖨 Print Reports</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ---------- LOOKUP TABLES ----------
+    const SERVICE_TYPES = {
+      "SST0001": "System Installation", "SST0002": "System Maintenance", "SST0003": "System Repair",
+      "SST0004": "Ana Lopez", "SST0005": "Mark Villanueva", "SST0006": "Jessa Mendoza",
+      "SST0007": "Carlo Reyes", "SST0008": "Angelica Bautista", "SST0009": "Paul Fernandez",
+      "SST0010": "Kristine Navarro", "SST0011": "John Michael Aquino", "SST0012": "Rose Ann Castillo",
+      "SST0013": "Bryan Flores", "SST0014": "Michelle Gomez", "SST0015": "Daniel Perez",
+      "SST0016": "Katrina Salazar", "SST0017": "Patrick Lim", "SST0018": "Joy Marie Cruz",
+      "SST0019": "Anthony Valdez", "SST0020": "Lea Rodriguez"
+    };
+
+    const SERVICE_STATUS = {
+      "SSS0001": "Pending", "SSS0002": "Received", "SSS0003": "Verified",
+      "SSS0004": "Scheduled", "SSS0005": "Assigned", "SSS0006": "In Progress",
+      "SSS0007": "On Hold", "SSS0008": "Awaiting Parts", "SSS0009": "Awaiting Approval",
+      "SSS0010": "Rescheduled", "SSS0011": "Escalated", "SSS0012": "Under Review",
+      "SSS0013": "Testing", "SSS0014": "Completed", "SSS0015": "Closed",
+      "SSS0016": "Cancelled", "SSS0017": "Rejected", "SSS0018": "Failed",
+      "SSS0019": "Reopened", "SSS0020": "Archived"
+    };
+
+    // ---------- SAMPLE DATA ----------
+    const MAINTENANCE_SERVICES = [
+      {maintenance_service_id:"SMS0001", service_no:"SMS0001", customer_id:"SC0001", sales_order_id:"SSO0001", project_id:"PP0001", service_type_id:"SST0001", status_id:"SSS0001", created_at:"2026-01-30 9:00:00"},
+      {maintenance_service_id:"SMS0002", service_no:"SMS0002", customer_id:"SC0002", sales_order_id:"SSO0002", project_id:"PP0002", service_type_id:"SST0002", status_id:"SSS0002", created_at:"2026-01-30 9:15:00"},
+      {maintenance_service_id:"SMS0003", service_no:"SMS0003", customer_id:"SC0003", sales_order_id:"SSO0003", project_id:"PP0003", service_type_id:"SST0003", status_id:"SSS0003", created_at:"2026-01-30 9:30:00"},
+      {maintenance_service_id:"SMS0004", service_no:"SMS0004", customer_id:"SC0004", sales_order_id:"SSO0004", project_id:"PP0004", service_type_id:"SST0004", status_id:"SSS0004", created_at:"2026-01-30 9:45:00"},
+      {maintenance_service_id:"SMS0005", service_no:"SMS0005", customer_id:"SC0005", sales_order_id:"SSO0005", project_id:"PP0005", service_type_id:"SST0005", status_id:"SSS0005", created_at:"2026-01-30 10:00:00"},
+      {maintenance_service_id:"SMS0006", service_no:"SMS0006", customer_id:"SC0006", sales_order_id:"SSO0006", project_id:"PP0006", service_type_id:"SST0006", status_id:"SSS0006", created_at:"2026-01-30 10:15:00"},
+      {maintenance_service_id:"SMS0007", service_no:"SMS0007", customer_id:"SC0007", sales_order_id:"SSO0007", project_id:"PP0007", service_type_id:"SST0007", status_id:"SSS0007", created_at:"2026-01-30 10:30:00"},
+      {maintenance_service_id:"SMS0008", service_no:"SMS0008", customer_id:"SC0008", sales_order_id:"SSO0008", project_id:"PP0008", service_type_id:"SST0008", status_id:"SSS0008", created_at:"2026-01-30 10:45:00"},
+      {maintenance_service_id:"SMS0009", service_no:"SMS0009", customer_id:"SC0009", sales_order_id:"SSO0009", project_id:"PP0009", service_type_id:"SST0009", status_id:"SSS0009", created_at:"2026-01-30 11:00:00"},
+      {maintenance_service_id:"SMS0010", service_no:"SMS0010", customer_id:"SC0010", sales_order_id:"SSO0010", project_id:"PP0010", service_type_id:"SST0010", status_id:"SSS0010", created_at:"2026-01-30 11:15:00"},
+      {maintenance_service_id:"SMS0011", service_no:"SMS0011", customer_id:"SC0011", sales_order_id:"SSO0011", project_id:"PP0011", service_type_id:"SST0011", status_id:"SSS0011", created_at:"2026-01-30 11:30:00"},
+      {maintenance_service_id:"SMS0012", service_no:"SMS0012", customer_id:"SC0012", sales_order_id:"SSO0012", project_id:"PP0012", service_type_id:"SST0012", status_id:"SSS0012", created_at:"2026-01-30 11:45:00"},
+      {maintenance_service_id:"SMS0013", service_no:"SMS0013", customer_id:"SC0013", sales_order_id:"SSO0013", project_id:"PP0013", service_type_id:"SST0013", status_id:"SSS0013", created_at:"2026-01-30 12:00:00"},
+      {maintenance_service_id:"SMS0014", service_no:"SMS0014", customer_id:"SC0014", sales_order_id:"SSO0004", project_id:"PP0004", service_type_id:"SST0014", status_id:"SSS0014", created_at:"2026-01-30 12:15:00"},
+      {maintenance_service_id:"SMS0015", service_no:"SMS0015", customer_id:"SC0015", sales_order_id:"SSO0005", project_id:"PP0005", service_type_id:"SST0015", status_id:"SSS0015", created_at:"2026-01-30 12:30:00"},
+      {maintenance_service_id:"SMS0016", service_no:"SMS0016", customer_id:"SC0016", sales_order_id:"SSO0006", project_id:"PP0006", service_type_id:"SST0016", status_id:"SSS0016", created_at:"2026-01-30 12:45:00"},
+      {maintenance_service_id:"SMS0017", service_no:"SMS0017", customer_id:"SC0017", sales_order_id:"SSO0007", project_id:"PP0007", service_type_id:"SST0017", status_id:"SSS0017", created_at:"2026-01-30 13:00:00"},
+      {maintenance_service_id:"SMS0018", service_no:"SMS0018", customer_id:"SC0018", sales_order_id:"SSO0008", project_id:"PP0008", service_type_id:"SST0018", status_id:"SSS0018", created_at:"2026-01-30 13:15:00"},
+      {maintenance_service_id:"SMS0019", service_no:"SMS0019", customer_id:"SC0019", sales_order_id:"SSO0009", project_id:"PP0009", service_type_id:"SST0019", status_id:"SSS0009", created_at:"2026-01-30 13:30:00"},
+      {maintenance_service_id:"SMS0020", service_no:"SMS0020", customer_id:"SC0020", sales_order_id:"SSO0010", project_id:"PP0010", service_type_id:"SST0020", status_id:"SSS0010", created_at:"2026-01-30 13:45:00"}
+    ];
+
+    // Helper functions
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    function escapeHtml(s) { return String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m]); }
+
+    function groupCount(arr, key) {
+      const m = new Map();
+      arr.forEach(x => {
+        const k = (x[key] ?? "Unknown").toString();
+        m.set(k, (m.get(k) || 0) + 1);
+      });
+      return [...m.entries()].sort((a,b)=>b[1]-a[1]);
+    }
+
+    function countBy(arr, key, map) {
+      return arr.reduce((acc, item) => {
+        const raw = item[key];
+        const label = map[raw] || raw;
+        acc[label] = (acc[label] || 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    function fmtNum(x) { return Number(x).toLocaleString(); }
+    function makeColors(n) { let a=[]; for(let i=0;i<n;i++) a.push(`hsl(${i*360/Math.max(n,1)},70%,55%)`); return a; }
+
+    function makeBars(containerId, pairs, total) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = pairs.map(([name, count]) => {
+        const pct = total ? Math.round((count / total) * 100) : 0;
+        return `
+          <div class="bar-row">
+            <div class="bar-label">${name}</div>
+            <div class="bar-fill-bg">
+              <div class="bar-fill" style="width:${pct}%;">${pct}%</div>
+            </div>
+            <div class="bar-count">${count}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function drawPie(canvasId, legendId, pairs) {
+      const canvas = document.getElementById(canvasId);
+      const legend = document.getElementById(legendId);
+      if (!canvas || !legend) return;
+
+      const ctx = canvas.getContext("2d");
+      const total = pairs.reduce((s, [,v]) => s + v, 0) || 1;
+
+      const colors = [
+        "#2563eb","#0ea5e9","#10b981","#f59e0b","#ef4444",
+        "#8b5cf6","#14b8a6","#f97316","#64748b","#22c55e"
+      ];
+
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+
+      const cx = canvas.width/2, cy = canvas.height/2;
+      const r = Math.min(cx,cy) - 8;
+      let start = -Math.PI/2;
+
+      legend.innerHTML = "";
+      pairs.forEach(([name, value], i) => {
+        const frac = value / total;
+        const end = start + frac * Math.PI * 2;
+        const col = colors[i % colors.length];
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, start, end);
+        ctx.closePath();
+        ctx.fillStyle = col;
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(30,41,59,0.10)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        const item = document.createElement("div");
+        item.className = "legend-item";
+        item.innerHTML = `
+          <div class="legend-left">
+            <span class="swatch" style="background:${col}"></span>
+            <div class="legend-name">${name}</div>
+          </div>
+          <div class="legend-count">${value}</div>
+        `;
+        legend.appendChild(item);
+
+        start = end;
+      });
+    }
+
+    function renderMaintenanceServiceTable() {
+      const container = $('#reportMaintenanceServiceTable');
+      if (!container) return;
+
+      const tableHTML = `
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Maintenance Service ID</th>
+              <th>Customer ID</th>
+              <th>Sales Order ID</th>
+              <th>Project ID</th>
+              <th>Service Type ID</th>
+              <th>Status ID</th>
+              <th>Created at</th>
+              <th>Status Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${MAINTENANCE_SERVICES.map((service, index) => `
+              <tr>
+                <td>${index + 1}</td>
+                <td><strong>${service.maintenance_service_id}</strong></td>
+                <td>${service.customer_id}</td>
+                <td>${service.sales_order_id}</td>
+                <td>${service.project_id}</td>
+                <td>${service.service_type_id}</td>
+                <td>${service.status_id}</td>
+                <td>${service.created_at}</td>
+                <td>${SERVICE_STATUS[service.status_id] || service.status_id}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+
+      container.innerHTML = tableHTML;
+    }
+
+    function printActiveTables() {
+      const tableContent = $('#reportMaintenanceServiceTable').innerHTML;
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Maintenance Service Report</title>
+            <style>
+              body { font-family: 'Plus Jakarta Sans', sans-serif; margin: 20px; }
+              table { width: 100%; border-collapse: collapse; font-size: 12px; }
+              th { background: #2563eb; color: white; padding: 12px; text-align: left; font-weight: 700; }
+              td { border-bottom: 1px solid #e2e8f0; padding: 12px; }
+              h1 { color: #1e293b; margin-bottom: 20px; }
+            </style>
+          </head>
+          <body>
+            <h1>Maintenance Service Report</h1>
+            ${tableContent}
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    }
+
+    // Initialize report
+    document.addEventListener('DOMContentLoaded', function() {
+      // Status distribution
+      const statusData = countBy(MAINTENANCE_SERVICES, 'status_id', SERVICE_STATUS);
+      const statusPairs = Object.entries(statusData).map(([k,v])=>[k, Number(v)]).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1]);
+      drawPie('maintenanceServiceStatusPie', 'maintenanceServiceStatusLegend', statusPairs);
+      makeBars('reportMaintenanceServiceStatusBars', statusPairs, MAINTENANCE_SERVICES.length);
+
+      // Type distribution
+      const typeData = countBy(MAINTENANCE_SERVICES, 'service_type_id', SERVICE_TYPES);
+      const typePairs = Object.entries(typeData).map(([k,v])=>[k, Number(v)]).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1]);
+      drawPie('maintenanceServiceTypePie', 'maintenanceServiceTypeLegend', typePairs);
+
+      // Main table
+      renderMaintenanceServiceTable();
+    });
+  </script>
+</body>
+</html>

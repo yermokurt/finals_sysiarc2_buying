@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Journal Entries - IT3B Inc.</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --primary-hover: #1d4ed8;
+        --sidebar-bg: #1e293b;
+        --bg-color: #badcfd;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+        --card-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: var(--bg-color);
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 280px;
+        background: var(--sidebar-bg);
+        height: 100vh;
+        position: fixed;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+      }
+
+      .logo-area {
+        padding: 2rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .logo-icon {
+        width: 35px;
+        height: 35px;
+        background: white;
+        color: var(--primary-color);
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-size: 1rem;
+      }
+
+      .nav-group-label {
+        padding: 1.5rem 1.5rem 0.5rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(255, 255, 255, 0.4);
+        font-weight: 700;
+      }
+
+      .nav-link {
+        padding: 0.8rem 1.5rem;
+        color: rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 500;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+
+      .nav-link:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .nav-link.active {
+        color: white;
+        background: var(--primary-color);
+        border-radius: 0 50px 50px 0;
+        margin-right: 1.5rem;
+      }
+
+      /* Main Content */
+      .main-content {
+        margin-left: 280px;
+        padding: 2.5rem;
+        min-height: 100vh;
+      }
+
+      .page-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: var(--card-shadow);
+      }
+
+      /* Summary Cards */
+      .summary-card {
+        background: white;
+        border-radius: 18px;
+        padding: 1.25rem 1.5rem;
+        box-shadow: var(--card-shadow);
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .summary-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .summary-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        background: #eff6ff;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+      }
+
+      .summary-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .summary-value {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        line-height: 1.1;
+      }
+
+      /* Inputs / Buttons */
+      .btn-primary {
+        background: var(--primary-color);
+        border: none;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+      }
+
+      .search-input {
+        border-radius: 12px;
+        padding: 0.65rem 0.9rem;
+        border: 1px solid #e2e8f0;
+      }
+
+      .filter-select {
+        border-radius: 12px;
+        padding: 0.65rem 0.9rem;
+        border: 1px solid #e2e8f0;
+      }
+
+      /* Table */
+      .table thead {
+        background: #f1f5f9;
+      }
+
+      .badge-status {
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .badge-posted {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+
+      .badge-unposted {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+
+      .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .dot-green {
+        background: #16a34a;
+      }
+
+      .dot-red {
+        background: #dc2626;
+      }
+
+      .pill {
+        background: #eff6ff;
+        color: var(--primary-color);
+        border-radius: 999px;
+        padding: 0.3rem 0.65rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        display: inline-block;
+      }
+
+      .amount {
+        font-weight: 700;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fa-solid fa-cube"></i></div>
+        <div>
+          <h6 class="mb-0 fw-bold">IT3B Inc.</h6>
+          <small class="text-white-50">Enterprise Central</small>
+        </div>
+      </div>
+
+      <div class="py-4">
+        <div class="nav-group-label">General</div>
+        <a href="../dashboard.html" class="nav-link">
+          <i class="fa-solid fa-gauge-high"></i> Enterprise Hub
+        </a>
+        <a href="../reports.html" class="nav-link">
+          <i class="fa-solid fa-chart-line"></i> Reports
+        </a>
+
+        <div class="nav-group-label">Accounts</div>
+        <a href="accounts_dashboard.html" class="nav-link">
+          <i class="fa-solid fa-calculator"></i> Overview
+        </a>
+        <a href="charts_of_accounts.html" class="nav-link">
+          <i class="fa-solid fa-sitemap"></i> Charts of Accounts
+        </a>
+        <a href="cost_centers.html" class="nav-link">
+          <i class="fa-solid fa-diagram-project"></i> Cost Centers
+        </a>
+        <a href="landed_cost.html" class="nav-link">
+          <i class="fa-solid fa-boxes-stacked"></i> Landed Cost
+        </a>
+        <a href="journal_entries.html" class="nav-link active">
+          <i class="fa-solid fa-book"></i> Journal Entries
+        </a>
+
+        <div
+          class="mt-auto border-top border-white border-opacity-10 pt-4"
+          style="margin-top: 10rem !important"
+        >
+          <a href="../login.html" class="nav-link text-danger">
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+          <h2 class="fw-bold mb-1">Journal Entries</h2>
+          <p class="text-muted mb-0">
+            Create, review, and post journal transactions with complete debit and credit validation.
+          </p>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-secondary px-3 py-2 rounded-3 fw-semibold">
+            <i class="fa-solid fa-file-export me-2"></i> Export
+          </button>
+          <button class="btn btn-primary px-4 py-2 rounded-3 fw-semibold">
+            <i class="fa-solid fa-plus me-2"></i> New Journal Entry
+          </button>
+        </div>
+      </div>
+
+      <!-- Summary Cards (like the generated UI) -->
+      <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+          <div class="summary-card">
+            <div class="summary-left">
+              <div class="summary-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+              <div>
+                <div class="summary-label">Total Entries</div>
+                <div class="summary-value">56</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-ellipsis-vertical text-muted"></i>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+          <div class="summary-card">
+            <div class="summary-left">
+              <div class="summary-icon"><i class="fa-solid fa-circle-check"></i></div>
+              <div>
+                <div class="summary-label">Posted</div>
+                <div class="summary-value">41</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-ellipsis-vertical text-muted"></i>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+          <div class="summary-card">
+            <div class="summary-left">
+              <div class="summary-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+              <div>
+                <div class="summary-label">Unposted</div>
+                <div class="summary-value">15</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-ellipsis-vertical text-muted"></i>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+          <div class="summary-card">
+            <div class="summary-left">
+              <div class="summary-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+              <div>
+                <div class="summary-label">Balance Check</div>
+                <div class="summary-value">Balanced</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-ellipsis-vertical text-muted"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table Card -->
+      <div class="page-card">
+        <!-- Filters -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+          <div class="d-flex flex-wrap gap-2">
+            <div class="input-group" style="min-width: 290px">
+              <span class="input-group-text bg-white border-0" style="border-radius: 12px 0 0 12px">
+                <i class="fa-solid fa-magnifying-glass text-muted"></i>
+              </span>
+              <input
+                type="text"
+                class="form-control search-input"
+                placeholder="Search JE No., memo, reference, or created by"
+                style="border-radius: 0 12px 12px 0"
+              />
+            </div>
+
+            <select class="form-select filter-select" style="min-width: 180px">
+              <option selected>Status: All</option>
+              <option>Posted</option>
+              <option>Unposted</option>
+            </select>
+
+            <select class="form-select filter-select" style="min-width: 180px">
+              <option selected>Period: All</option>
+              <option>January 2026</option>
+              <option>February 2026</option>
+              <option>March 2026</option>
+            </select>
+          </div>
+
+          <button class="btn btn-outline-secondary px-3 py-2 rounded-3 fw-semibold">
+            <i class="fa-solid fa-filter me-2"></i> Apply Filters
+          </button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>JE No.</th>
+                <th>Date</th>
+                <th>Memo</th>
+                <th>Reference</th>
+                <th>Debit</th>
+                <th>Credit</th>
+                <th>Created By</th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="fw-semibold">JE-2026-0041</td>
+                <td>2026-02-10</td>
+                <td>Monthly rent expense</td>
+                <td><span class="pill">BILL-8821</span></td>
+                <td class="amount">$12,000</td>
+                <td class="amount">$12,000</td>
+                <td>J. Dizon</td>
+                <td>
+                  <span class="badge-status badge-posted">
+                    <span class="dot dot-green"></span> Posted
+                  </span>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-light rounded-3">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                  <button class="btn btn-sm btn-light rounded-3">
+                    <i class="fa-solid fa-print"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="fw-semibold">JE-2026-0042</td>
+                <td>2026-02-12</td>
+                <td>Utility bills allocation</td>
+                <td><span class="pill">UTIL-1109</span></td>
+                <td class="amount">$3,450</td>
+                <td class="amount">$3,450</td>
+                <td>A. Laurel</td>
+                <td>
+                  <span class="badge-status badge-posted">
+                    <span class="dot dot-green"></span> Posted
+                  </span>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-light rounded-3">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                  <button class="btn btn-sm btn-light rounded-3">
+                    <i class="fa-solid fa-print"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="fw-semibold">JE-2026-0043</td>
+                <td>2026-02-15</td>
+                <td>Inventory adjustment</td>
+                <td><span class="pill">ADJ-2026</span></td>
+                <td class="amount">$5,800</td>
+                <td class="amount">$5,800</td>
+                <td>P. Macalintal</td>
+                <td>
+                  <span class="badge-status badge-unposted">
+                    <span class="dot dot-red"></span> Unposted
+                  </span>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-light rounded-3">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                  <button class="btn btn-sm btn-light rounded-3">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="fw-semibold">JE-2026-0044</td>
+                <td>2026-02-18</td>
+                <td>Accrued salaries</td>
+                <td><span class="pill">PAY-0218</span></td>
+                <td class="amount">$18,200</td>
+                <td class="amount">$18,200</td>
+                <td>C. Mendoza</td>
+                <td>
+                  <span class="badge-status badge-unposted">
+                    <span class="dot dot-red"></span> Unposted
+                  </span>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-light rounded-3">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                  <button class="btn btn-sm btn-light rounded-3">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <small class="text-muted">Showing 1 to 4 of 56 journal entries</small>
+          <nav>
+            <ul class="pagination mb-0">
+              <li class="page-item disabled">
+                <a class="page-link">Prev</a>
+              </li>
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

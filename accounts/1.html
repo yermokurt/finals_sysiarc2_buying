@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accounts Dashboard - IT3B Inc.</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="universal.css" />
+
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --primary-hover: #1d4ed8;
+        --sidebar-bg: #1e293b;
+        --bg-color: #badcfd;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+        --card-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: var(--bg-color);
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      /* Sidebar Styling */
+      .sidebar {
+        width: 280px;
+        background: var(--sidebar-bg);
+        height: 100vh;
+        position: fixed;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+        transition: all 0.3s ease;
+      }
+
+      .logo-area {
+        padding: 2rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .logo-icon {
+        width: 35px;
+        height: 35px;
+        background: white;
+        color: var(--primary-color);
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-size: 1rem;
+      }
+
+      .nav-group-label {
+        padding: 1.5rem 1.5rem 0.5rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(255, 255, 255, 0.4);
+        font-weight: 700;
+      }
+
+      .nav-link {
+        padding: 0.8rem 1.5rem;
+        color: rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 500;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+
+      .nav-link:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .nav-link.active {
+        color: white;
+        background: var(--primary-color);
+        border-radius: 0 50px 50px 0;
+        margin-right: 1.5rem;
+      }
+
+      /* Main Content */
+      .main-content {
+        margin-left: 280px;
+        padding: 2.5rem;
+        min-height: 100vh;
+      }
+
+      .header-section {
+        margin-bottom: 3rem;
+      }
+
+      .welcome-text h1 {
+        font-weight: 700;
+        color: var(--text-dark);
+        font-size: 2rem;
+        margin-bottom: 0.25rem;
+      }
+
+      /* Module Cards */
+      .module-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        border: none;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        height: 100%;
+      }
+
+      .module-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      .module-icon-box {
+        width: 65px;
+        height: 65px;
+        border-radius: 16px;
+        display: grid;
+        place-items: center;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        background: #f8fafc;
+        color: var(--primary-color);
+        transition: all 0.3s;
+      }
+
+      .module-card:hover .module-icon-box {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .module-title {
+        font-weight: 700;
+        font-size: 1.15rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+      }
+
+      .module-desc {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+      }
+
+      .btn-module {
+        background: #f1f5f9;
+        color: var(--text-dark);
+        font-weight: 600;
+        font-size: 0.8rem;
+        padding: 0.5rem 1.25rem;
+        border-radius: 10px;
+        border: none;
+        transition: all 0.2s;
+      }
+
+      .module-card:hover .btn-module {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      /* Icon accents (optional, same pattern as reference) */
+      .icon-coa {
+        color: #2563eb;
+      }
+      .icon-costcenter {
+        color: #16a34a;
+      }
+      .icon-landed {
+        color: #ea580c;
+      }
+      .icon-journal {
+        color: #7c3aed;
+      }
+
+      /* Stat Bar */
+      .stat-bar {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem 2rem;
+        box-shadow: var(--card-shadow);
+        margin-top: 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        min-width: 240px;
+      }
+
+      .stat-icon {
+        width: 45px;
+        height: 45px;
+        background: #eff6ff;
+        color: var(--primary-color);
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        font-size: 1.1rem;
+      }
+
+      .stat-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      .stat-value {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--text-dark);
+      }
+
+      .system-badge {
+        padding: 0.5rem 1rem;
+        background: #f0fdf4;
+        color: #16a34a;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        background: #16a34a;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      @media (max-width: 992px) {
+        .sidebar {
+          position: static;
+          width: 100%;
+          height: auto;
+        }
+        .main-content {
+          margin-left: 0;
+        }
+        .nav-link.active {
+          border-radius: 12px;
+          margin-right: 0;
+          margin-left: 1.5rem;
+          margin-right: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fa-solid fa-cube"></i></div>
+        <div>
+          <h6 class="mb-0 fw-bold">IT3B Inc.</h6>
+          <small class="text-white-50">Enterprise Central</small>
+        </div>
+      </div>
+
+      <div class="py-4">
+        <div class="nav-group-label">General</div>
+        <a href="../dashboard.html" class="nav-link">
+          <i class="fa-solid fa-gauge-high"></i> Enterprise Hub
+        </a>
+        <a href="../reports.html" class="nav-link">
+          <i class="fa-solid fa-chart-line"></i> Reports
+        </a>
+
+        <div class="nav-group-label">Accounts</div>
+        <a href="accounts_dashboard.html" class="nav-link active">
+          <i class="fa-solid fa-calculator"></i> Overview
+        </a>
+        <a href="charts_of_accounts.html" class="nav-link">
+          <i class="fa-solid fa-sitemap"></i> Charts of Accounts
+        </a>
+        <a href="cost_centers.html" class="nav-link">
+          <i class="fa-solid fa-diagram-project"></i> Cost Centers
+        </a>
+        <a href="landed_cost.html" class="nav-link">
+          <i class="fa-solid fa-boxes-stacked"></i> Landed Cost
+        </a>
+        <a href="journal_entries.html" class="nav-link">
+          <i class="fa-solid fa-book"></i> Journal Entries
+        </a>
+
+        <div
+          class="mt-auto border-top border-white border-opacity-10 pt-4"
+          style="margin-top: 10rem !important"
+        >
+          <a href="../login.html" class="nav-link text-danger">
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div
+        class="header-section d-flex justify-content-between align-items-end"
+      >
+        <div class="welcome-text">
+          <h1>Accounts Module Dashboard</h1>
+          <p class="text-muted mb-0">
+            Manage your accounting operations from here.
+          </p>
+        </div>
+        <div class="system-badge">
+          <span class="dot"></span> All Operational
+        </div>
+      </div>
+
+      <!-- Module Grid -->
+      <div class="row g-4">
+        <!-- Charts of Accounts -->
+        <div class="col-xl-3 col-md-4 col-sm-6">
+          <a href="charts_of_accounts.html" class="module-card">
+            <div class="module-icon-box icon-coa">
+              <i class="fa-solid fa-sitemap"></i>
+            </div>
+            <h5 class="module-title">Charts of Accounts</h5>
+            <p class="module-desc">
+              Manage general ledger accounts and classifications.
+            </p>
+            <button class="btn-module">View</button>
+          </a>
+        </div>
+
+        <!-- Cost Centers -->
+        <div class="col-xl-3 col-md-4 col-sm-6">
+          <a href="cost_centers.html" class="module-card">
+            <div class="module-icon-box icon-costcenter">
+              <i class="fa-solid fa-diagram-project"></i>
+            </div>
+            <h5 class="module-title">Cost Centers</h5>
+            <p class="module-desc">
+              Create and assign cost centers per department or project.
+            </p>
+            <button class="btn-module">View</button>
+          </a>
+        </div>
+
+        <!-- Landed Cost -->
+        <div class="col-xl-3 col-md-4 col-sm-6">
+          <a href="landed_cost.html" class="module-card">
+            <div class="module-icon-box icon-landed">
+              <i class="fa-solid fa-boxes-stacked"></i>
+            </div>
+            <h5 class="module-title">Landed Cost</h5>
+            <p class="module-desc">
+              Allocate freight, duties, and other additional costs.
+            </p>
+            <button class="btn-module">View</button>
+          </a>
+        </div>
+
+        <!-- Journal Entries -->
+        <div class="col-xl-3 col-md-4 col-sm-6">
+          <a href="journal_entries.html" class="module-card">
+            <div class="module-icon-box icon-journal">
+              <i class="fa-solid fa-book"></i>
+            </div>
+            <h5 class="module-title">Journal Entries</h5>
+            <p class="module-desc">
+              Record, review, and post journal transactions.
+            </p>
+            <button class="btn-module">View</button>
+          </a>
+        </div>
+      </div>
+
+      <!-- Module Health / Quick Stats Bar -->
+      <div class="stat-bar">
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+          <div>
+            <div class="stat-label">GL Accounts</div>
+            <div class="stat-value">128 Active</div>
+          </div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fa-solid fa-building"></i></div>
+          <div>
+            <div class="stat-label">Cost Centers</div>
+            <div class="stat-value">12 Total</div>
+          </div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-icon"><i class="fa-solid fa-receipt"></i></div>
+          <div>
+            <div class="stat-label">Unposted Entries</div>
+            <div class="stat-value">5 Pending</div>
+          </div>
+        </div>
+
+        <div class="stat-item">
+          <button
+            class="btn btn-primary fw-bold px-4 py-2 rounded-3"
+            style="border-radius: 12px !important"
+          >
+            Generate Accounts Report
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

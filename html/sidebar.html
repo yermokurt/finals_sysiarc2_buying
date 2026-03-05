@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sidebar</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+   
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --sidebar-bg: #1e293b;
+      --bg-color: #badcfd;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --card-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: var(--sidebar-bg);
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 280px;
+      background: var(--sidebar-bg);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      z-index: 1000;
+      padding: 0;
+      border-right: none;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .brand {
+      padding: 2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 0;
+    }
+
+    .brand .logo {
+      width: 35px;
+      height: 35px;
+      background: white;
+      color: var(--primary-color);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      font-weight: 800;
+      border: none;
+    }
+
+    .brand .t1 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.1;
+      color: #fff;
+    }
+
+    .brand .t2 {
+      margin-top: 3px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 600;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem 0;
+      flex: 1;
+    }
+
+    .nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 12px;              /* space left & right */
+  padding: 12px 18px;
+  border-radius: 999px;          /* pill shape */
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.nav a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.nav a.active {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+  transform: translateX(4px);
+}
+    .nav .icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .section-label {
+      padding: 1rem 1.5rem 0.5rem;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .signout {
+      margin-top: auto;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .signout a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.75rem 1.5rem;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: none;
+      background: none;
+      border-radius: 6px;
+    }
+
+    .signout a:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">S</div>
+      <div>
+        <div class="t1">ERP Service System</div>
+        <div class="t2">Arriola - Cacao - Lantafe - Magbuhat (IT3B)</div>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <a href="dashboard-standalone.html" target="_parent"><span class="icon">⌂</span> Dashboard</a>
+
+      <div class="section-label">Master Data</div>
+      <a href="service-type-master.html" target="_parent"><span class="icon">🛠</span> Service Type</a>
+      <a href="issue-type-master.html" target="_parent"><span class="icon">⚠️</span> Issue Type</a>
+
+      <div class="section-label">Operations</div>
+      <a href="form-maintenance-service.html" target="_parent"><span class="icon">🛠</span> Maintenance Service Forms</a>
+      <a href="form-maintenance-visit.html" target="_parent"><span class="icon">📅</span> Maintenance Visit Forms</a>
+      <a href="form-issue.html" target="_parent"><span class="icon">⚠</span> Issue Forms</a>
+      <a href="form-warranty.html" target="_parent"><span class="icon">🛡</span> Warranty Forms</a>
+
+      
+      <div class="section-label">Reports</div>
+      <a href="report-service.html" target="_parent"><span class="icon">📑</span> Service Report</a>
+      <a href="report-visit.html" target="_parent"><span class="icon">📑</span> Visit Report</a>
+      <a href="report-issue.html" target="_parent"><span class="icon">📑</span> Issue Report</a>
+      <a href="report-warranty.html" target="_parent"><span class="icon">📑</span> Warranty Report</a>
+
+      <div class="signout">
+        <a href="../login/loginpage.html" target="_parent">
+          <span class="icon" style="background:rgba(239,68,68,.10); color:#ef4444;">⟲</span>
+          Sign out
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <script>
+    // Persist scroll positions and highlight current link inside iframe sidebar.
+    // The sidebar is reused across parent-page navigations, so we keep two values
+    // in sessionStorage: one for the iframe's own scrollTop, and one for the
+    // parent's scrollY.  This prevents the UX where the sidebar jumps to top or
+    // the main content resets to top when a link is clicked.
+    document.addEventListener('DOMContentLoaded', function() {
+      const currentPage = window.parent.location.pathname.split('/').pop();
+      const links = document.querySelectorAll('.nav a');
+      const sidebarEl = document.querySelector('.sidebar');
+
+      // restore sidebar scroll if we saved one
+      const savedSidebarScroll = sessionStorage.getItem('sidebarScroll');
+      if (savedSidebarScroll !== null) {
+        sidebarEl.scrollTop = parseFloat(savedSidebarScroll);
+      }
+
+      // utility to persist parent's scroll before navigating
+      function saveParentScroll() {
+        try {
+          sessionStorage.setItem('mainScroll', window.parent.scrollY);
+        } catch (err) {
+          // storage might be unavailable in some contexts, ignore
+        }
+      }
+
+      // restore parent scroll if saved
+      const savedMain = sessionStorage.getItem('mainScroll');
+      if (savedMain !== null) {
+        window.parent.scrollTo(0, parseFloat(savedMain));
+      }
+
+      // Save sidebar scroll continuously
+      sidebarEl.addEventListener('scroll', () => {
+        sessionStorage.setItem('sidebarScroll', sidebarEl.scrollTop);
+      });
+
+      // Set active state and optionally bring it into view
+      function setActiveAndScroll(targetHref = currentPage) {
+        links.forEach(link => {
+          const href = link.getAttribute('href');
+          if (href === targetHref) {
+            link.classList.add('active');
+            // only scroll to active when user hasn't manually moved away
+            link.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+
+      // initial highlighting
+      setActiveAndScroll();
+
+      // intercept clicks to store parent scroll before navigating
+      links.forEach(link => {
+        const href = link.getAttribute('href');
+        link.addEventListener('click', function(e) {
+          if (href === currentPage) {
+            e.preventDefault(); // no-op if already on page
+            return;
+          }
+          saveParentScroll();
+          // new page will trigger a full load of the parent, sidebar will reload
+          window.parent.location.href = href;
+          e.preventDefault();
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service System - Issue Form</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --sidebar-bg: #1e293b;
+      --bg-color: #badcfd;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --card-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: var(--bg-color);
+      color: var(--text-dark);
+    }
+
+    /* ===== LAYOUT ===== */
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR FRAME ===== */
+    .sidebar-frame {
+      width: 280px;
+      height: 100vh;
+      border: none;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    /* ===== MAIN CONTENT (mapped to your HTML) ===== */
+    .main {
+      padding: 2.5rem;
+      overflow-y: auto;
+      max-height: 100vh;
+      margin-left: 0;
+      min-height: 100vh;
+    }
+
+    /* top header area */
+    .topbar {
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .title h1 {
+      font-weight: 700;
+      color: var(--text-dark);
+      font-size: 1.75rem;
+      margin: 0 0 0.25rem;
+      letter-spacing: 0;
+    }
+
+    .title p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* ===== FORM CONTAINER ===== */
+    .form-container {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+      border: none;
+      margin-bottom: 2rem;
+    }
+
+    .form-container h2 {
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+    }
+
+    .form-container .sub {
+      margin: 0 0 24px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* ===== FORM STYLES ===== */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid rgba(30, 41, 59, 0.12);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-dark);
+      background: #fff;
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .form-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    /* ===== TABLE ===== */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(30,41,59,0.12);
+      margin-top: 2rem;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .data-table th {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+      color: white;
+      padding: 12px 10px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 2px solid var(--primary-hover);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(30,41,59,0.10);
+      color: var(--text-dark);
+      vertical-align: middle;
+    }
+
+    .data-table td:nth-child(1) {
+      font-weight: 800;
+      text-align: center;
+      background: #eff6ff;
+      color: var(--primary-color);
+      font-size: 11px;
+    }
+
+    .data-table tr:nth-child(even) td:nth-child(1) {
+      background: #dbeafe;
+    }
+
+    .data-table tr:hover td {
+      border-color: rgba(37,99,235,0.35);
+      background: rgba(37,99,235,0.04);
+    }
+
+    /* ===== SEARCH BAR ===== */
+    .search-container {
+      margin-bottom: 16px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .search-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid rgba(37,99,235,0.2);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+    .search-input:focus {
+      border-color: var(--primary-color);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    /* action buttons used in tables */
+    .action-buttons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-edit {
+      padding: 6px 10px !important;
+      font-size: 11px !important;
+      background: #eff6ff !important;
+      color: var(--primary-color) !important;
+      border: 1px solid rgba(37,99,235,0.25) !important;
+    }
+
+    .btn-edit:hover {
+      background: #dbeafe !important;
+    }
+
+    .btn-delete {
+      padding: 6px 10px !important;
+      font-size: 11px !important;
+      background: #fef2f2 !important;
+      color: #dc2626 !important;
+      border: 1px solid rgba(220,38,38,0.25) !important;
+    }
+
+    .btn-delete:hover {
+      background: #fee2e2 !important;
+    }
+
+    .form-full {
+      grid-column: span 2;
+    }
+
+    /* ===== ACTIONS (added) ===== */
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 10px rgba(0,0,0,.08);
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .btn-primary { background: var(--primary-color); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-soft { background: #eff6ff; color: var(--primary-color); border: 1px solid rgba(37,99,235,.25); }
+    .btn-soft:hover { background: #dbeafe; }
+
+    .btn-success { background: #10b981; color: #fff; }
+    .btn-success:hover { background: #059669; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; }
+      .main { max-height: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .form-row-3 { grid-template-columns: 1fr; }
+      .form-full { grid-column: span 1; }
+      .actions { justify-content: flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <iframe src="sidebar.html" class="sidebar-frame" frameborder="0"></iframe>
+    <main class="main" id="main-content">
+      <!-- ISSUE FORM -->
+      <section class="view active" id="view-form-issue">
+        <div class="topbar">
+          <div class="title">
+            <h1>⚠️ Issue Form</h1>
+            <p>Add new Issue entry with complete details</p>
+          </div>
+          <div class="actions">
+            <a class="btn btn-soft" href="dashboard-standalone.html">⌂ Dashboard</a>
+            <a class="btn btn-soft" href="issue-standalone.html">📋 Issue Records</a>
+          </div>
+        </div>
+
+        <!-- ISSUE FORM -->
+        <div class="form-container">
+          <h2>Add New Issue</h2>
+          <p class="sub">Enter issue details below. Fields follow the same order as the table columns.</p>
+          
+          <form id="issueForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="issue_id">Issue ID</label>
+                <input type="text" id="issue_id" name="issue_id" placeholder="e.g. SI0021" pattern="^SI\d{4}$" title="Format: SI#### (e.g. SI0021)" readonly required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="customer_id">Customer ID</label>
+                <select id="customer_id" name="customer_id" required>
+                  <option value="">Select Customer</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="issue_type_id">Issue Type ID</label>
+                <select id="issue_type_id" name="issue_type_id" required>
+                  <option value="">Select Issue Type</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="status_id">Status ID</label>
+                <select id="status_id" name="status_id" required>
+                  <option value="">Select Status</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="reported_at">Reported At</label>
+                <input type="datetime-local" id="reported_at" name="reported_at" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea id="description" name="description" placeholder="Describe the issue in detail..." required></textarea>
+            </div>
+            
+            <div class="actions">
+              <button type="submit" class="btn btn-primary">✅ Save Issue</button>
+              <button type="reset" class="btn btn-soft">🔄 Clear Form</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ISSUE TABLE -->
+        <div class="form-container" style="margin-top: 2rem;">
+          <h2>Issue Records</h2>
+          <p class="sub">View, edit, and delete existing issues</p>
+          
+          <div class="search-container">
+            <input type="text" id="searchInput" placeholder="🔍 Search" class="search-input">
+          </div>
+          <div class="table-container">
+            <table class="data-table" id="issueTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Issue ID</th>
+                  <th>Customer ID</th>
+                  <th>Issue Type ID</th>
+                  <th>Status</th>
+                  <th>Reported At</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="issueTableBody">
+                <!-- Table rows will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ---------- HELPER FUNCTIONS ----------
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+
+    // Generate Issue ID sequentially
+    function generateIssueId() {
+      if (!Array.isArray(issues) || issues.length === 0) return 'SI0001';
+      const max = issues.reduce((m,v)=>{
+        const num = parseInt(v.issue_id.replace('SI','')) || 0;
+        return num>m?num:m;
+      },0);
+      return `SI${String(max+1).padStart(4,'0')}`;
+    }
+
+    // ---------- ISSUE DATA ----------
+    // persist issues in localStorage so edits survive reload
+    let issues = JSON.parse(localStorage.getItem('issues') || 'null');
+
+    // drop‑down options
+    const customerIds = Array.from({length:20},(_,i)=>`SC${String(i+1).padStart(4,'0')}`);
+    const statuses = [
+      'Open','In Progress','Resolved','Pending','On Hold','Assigned','Reopened','Escalated',
+      'Waiting for User','Waiting for Vendor','Under Review','Scheduled','Deferred','Cancelled',
+      'Closed','Completed','Approved','Rejected','Testing','Monitoring'
+    ];
+
+    // issue types stored by issue-type-master page
+    let issueTypes = JSON.parse(localStorage.getItem('issueTypes') || 'null');
+    if (!Array.isArray(issueTypes)) issueTypes = [];
+    if (!Array.isArray(issues)) {
+      // first load: populate with sample records
+      issues = [
+        {
+          issue_id: "SI0001",
+          customer_id: "SC0001",
+          issue_type_id: "SIT0001",
+          status_id: "Open",
+          reported_at: "2026-01-15T10:30:00",
+          description: "Installation issue with HVAC system not cooling properly in main office area"
+        },
+        {
+          issue_id: "SI0002",
+          customer_id: "SC0002",
+          issue_type_id: "SIT0002",
+          status_id: "In Progress",
+          reported_at: "2026-01-16T14:45:00",
+          description: "Maintenance required for elevator door malfunction on floor 3"
+        },
+        {
+          issue_id: "SI0003",
+          customer_id: "SC0003",
+          issue_type_id: "SIT0003",
+          status_id: "Resolved",
+          reported_at: "2026-01-17T09:15:00",
+          description: "Consultation needed for system upgrade planning and budget estimation"
+        },
+        {
+          issue_id: "SI0004",
+          customer_id: "SC0004",
+          issue_type_id: "SIT0001",
+          status_id: "Pending",
+          reported_at: "2026-01-18T16:20:00",
+          description: "Installation problem with fire alarm system in parking garage"
+        }
+      ];
+      saveIssues();
+    }
+
+    function saveIssues() {
+      localStorage.setItem('issues', JSON.stringify(issues));
+    }
+
+    let editingIndex = -1; // Track which issue is being edited
+
+    // ---------- FORM SUBMISSION ----------
+    function handleIssueSubmit(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const issueData = {
+        issue_id: formData.get('issue_id'),
+        customer_id: formData.get('customer_id'),
+        issue_type_id: formData.get('issue_type_id'),
+        status_id: formData.get('status_id'),
+        reported_at: formData.get('reported_at'),
+        description: formData.get('description'),
+        created_at: new Date().toLocaleString()
+      };
+
+      if (editingIndex >= 0) {
+        // Update existing issue
+        issues[editingIndex] = issueData;
+        editingIndex = -1;
+        alert('Issue updated successfully!');
+      } else {
+        // Add new issue
+        issues.push(issueData);
+        alert('Issue submitted successfully!');
+      }
+      saveIssues();
+      
+      // Reset form and regenerate ID
+      e.target.reset();
+      $('#issue_id').value = generateIssueId();
+      
+      // Re-render table
+      renderIssueTable();
+    }
+
+    // ---------- TABLE FUNCTIONS ----------
+    function renderIssueTable() {
+      const tbody = $('#issueTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = issues.map((issue, index) => `
+        <tr>
+          <td>${index+1}</td>
+          <td>${issue.issue_id}</td>
+          <td>${issue.customer_id}</td>
+          <td>${issue.issue_type_id}</td>
+          <td>${issue.status_id}</td>
+          <td>${formatDateTime(issue.reported_at)}</td>
+          <td>${issue.description.substring(0, 50)}${issue.description.length > 50 ? '...' : ''}</td>
+          <td>
+            <div class="action-buttons" style="display:flex;gap:4px;justify-content:center;">
+              <button class="btn btn-soft btn-edit" onclick="editIssue(${index})">✏️ Edit</button>
+              <button class="btn btn-soft btn-delete" onclick="deleteIssue(${index})">🗑 Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ---------- SEARCH FUNCTIONALITY ----------
+    function initializeSearch() {
+      const searchInput = $('#searchInput');
+      if (!searchInput) return;
+
+      const positive = ['completed','closed','approved','success','resolved','active'];
+      const neutral = ['pending','open','in progress','scheduled','waiting','on hold','received','verified'];
+      const negative = ['cancelled','rejected','failed','error'];
+
+      function updateColor(term) {
+        const t = term.toLowerCase();
+        if (positive.some(w => t.includes(w))) return 'green';
+        if (neutral.some(w => t.includes(w))) return 'yellow';
+        if (negative.some(w => t.includes(w))) return 'red';
+        return '';
+      }
+
+      function doFilter() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const rows = document.querySelectorAll('#issueTableBody tr');
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+        searchInput.style.borderColor = updateColor(searchInput.value) || '';
+      }
+
+      searchInput.addEventListener('input', doFilter);
+      searchInput.addEventListener('focus', () => {
+        searchInput.style.borderColor = updateColor(searchInput.value) || '';
+      });
+    }
+
+    function editIssue(index) {
+      const issue = issues[index];
+      editingIndex = index;
+      
+      // Populate form with issue data
+      $('#issue_id').value = issue.issue_id;
+      $('#customer_id').value = issue.customer_id;
+      $('#issue_type_id').value = issue.issue_type_id;
+      $('#status_id').value = issue.status_id;
+      $('#reported_at').value = issue.reported_at;
+      $('#description').value = issue.description;
+      
+      // Change submit button text
+      const submitBtn = document.querySelector('#issueForm button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.textContent = '✅ Update Issue';
+        submitBtn.style.background = '#10b981';
+      }
+      
+      // Scroll to form
+      document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function deleteIssue(index) {
+      if (confirm('Are you sure you want to delete this issue?')) {
+        issues.splice(index, 1);
+        saveIssues();
+        renderIssueTable();
+        alert('Issue deleted successfully!');
+      }
+    }
+
+    function formatDateTime(dateTimeStr) {
+      const date = new Date(dateTimeStr);
+      return date.toLocaleString();
+    }
+
+    // ---------- INITIALIZATION ----------
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize form
+      $('#issue_id').value = generateIssueId();
+
+      // populate customer selector
+      const custSel = $('#customer_id');
+      customerIds.forEach(id => custSel.append(new Option(id, id)));
+
+      // populate status selector
+      const statusSel = $('#status_id');
+      statuses.forEach(s => statusSel.append(new Option(s, s)));
+
+      // populate issue type selector from master data
+      const typeSel = $('#issue_type_id');
+      issueTypes.forEach(it => {
+        const txt = `${it.issue_type_id} - ${it.type_name_issue}`;
+        typeSel.append(new Option(txt, it.issue_type_id));
+      });
+
+      // Bind form submit event
+      $('#issueForm').addEventListener('submit', handleIssueSubmit);
+
+      // Render initial table
+      renderIssueTable();
+      // Initialize search functionality
+      initializeSearch();
+      
+      // Initialize navigation
+      initNav();
+    });
+
+    // Navigation functionality
+    function initNav() {
+      const nav = document.getElementById('nav');
+      if (!nav) return;
+
+      nav.addEventListener('click', e => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        
+        // Add ripple effect
+        createRippleEffect(a, e);
+        
+        // Handle navigation
+        if (a.href.includes('.html')) {
+          // External link - just add visual feedback
+          setTimeout(() => {
+            window.location.href = a.href;
+          }, 200);
+        }
+      });
+
+      // Add hover sound effect (visual feedback)
+      nav.addEventListener('mouseenter', e => {
+        const a = e.target.closest('a');
+        if (a && !a.classList.contains('active')) {
+          a.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        }
+      }, true);
+    }
+
+    function createRippleEffect(element, event) {
+      const ripple = document.createElement('span');
+      const rect = element.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = event.clientX - rect.left - size / 2;
+      const y = event.clientY - rect.top - size / 2;
+      
+      ripple.style.cssText = `
+        position: absolute;
+        width: ${size}px;
+        height: ${size}px;
+        left: ${x}px;
+        top: ${y}px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: scale(0);
+        animation: ripple 0.6s ease-out;
+        pointer-events: none;
+      `;
+      
+      element.style.position = 'relative';
+      element.style.overflow = 'hidden';
+      element.appendChild(ripple);
+      
+      setTimeout(() => {
+        ripple.remove();
+      }, 600);
+    }
+
+
+  </script>
+</body>
+</html>

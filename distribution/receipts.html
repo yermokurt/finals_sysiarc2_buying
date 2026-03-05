@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Receipts - IT3B Inc.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Exact same CSS for perfect consistency --- */
+        :root { --sidebar-bg: #1e293b; --sidebar-text: #94a3b8; --sidebar-text-active: #ffffff; --primary-blue: #2563eb; --content-bg: #eef2f6; --card-bg: #ffffff; --text-dark: #1e293b; --text-muted: #64748b; --danger-red: #ef4444; --success-green: #10b981; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { display: flex; height: 100vh; overflow: hidden; background-color: var(--content-bg); }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
+        .brand { display: flex; align-items: center; margin-bottom: 40px; color: var(--sidebar-text-active); }
+        .brand-icon { font-size: 24px; margin-right: 10px; }
+        .brand-text h1 { font-size: 16px; font-weight: 700; }
+        .brand-text p { font-size: 10px; opacity: 0.7; }
+        .menu-group-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-top: 20px; font-weight: 600; }
+        .nav-link { display: flex; align-items: center; text-decoration: none; color: var(--sidebar-text); padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-size: 14px; font-weight: 500; }
+        .nav-link i { margin-right: 15px; font-size: 16px; width: 20px; text-align: center; }
+        .nav-link:hover { background-color: rgba(255,255,255,0.05); color: var(--sidebar-text-active); }
+        .nav-link.active { background-color: var(--primary-blue); color: white; }
+        .text-danger { color: var(--danger-red); }
+        .text-danger:hover { background-color: rgba(239, 68, 68, 0.1); color: var(--danger-red); }
+        .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header h2 { font-size: 24px; color: var(--text-dark); font-weight: 700; }
+        .header p { color: var(--text-muted); font-size: 14px; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: 500; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-primary { background-color: var(--primary-blue); color: white; }
+        .btn-primary:hover { background-color: #1d4ed8; }
+        .card { background-color: var(--card-bg); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; }
+        .table-toolbar { padding: 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .search-box { padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 8px; width: 300px; outline: none; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .data-table th { background-color: #f8fafc; color: var(--text-muted); font-weight: 600; font-size: 12px; padding: 15px 20px; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
+        .data-table td { padding: 15px 20px; border-bottom: 1px solid #e2e8f0; color: var(--text-dark); font-size: 14px; }
+        .data-table tr:hover { background-color: #f8fafc; }
+        .action-icon-btn { background: none; border: none; cursor: pointer; font-size: 16px; margin-right: 10px; transition: 0.2s; }
+        .delete-btn { color: var(--danger-red); }
+        .delete-btn:hover { color: #b91c1c; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.6); align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-content { background-color: var(--card-bg); width: 450px; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-header { padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-weight: 600; color: var(--text-dark); }
+        .close-btn { cursor: pointer; color: var(--text-muted); font-size: 20px; }
+        .modal-body { padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 500; color: var(--text-dark); }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; }
+        .form-control:focus { border-color: var(--primary-blue); }
+        .form-control[readonly] { background-color: #f8fafc; cursor: not-allowed; color: var(--text-muted); }
+        .modal-footer { padding: 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px; background-color: #f8fafc; }
+        .btn-secondary { background-color: white; border: 1px solid #e2e8f0; color: var(--text-dark); }
+        .btn-secondary:hover { background-color: #f1f5f9; }
+        .status-badge { background-color: #d1fae5; color: #047857; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fas fa-cube"></i></div>
+            <div class="brand-text"><h1>IT3B Inc.</h1><p>Supply Chain Management</p></div>
+        </div>
+
+        <div class="menu-group-label">Core Dashboard</div>
+        <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-pie"></i> Overview</a>
+
+        <div class="menu-group-label">Distribution Data</div>
+        <a href="items.html" class="nav-link"><i class="fas fa-box-open"></i> Items Master</a>
+        <a href="warehouses.html" class="nav-link"><i class="fas fa-warehouse"></i> Warehouses</a>
+
+        <div class="menu-group-label">Operations</div>
+        <a href="stock.html" class="nav-link"><i class="fas fa-chart-line"></i> Stock Balance</a>
+        <a href="receipts.html" class="nav-link active"><i class="fas fa-file-invoice-dollar"></i> Purchase Receipts</a>
+        <a href="delivery.html" class="nav-link"><i class="fas fa-truck-fast"></i> Delivery Notes</a>
+
+        <a href="../login.html" class="nav-link text-danger" style="margin-top: auto;">
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+        </a>
+    </nav>
+
+    <main class="main-content">
+        <div class="header">
+            <div>
+                <h2>Purchase Receipts</h2>
+                <p>Log incoming inventory shipments.</p>
+            </div>
+            <button class="btn btn-primary" onclick="openModal()"><i class="fas fa-plus"></i> Receive New Stock</button>
+        </div>
+
+        <div class="card">
+            <div class="table-toolbar">
+                <input type="text" class="search-box" placeholder="Search receipt numbers or items..." id="searchInput" onkeyup="filterTable()">
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Receipt No.</th>
+                        <th>Date</th>
+                        <th>Item Received</th>
+                        <th>Destination</th>
+                        <th>Qty</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="receiptsTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="receiptModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">New Purchase Receipt</h3>
+                <i class="fas fa-times close-btn" onclick="closeModal()"></i>
+            </div>
+            <div class="modal-body">
+                <form id="receiptForm">
+                    <div class="form-group">
+                        <label>Select Item</label>
+                        <select id="receiptItem" class="form-control" required onchange="autoFillWarehouse()">
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Destination Warehouse</label>
+                        <input type="text" id="receiptWarehouse" class="form-control" readonly placeholder="Select an item first...">
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity Received</label>
+                        <input type="number" id="receiptQty" class="form-control" min="1" required placeholder="Enter amount...">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveReceipt()">Process Receipt</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Load Data ---
+        let receiptsData = JSON.parse(localStorage.getItem('it3b_receipts')) || [];
+        let itemsMaster = JSON.parse(localStorage.getItem('it3b_items')) || [];
+
+        // --- Helper: Find the next available PR number ---
+        function getNextAvailableId() {
+            if (receiptsData.length === 0) return 'PR-1001';
+            const existingNumbers = receiptsData.map(r => parseInt(r.id.replace('PR-', ''))).sort((a, b) => a - b);
+            let nextNumber = 1001;
+            for (let i = 0; i < existingNumbers.length; i++) {
+                if (existingNumbers[i] === nextNumber) { nextNumber++; } 
+                else if (existingNumbers[i] > nextNumber) { break; }
+            }
+            return 'PR-' + nextNumber;
+        }
+
+        // --- 2. Populate Dropdowns ---
+        function loadDropdownOptions() {
+            const itemSelect = document.getElementById('receiptItem');
+            
+            // Load Items
+            itemsMaster = JSON.parse(localStorage.getItem('it3b_items')) || [];
+            let itemsHTML = '<option value="" disabled selected>-- Select an Item --</option>';
+            itemsMaster.forEach(item => {
+                itemsHTML += `<option value="${item.id}">${item.id} - ${item.name}</option>`;
+            });
+            itemSelect.innerHTML = itemsHTML;
+        }
+
+        // When user picks an item, automatically lock in its default warehouse!
+        function autoFillWarehouse() {
+            const selectedItemId = document.getElementById('receiptItem').value;
+            const selectedItem = itemsMaster.find(i => i.id === selectedItemId);
+            if (selectedItem && selectedItem.warehouse) {
+                document.getElementById('receiptWarehouse').value = selectedItem.warehouse;
+            } else {
+                document.getElementById('receiptWarehouse').value = "Unassigned";
+            }
+        }
+
+        // --- 3. Render Table ---
+        function renderTable() {
+            const tbody = document.getElementById('receiptsTableBody');
+            tbody.innerHTML = ''; 
+            
+            if (receiptsData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No receipts found.</td></tr>';
+                return;
+            }
+
+            // Show newest receipts first (reverse order)
+            let displayData = [...receiptsData].reverse();
+
+            displayData.forEach(receipt => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${receipt.id}</strong></td>
+                        <td>${receipt.date}</td>
+                        <td>${receipt.itemName}</td>
+                        <td>${receipt.warehouse}</td>
+                        <td><strong>+${receipt.qty}</strong></td>
+                        <td><span class="status-badge">Completed</span></td>
+                        <td>
+                            <button class="action-icon-btn delete-btn" onclick="deleteReceipt('${receipt.id}')" title="Delete & Reverse Stock"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- 4. Modal Functions ---
+        const modal = document.getElementById('receiptModal');
+
+        function openModal() {
+            document.getElementById('receiptForm').reset();
+            loadDropdownOptions(); // Refresh dropdowns
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        function saveReceipt() {
+            const itemId = document.getElementById('receiptItem').value;
+            const warehouse = document.getElementById('receiptWarehouse').value;
+            const qty = parseInt(document.getElementById('receiptQty').value);
+
+            if (!itemId || !warehouse || isNaN(qty) || qty <= 0) {
+                alert("Please fill out all fields with valid information.");
+                return;
+            }
+
+            // Find the item name for display
+            const item = itemsMaster.find(i => i.id === itemId);
+            const itemName = item ? item.name : "Unknown Item";
+
+            // 1. Save the new receipt
+            const newId = getNextAvailableId();
+            const today = new Date().toISOString().split('T')[0]; 
+            
+            receiptsData.push({ 
+                id: newId, 
+                date: today, 
+                itemId: itemId, 
+                itemName: itemName, 
+                warehouse: warehouse, 
+                qty: qty 
+            });
+
+            // 2. AUTOMATIC STOCK UPDATE
+            if (item) {
+                item.stock = (parseInt(item.stock) || 0) + qty;
+                localStorage.setItem('it3b_items', JSON.stringify(itemsMaster)); 
+            }
+
+            localStorage.setItem('it3b_receipts', JSON.stringify(receiptsData)); 
+            closeModal();
+            renderTable();
+        }
+
+        // Deleting a receipt reverses the stock addition
+        function deleteReceipt(id) {
+            if (confirm("Are you sure you want to delete this receipt? This will REMOVE the received quantity from your stock inventory!")) {
+                const receiptToDelete = receiptsData.find(r => r.id === id);
+                
+                if (receiptToDelete) {
+                    const item = itemsMaster.find(i => i.id === receiptToDelete.itemId);
+                    if (item) {
+                        item.stock = (parseInt(item.stock) || 0) - parseInt(receiptToDelete.qty);
+                        if(item.stock < 0) item.stock = 0; 
+                        localStorage.setItem('it3b_items', JSON.stringify(itemsMaster));
+                    }
+                    
+                    receiptsData = receiptsData.filter(r => r.id !== id);
+                    localStorage.setItem('it3b_receipts', JSON.stringify(receiptsData));
+                    
+                    renderTable();
+                }
+            }
+        }
+
+        // --- 5. Search Filter ---
+        function filterTable() {
+            const filter = document.getElementById('searchInput').value.toUpperCase();
+            const rows = document.getElementById('receiptsTableBody').getElementsByTagName('tr');
+            for (let i = 0; i < rows.length; i++) {
+                const textValue = rows[i].textContent || rows[i].innerText;
+                rows[i].style.display = textValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        }
+
+        // Initial Load
+        renderTable();
+    </script>
+</body>
+</html>

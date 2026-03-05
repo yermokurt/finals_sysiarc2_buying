@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service System - Issue Management</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --sidebar-bg: #1e293b;
+      --bg-color: #badcfd;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --card-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: var(--bg-color);
+      color: var(--text-dark);
+    }
+
+    /* ===== LAYOUT ===== */
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR FRAME ===== */
+    .sidebar-frame {
+      width: 280px;
+      height: 100vh;
+      border: none;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      padding: 32px;
+      overflow-y: auto;
+    }
+
+    /* ===== TOPBAR ===== */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.1);
+    }
+
+    .title h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin: 0;
+    }
+
+    .title p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 4px 0 0 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* ===== GRID ===== */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    /* ===== PANEL ===== */
+    .panel {
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      padding: 24px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .panel:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .panel h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 0 0 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel .sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 0 0 20px 0;
+    }
+
+    /* ===== CHART WRAP ===== */
+    .chart-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    canvas {
+      border-radius: 8px;
+      background: white;
+    }
+
+    /* ===== LEGEND ===== */
+    .legend {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 180px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-dark);
+    }
+
+    .legend-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .legend-name {
+      font-weight: 500;
+    }
+
+    .legend-value {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-left: auto;
+    }
+
+    /* ===== BAR SECTIONS ===== */
+    .bar-section {
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .bar-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 0 0 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .bar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bar-label {
+      font-size: 13px;
+      color: var(--text-dark);
+      min-width: 120px;
+      font-weight: 500;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--primary-color);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .bar-count {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      min-width: 40px;
+      text-align: right;
+    }
+
+    /* ===== TABLE ===== */
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: var(--text-dark);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-soft {
+      background: white;
+      color: var(--text-dark);
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-soft:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+    }
+
+    /* ===== STATUS BADGES ===== */
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-open {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    .status-in-progress {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .status-resolved {
+      background: #f0fdf4;
+      color: #16a34a;
+    }
+
+    .status-pending {
+      background: #f0f9ff;
+      color: #0ea5e9;
+    }
+
+    .status-assigned {
+      background: #f5f3ff;
+      color: #7c3aed;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar-frame {
+        display: none;
+      }
+
+      main {
+        padding: 16px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <iframe src="sidebar.html" class="sidebar-frame" title="Navigation Sidebar"></iframe>
+    
+    <main>
+      <!-- ISSUE (records) -->
+      <section class="view" id="view-issue">
+        <div class="topbar">
+          <div class="title">
+            <h1>Issue Management</h1>
+            <p>Issue entry + reports (aligned to table columns)</p>
+          </div>
+          <div class="actions">
+            <a class="btn btn-soft" href="#dashboard" data-view="dashboard">⌂ Dashboard</a>
+            <a class="btn btn-soft" href="#report-issue" data-view="report-issue">📑 View Report</a>
+          </div>
+        </div>
+
+        <div class="grid">
+          <section class="panel">
+            <h2>Status</h2>
+            <p class="sub">issue statuses</p>
+            <div class="chart-wrap">
+              <canvas id="issueStatusPie" width="240" height="240"></canvas>
+              <div class="legend" id="issueStatusLegend"></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>Type</h2>
+            <p class="sub">issue types</p>
+            <div class="chart-wrap">
+              <canvas id="issueTypePie" width="240" height="240"></canvas>
+              <div class="legend" id="issueTypeLegend"></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="bar-section">
+          <div class="bar-title"><span>📊</span> Status bars (grouped)</div>
+          <div class="bar-container" id="issueStatusBars"></div>
+        </div>
+
+        <div class="bar-section">
+          <div class="bar-title"><span>📋</span> All Issues</div>
+          <div class="table-container" id="issueTable"></div>
+          <div class="actions" style="margin-top: 16px; justify-content: center;">
+            <button class="btn btn-primary" onclick="printActiveTables()">🖨 Print Table</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ---------- ISSUE DATA ----------
+    const ISSUES = [
+      {issue_id:"SI0001", issue_no:"SI0001", customer_id:"SC0001", issue_type_id:"SIT0001", status_id:"SIS0001", reported_at:"2026-01-30 9:00:00", description:"System installation request"},
+      {issue_id:"SI0002", issue_no:"SI0002", customer_id:"SC0002", issue_type_id:"SIT0002", status_id:"SIS0002", reported_at:"2026-01-30 9:15:00", description:"Preventive maintenance scheduling"},
+      {issue_id:"SI0003", issue_no:"SI0003", customer_id:"SC0003", issue_type_id:"SIT0003", status_id:"SIS0003", reported_at:"2026-01-30 9:30:00", description:"Emergency repair request"},
+      {issue_id:"SI0004", issue_no:"SI0004", customer_id:"SC0004", issue_type_id:"SIT0004", status_id:"SIS0004", reported_at:"2026-01-30 9:45:00", description:"System performance optimization"},
+      {issue_id:"SI0005", issue_no:"SI0005", customer_id:"SC0005", issue_type_id:"SIT0005", status_id:"SIS0005", reported_at:"2026-01-30 10:00:00", description:"Hardware upgrade consultation"},
+      {issue_id:"SI0006", issue_no:"SI0006", customer_id:"SC0006", issue_type_id:"SIT0006", status_id:"SIS0006", reported_at:"2026-01-30 10:15:00", description:"Software troubleshooting"},
+      {issue_id:"SI0007", issue_no:"SI0007", customer_id:"SC0007", issue_type_id:"SIT0007", status_id:"SIS0007", reported_at:"2026-01-30 10:30:00", description:"Network configuration assistance"},
+      {issue_id:"SI0008", issue_no:"SI0008", customer_id:"SC0008", issue_type_id:"SIT0008", status_id:"SIS0008", reported_at:"2026-01-30 10:45:00", description:"Data backup and recovery"},
+      {issue_id:"SI0009", issue_no:"SI0009", customer_id:"SC0009", issue_type_id:"SIT0009", status_id:"SIS0009", reported_at:"2026-01-30 11:00:00", description:"Security audit and assessment"},
+      {issue_id:"SI0010", issue_no:"SI0010", customer_id:"SC0010", issue_type_id:"SIT0010", status_id:"SIS0010", reported_at:"2026-01-30 11:15:00", description:"System integration project"}
+    ];
+
+    // ---------- LOOKUP TABLES ----------
+    const ISSUE_TYPES = {
+      "SIT0001": "Installation", "SIT0002": "Maintenance", "SIT0003": "Repair",
+      "SIT0004": "Optimization", "SIT0005": "Upgrade", "SIT0006": "Troubleshooting",
+      "SIT0007": "Configuration", "SIT0008": "Network Issue", "SIT0009": "Software Bug",
+      "SIT0010": "Hardware Failure", "SIT0011": "Data Backup", "SIT0012": "Data Recovery",
+      "SIT0013": "Security Incident", "SIT0014": "Performance Issue", "SIT0015": "Account Access Issue",
+      "SIT0016": "System Downtime", "SIT0017": "User Training", "SIT0018": "License Management",
+      "SIT0019": "System Audit", "SIT0020": "Decommissioning"
+    };
+
+    const ISSUE_STATUS = {
+      "SIS0001": "Open", "SIS0002": "In Progress", "SIS0003": "Resolved",
+      "SIS0004": "Pending", "SIS0005": "On Hold", "SIS0006": "Assigned",
+      "SIS0007": "Reopened", "SIS0008": "Escalated", "SIS0009": "Waiting for User",
+      "SIS0010": "Waiting for Vendor", "SIS0011": "Under Review", "SIS0012": "Scheduled",
+      "SIS0013": "Deferred", "SIS0014": "Cancelled", "SIS0015": "Closed",
+      "SIS0016": "Completed", "SIS0017": "Approved", "SIS0018": "Rejected",
+      "SIS0019": "Testing", "SIS0020": "Monitoring"
+    };
+
+    // ---------- HELPER FUNCTIONS ----------
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+
+    function groupCount(arr, key) {
+      const m = new Map();
+      arr.forEach(x => {
+        const k = (x[key] ?? "Unknown").toString();
+        m.set(k, (m.get(k) || 0) + 1);
+      });
+      return [...m.entries()].sort((a,b)=>b[1]-a[1]);
+    }
+
+    function countBy(arr, key, map) {
+      return arr.reduce((acc, item) => {
+        const raw = item[key];
+        const label = map[raw] || raw;
+        acc[label] = (acc[label] || 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    function statusBadge(status) {
+      const statusMap = {
+        'Open': 'status-open',
+        'In Progress': 'status-in-progress',
+        'Resolved': 'status-resolved',
+        'Pending': 'status-pending',
+        'Assigned': 'status-assigned'
+      };
+      const className = statusMap[status] || 'status-pending';
+      return `<span class="status-badge ${className}">${status}</span>`;
+    }
+
+    // ---------- CHART FUNCTIONS ----------
+    function drawPie(canvasId, legendId, data, totalLabel = null) {
+      const canvas = $(canvasId);
+      const legend = $(legendId);
+      if (!canvas || !legend) return;
+
+      const ctx = canvas.getContext('2d');
+      const colors = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      legend.innerHTML = '';
+
+      const total = data.reduce((sum, [_, count]) => sum + count, 0);
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const r = Math.min(cx, cy) - 20;
+
+      let currentAngle = -Math.PI / 2;
+
+      data.forEach(([name, count], i) => {
+        const slice = (count / total) * 2 * Math.PI;
+        const end = currentAngle + slice;
+        const mid = currentAngle + slice / 2;
+
+        // Draw pie slice
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, currentAngle, end);
+        ctx.closePath();
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.fill();
+
+        // Draw border
+        ctx.strokeStyle = "rgba(30,41,59,0.10)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Create legend item
+        const item = document.createElement("div");
+        item.className = "legend-item";
+        const percentage = ((count / total) * 100).toFixed(1);
+        item.innerHTML = `
+          <div class="legend-left">
+            <span class="swatch" style="background:${colors[i % colors.length]}"></span>
+            <div class="legend-name">${name}</div>
+          </div>
+          <div class="legend-value">${count} (${percentage}%)</div>
+        `;
+        legend.appendChild(item);
+
+        currentAngle = end;
+      });
+
+      // Add total label if provided
+      if (totalLabel) {
+        const totalItem = document.createElement("div");
+        totalItem.className = "legend-item";
+        totalItem.innerHTML = `
+          <div class="legend-left">
+            <div class="legend-name">${totalLabel}</div>
+          </div>
+          <div class="legend-value">${total}</div>
+        `;
+        legend.appendChild(totalItem);
+      }
+    }
+
+    function makeBars(containerId, data, total) {
+      const container = $(containerId);
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      data.forEach(([name, count]) => {
+        const percentage = total > 0 ? (count / total) * 100 : 0;
+        const item = document.createElement('div');
+        item.className = 'bar-item';
+        item.innerHTML = `
+          <div class="bar-label">${name}</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width: ${percentage}%"></div>
+          </div>
+          <div class="bar-count">${count}</div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function makeTable(containerId, columns, data) {
+      const container = $(containerId);
+      if (!container) return;
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const tbody = document.createElement('tbody');
+
+      // Create header
+      const headerRow = document.createElement('tr');
+      columns.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = col.label;
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+
+      // Create body rows
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        columns.forEach(col => {
+          const td = document.createElement('td');
+          if (col.render) {
+            td.innerHTML = col.render(row);
+          } else {
+            td.textContent = row[col.key] || '';
+          }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      container.innerHTML = '';
+      container.appendChild(table);
+    }
+
+    // ---------- INITIALIZATION ----------
+    function initIssuePage() {
+      // Status distribution
+      const statusPairs = groupCount(ISSUES, 'status_id');
+      const statusData = Object.fromEntries(
+        statusPairs.map(([statusId, count]) => [
+          ISSUE_STATUS[statusId] || statusId, 
+          count
+        ])
+      );
+      drawPie('issueStatusPie', 'issueStatusLegend', statusData, String(ISSUES.length));
+
+      // Type distribution
+      const typePairs = groupCount(ISSUES, 'issue_type_id');
+      const typeData = Object.fromEntries(
+        typePairs.map(([typeId, count]) => [
+          ISSUE_TYPES[typeId] || typeId, 
+          count
+        ])
+      );
+      drawPie('issueTypePie', 'issueTypeLegend', typeData);
+
+      // Status bars
+      makeBars('issueStatusBars', statusPairs, ISSUES.length);
+
+      // Main table
+      makeTable('issueTable', [
+        {key: 'issue_id', label: 'Issue ID'},
+        {key: 'issue_no', label: 'Issue No'},
+        {key: 'customer_id', label: 'Customer ID'},
+        {key: 'issue_type_id', label: 'Issue Type', render: r => ISSUE_TYPES[r.issue_type_id] || r.issue_type_id},
+        {key: 'status_id', label: 'Status', render: r => statusBadge(ISSUE_STATUS[r.status_id] || r.status_id)},
+        {key: 'reported_at', label: 'Reported At'},
+        {key: 'description', label: 'Description'}
+      ], ISSUES);
+      
+      // Initialize navigation
+      initNav();
+    }
+
+    // Navigation function (from universal.js)
+    function initNav() {
+      const links = document.querySelectorAll('[data-view]');
+      links.forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const view = this.getAttribute('data-view');
+          // Handle navigation logic here
+          console.log('Navigate to:', view);
+        });
+      });
+    }
+
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', initIssuePage);
+  </script>
+</body>
+</html>

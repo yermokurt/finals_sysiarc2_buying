@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribution Dashboard - IT3B Inc.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Color Variables based on the new design --- */
+        :root {
+            --sidebar-bg: #1e293b; /* Dark slate blue */
+            --sidebar-text: #94a3b8; /* Muted light blue/gray */
+            --sidebar-text-active: #ffffff;
+            --primary-blue: #2563eb; /* Bright action blue */
+            --content-bg: #eef2f6; /* Very light blue gray background */
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --danger-red: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-color: var(--content-bg);
+        }
+
+        /* --- SIDEBAR STYLES --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            color: var(--sidebar-text-active);
+        }
+
+        .brand-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .brand-text h1 { font-size: 16px; font-weight: 700; }
+        .brand-text p { font-size: 10px; opacity: 0.7; }
+
+        .menu-group-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--sidebar-text);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-link i {
+            margin-right: 15px;
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+            color: var(--sidebar-text-active);
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .sign-out {
+            margin-top: auto; /* Pushes to bottom */
+            color: var(--danger-red);
+        }
+        .sign-out:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-red);
+        }
+
+
+        /* --- MAIN CONTENT STYLES --- */
+        .main-content {
+            flex: 1;
+            padding: 30px 40px;
+            overflow-y: auto;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h2 {
+            font-size: 24px;
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* --- Top Stats Cards --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .stat-icon-box {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        /* Specific color styles for icons */
+        .bg-blue-light { background-color: #dbeafe; color: #2563eb; }
+        .bg-green-light { background-color: #dcfce7; color: #16a34a; }
+        .bg-yellow-light { background-color: #fef9c3; color: #ca8a04; }
+        .bg-red-light { background-color: #fee2e2; color: #dc2626; }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* --- Big Section Card (Quick Actions) --- */
+        .section-card {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 25px;
+        }
+
+        /* Styling Quick Actions like the process steps in the image */
+        .actions-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .action-step-card {
+            background-color: var(--content-bg); /* Slightly darker than white card */
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none; /* Since these are links now */
+            display: block;
+        }
+
+        .action-step-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            background-color: #e2e8f0;
+        }
+
+        .action-icon {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 15px auto;
+            color: var(--primary-blue);
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .action-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+
+        .action-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .text-danger {
+            color: var(--danger-red);
+        }
+        
+        .text-danger:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-red);
+        }
+
+    </style>
+</head>
+<body>
+
+ <nav class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fas fa-cube"></i></div>
+            <div class="brand-text">
+                <h1>IT3B Inc.</h1>
+                <p>Supply Chain Management</p>
+            </div>
+        </div>
+
+        <div class="menu-group-label">Core Dashboard</div>
+        <a href="dashboard.html" class="nav-link active">
+            <i class="fas fa-chart-pie"></i> Overview
+        </a>
+
+        <div class="menu-group-label">Distribution Data</div>
+        <a href="items.html" class="nav-link"><i class="fas fa-box-open"></i> Items Master</a>
+        <a href="warehouses.html" class="nav-link"><i class="fas fa-warehouse"></i> Warehouses</a>
+
+        <div class="menu-group-label">Operations</div>
+        <a href="stock.html" class="nav-link"><i class="fas fa-chart-line"></i> Stock Balance</a>
+        <a href="receipts.html" class="nav-link"><i class="fas fa-file-invoice-dollar"></i> Purchase Receipts</a>
+        <a href="delivery.html" class="nav-link"><i class="fas fa-truck-fast"></i> Delivery Notes</a>
+
+        <a href="../login.html" class="nav-link text-danger" style="margin-top: auto;">
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+        </a>
+    </nav>
+
+    <main class="main-content">
+        <div class="header">
+            <h2>Distribution Dashboard</h2>
+            <p>Welcome back, dept_user. Here is your stock and distribution status.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon-box bg-blue-light">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <span class="stat-label">Total Items</span>
+                <span class="stat-value" id="statTotalItems">0</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-box bg-green-light">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <span class="stat-label">Purchase Receipts</span>
+                <span class="stat-value" id="statTotalReceipts">0</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-box bg-yellow-light">
+                    <i class="fas fa-warehouse"></i>
+                </div>
+                <span class="stat-label">Active Warehouses</span>
+                <span class="stat-value" id="statActiveWarehouses">0</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-box bg-red-light">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <span class="stat-label">Delivery Notes</span>
+                <span class="stat-value" id="statTotalDeliveries">0</span>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h3 class="section-title">Quick Actions</h3>
+            
+            <div class="actions-container">
+                <a href="items.html" class="action-step-card">
+                    <div class="action-icon"><i class="fas fa-list-ul"></i></div>
+                    <div class="action-title">View All Items</div>
+                    <div class="action-desc">Master item list</div>
+                </a>
+                 <a href="stock.html" class="action-step-card">
+                    <div class="action-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <div class="action-title">Check Stock</div>
+                    <div class="action-desc">Current inventory levels</div>
+                </a>
+                 <a href="receipts.html" class="action-step-card">
+                    <div class="action-icon"><i class="fas fa-file-import"></i></div>
+                    <div class="action-title">Purchase Receipts</div>
+                    <div class="action-desc">View incoming goods</div>
+                </a>
+                 <a href="delivery.html" class="action-step-card">
+                    <div class="action-icon"><i class="fas fa-dolly"></i></div>
+                    <div class="action-title">Delivery Notes</div>
+                    <div class="action-desc">Manage outgoing shipments</div>
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function loadDashboardData() {
+            // 1. Fetch all data from localStorage
+            const itemsData = JSON.parse(localStorage.getItem('it3b_items')) || [];
+            const warehousesData = JSON.parse(localStorage.getItem('it3b_warehouses')) || [];
+            const receiptsData = JSON.parse(localStorage.getItem('it3b_receipts')) || [];
+            const deliveriesData = JSON.parse(localStorage.getItem('it3b_deliveries')) || [];
+
+            // 2. Update the Stat Cards with the lengths of our arrays
+            document.getElementById('statTotalItems').innerText = itemsData.length;
+            document.getElementById('statActiveWarehouses').innerText = warehousesData.length;
+            document.getElementById('statTotalReceipts').innerText = receiptsData.length;
+            document.getElementById('statTotalDeliveries').innerText = deliveriesData.length;
+        }
+
+        // Run the function as soon as the page loads
+        document.addEventListener('DOMContentLoaded', loadDashboardData);
+    </script>
+</body>
+</html>

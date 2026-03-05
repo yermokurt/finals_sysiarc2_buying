@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payroll Processing - IT3B Inc.</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --sidebar-bg: #1e293b;
+        --bg-color: #badcfd;
+        --text-dark: #1e293b;
+        --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: var(--bg-color);
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+      }
+      .sidebar { width: 280px; background: var(--sidebar-bg); height: 100vh; position: fixed; color: white; display: flex; flex-direction: column; z-index: 1000; }
+      .logo-area { padding: 2rem 1.5rem; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+      .logo-icon { width: 35px; height: 35px; background: white; color: var(--primary-color); border-radius: 8px; display: grid; place-items: center; font-size: 1rem; }
+      .nav-link { padding: 0.8rem 1.5rem; color: rgba(255, 255, 255, 0.6); display: flex; align-items: center; gap: 12px; font-weight: 500; transition: all 0.2s; text-decoration: none; }
+      .nav-link:hover { color: white; background: rgba(255, 255, 255, 0.05); }
+      .nav-link.active { color: white; background: var(--primary-color); border-radius: 0 50px 50px 0; margin-right: 1.5rem; }
+      
+      .main-content { margin-left: 280px; padding: 2.5rem; flex: 1; }
+      .form-card { background: white; border-radius: 24px; box-shadow: var(--card-shadow); border: none; overflow: hidden; margin-bottom: 2rem; }
+      .form-header { background: #f8fafc; padding: 2rem; border-bottom: 1px solid #e2e8f0; }
+      .form-body { padding: 2.5rem; }
+      
+      .form-label { font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem; font-size: 0.9rem; }
+      .form-control, .form-select { border-radius: 12px; padding: 0.75rem 1rem; border: 1px solid #e2e8f0; }
+      
+      .btn-primary { background: var(--primary-color); border: none; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 600; }
+      .section-divider { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-color); font-weight: 700; margin: 1.5rem 0; display: flex; align-items: center; gap: 10px; }
+      .section-divider::after { content: ""; flex: 1; height: 1px; background: #e2e8f0; }
+      
+      .summary-box { background: #f8fafc; border-radius: 12px; padding: 1.5rem; border-left: 4px solid var(--primary-color); }
+      .badge-net { background: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 20px; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <nav class="sidebar">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fa-solid fa-money-check-dollar"></i></div>
+        <div>
+          <h6 class="mb-0 fw-bold">IT3B Inc.</h6>
+          <small class="text-white-50">HR Management</small>
+        </div>
+      </div>
+      <div class="py-4">
+        <a href="hr_dashboard.html" class="nav-link"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+        <div class="px-3 mt-4 mb-2 small text-uppercase opacity-50 fw-bold">Finance</div>
+        <a href="payroll_form.html" class="nav-link active"><i class="fa-solid fa-file-invoice-dollar"></i> Salary Processing</a>
+        <a href="employee_master_form.html" class="nav-link"><i class="fa-solid fa-id-card"></i> Employee Master</a>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <div class="form-card">
+        <div class="form-header">
+          <h4 class="fw-bold mb-1">Payroll / Salary Slip</h4>
+          <p class="text-muted mb-0 small">Generate monthly compensation records and tax deductions.</p>
+        </div>
+        <div class="form-body">
+          <form id="payrollForm" class="needs-validation" novalidate>
+            <div class="section-divider">Payroll Header</div>
+            <div class="row g-4 mb-4">
+              <div class="col-md-4">
+  <label class="form-label">Employee</label>
+  <select id="empSelect" class="form-select" required>
+    <option value="" selected disabled>Select Employee ID...</option>
+  </select>
+</div>
+              <div class="col-md-4">
+                <label class="form-label">Pay Period</label>
+                <select id="payPeriod" class="form-select" required>
+                  <option value="" selected disabled>Select Month...</option>
+                  <option>February 2026</option>
+                  <option>January 2026</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Posting Date</label>
+                <input type="date" id="postDate" class="form-control" required />
+              </div>
+            </div>
+
+            <div class="row g-5">
+              <div class="col-md-6">
+                <div class="section-divider">Earnings (+)</div>
+                <div class="mb-3">
+                  <label class="form-label">Basic Salary</label>
+                  <input type="number" id="basicSal" class="form-control calc-trigger" placeholder="0.00" step="0.01" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Overtime / Bonuses</label>
+                  <input type="number" id="bonus" class="form-control calc-trigger" placeholder="0.00" value="0" step="0.01" />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Allowances</label>
+                  <input type="number" id="allowance" class="form-control calc-trigger" placeholder="0.00" value="0" step="0.01" />
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="section-divider">Deductions (-)</div>
+                <div class="mb-3">
+                  <label class="form-label">Income Tax</label>
+                  <input type="number" id="tax" class="form-control calc-trigger" placeholder="0.00" step="0.01" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Social Security</label>
+                  <input type="number" id="ssn" class="form-control calc-trigger" placeholder="0.00" step="0.01" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Other Deductions</label>
+                  <input type="number" id="otherDed" class="form-control calc-trigger" placeholder="0.00" value="0" step="0.01" />
+                </div>
+              </div>
+            </div>
+
+            <div class="summary-box mt-4">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <h6 class="mb-0 fw-bold text-dark">Net Payable Amount</h6>
+                  <small class="text-muted">Total Earnings - Total Deductions</small>
+                </div>
+                <div class="col-md-4 text-end">
+                  <h3 class="mb-0 fw-bold text-primary" id="netDisplay">$0.00</h3>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-5 d-flex justify-content-end gap-3">
+              <button type="reset" class="btn btn-light px-4 py-2 fw-bold" style="border-radius: 12px">Reset</button>
+              <button type="submit" class="btn btn-primary px-5 py-2">Generate Payslip</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-body">
+          <h5 class="fw-bold mb-4">Historical Payroll Records</h5>
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="bg-light">
+                <tr class="small text-uppercase fw-bold text-muted">
+                  <th>Employee</th>
+                  <th>Period</th>
+                  <th>Net Pay</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody id="payrollTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="modal fade" id="viewPayrollModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px;">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="fw-bold">Payslip Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="modalBody"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+  // Load Databases from LocalStorage
+  let payrollDb = JSON.parse(localStorage.getItem('it3b_payroll')) || [];
+  let empDb = JSON.parse(localStorage.getItem('hr_employee_records')) || [];
+  const viewModal = new bootstrap.Modal(document.getElementById('viewPayrollModal'));
+
+  window.onload = () => {
+    populateEmployeeDropdown(); // Initialize dropdown from Master Records
+    renderTable();
+    document.getElementById('postDate').valueAsDate = new Date();
+  };
+
+  // Populate the dropdown using data from hr_employee_records
+  function populateEmployeeDropdown() {
+    const select = document.getElementById("empSelect");
+    // Ensure placeholder is kept
+    select.innerHTML = '<option value="" selected disabled>Select Employee ID...</option>';
+    
+    if (empDb.length === 0) {
+      const opt = document.createElement("option");
+      opt.textContent = "No employees found in Master Records";
+      opt.disabled = true;
+      select.appendChild(opt);
+      return;
+    }
+
+    empDb.forEach(emp => {
+      const opt = document.createElement("option");
+      opt.value = emp.id; // Store Employee ID as value
+      opt.textContent = `${emp.id} - ${emp.name}`; // Display ID and Name
+      select.appendChild(opt);
+    });
+  }
+
+  // Real-time calculation listener
+  document.querySelectorAll('.calc-trigger').forEach(input => {
+    input.addEventListener('input', calculateNet);
+  });
+
+  function calculateNet() {
+    const basic = parseFloat(document.getElementById('basicSal').value) || 0;
+    const bonus = parseFloat(document.getElementById('bonus').value) || 0;
+    const allowance = parseFloat(document.getElementById('allowance').value) || 0;
+    const tax = parseFloat(document.getElementById('tax').value) || 0;
+    const ssn = parseFloat(document.getElementById('ssn').value) || 0;
+    const other = parseFloat(document.getElementById('otherDed').value) || 0;
+
+    const net = (basic + bonus + allowance) - (tax + ssn + other);
+    document.getElementById('netDisplay').textContent = `$${net.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+    return net;
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById("payrollTableBody");
+    tbody.innerHTML = "";
+    
+    payrollDb.forEach((record, index) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>
+            <div class="fw-bold text-dark">${record.empId}</div>
+            <small class="text-muted">${record.date}</small>
+          </td>
+          <td>${record.period}</td>
+          <td><span class="badge-net">$${record.net.toLocaleString(undefined, {minimumFractionDigits: 2})}</span></td>
+          <td class="text-end">
+            <button class="btn btn-outline-primary btn-sm px-3 rounded-3 me-1" onclick="viewRecord(${index})">View</button>
+          </td>
+        </tr>`;
+    });
+  }
+
+  function viewRecord(index) {
+    const r = payrollDb[index];
+    document.getElementById('modalBody').innerHTML = `
+      <div class="p-2">
+        <div class="d-flex justify-content-between mb-3">
+           <span class="text-muted small text-uppercase fw-bold">Employee ID</span>
+           <span class="fw-bold text-primary">${r.empId}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-1">
+           <span>Basic Salary</span><span>$${r.basic.toLocaleString()}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-1">
+           <span>Total Earnings (+)</span>
+           <span class="text-success">+$${(r.basic + r.bonus + r.allowance).toLocaleString()}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-1">
+           <span>Total Deductions (-)</span>
+           <span class="text-danger">-$${(r.tax + r.ssn + r.other).toLocaleString()}</span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between align-items-center">
+           <span class="fw-bold h6 mb-0">Net Amount Paid</span>
+           <span class="h5 fw-bold text-primary mb-0">$${r.net.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+        </div>
+      </div>
+    `;
+    viewModal.show();
+  }
+
+  document.getElementById("payrollForm").onsubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    
+    if (form.checkValidity()) {
+      const newRecord = {
+        empId: document.getElementById('empSelect').value, // Use dropdown value
+        period: document.getElementById('payPeriod').value,
+        date: document.getElementById('postDate').value,
+        basic: parseFloat(document.getElementById('basicSal').value),
+        bonus: parseFloat(document.getElementById('bonus').value) || 0,
+        allowance: parseFloat(document.getElementById('allowance').value) || 0,
+        tax: parseFloat(document.getElementById('tax').value),
+        ssn: parseFloat(document.getElementById('ssn').value),
+        other: parseFloat(document.getElementById('otherDed').value) || 0,
+        net: calculateNet()
+      };
+
+      payrollDb.push(newRecord);
+      localStorage.setItem('it3b_payroll', JSON.stringify(payrollDb));
+      
+      renderTable();
+      form.reset();
+      form.classList.remove("was-validated");
+      document.getElementById('netDisplay').textContent = "$0.00";
+      document.getElementById('postDate').valueAsDate = new Date();
+      alert("Payroll processed successfully!");
+    } else {
+      form.classList.add("was-validated");
+    }
+  };
+</script>
+  </body>
+</html>

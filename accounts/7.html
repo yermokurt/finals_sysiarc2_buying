@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Charts of Accounts - IT3B Inc.</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --primary-hover: #1d4ed8;
+
+        --sidebar-bg: #1e293b;
+        --sidebar-border: rgba(255, 255, 255, 0.08);
+        --sidebar-muted: rgba(255, 255, 255, 0.55);
+        --sidebar-muted-2: rgba(255, 255, 255, 0.35);
+        --sidebar-text: rgba(255, 255, 255, 0.9);
+
+        --bg-color: #badcfd;
+
+        --text-dark: #0f172a;
+        --text-muted: #64748b;
+
+        --card-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.12),
+          0 4px 6px -2px rgba(0, 0, 0, 0.06);
+
+        --radius-lg: 20px;
+        --radius-md: 16px;
+      }
+
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: var(--bg-color);
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      /* Sidebar (match your screenshot) */
+      .sidebar {
+        width: 300px;
+        background: var(--sidebar-bg);
+        height: 100vh;
+        position: fixed;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+        border-right: 1px solid rgba(0, 0, 0, 0.35);
+      }
+
+      .logo-area {
+        padding: 1.75rem 1.75rem;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border-bottom: 1px solid var(--sidebar-border);
+      }
+
+      .logo-icon {
+        width: 54px;
+        height: 54px;
+        background: white;
+        color: var(--primary-color);
+        border-radius: 16px;
+        display: grid;
+        place-items: center;
+        font-size: 1.25rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .brand-title {
+        font-weight: 800;
+        margin: 0;
+        font-size: 1.35rem;
+        color: var(--sidebar-text);
+        line-height: 1.1;
+      }
+
+      .brand-subtitle {
+        margin: 0;
+        color: var(--sidebar-muted-2);
+        font-weight: 600;
+        font-size: 1rem;
+        letter-spacing: 0.01em;
+      }
+
+      .sidebar-scroll {
+        padding: 1.25rem 0 1.25rem;
+        overflow: auto;
+        height: calc(100vh - 110px);
+      }
+
+      .nav-group-label {
+        padding: 1.25rem 1.75rem 0.75rem;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--sidebar-muted-2);
+        font-weight: 800;
+      }
+
+      .nav-link {
+        padding: 0.95rem 1.75rem;
+        color: var(--sidebar-muted);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-weight: 650;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border-radius: 16px;
+        margin: 0.2rem 0.9rem;
+      }
+
+      .nav-link i {
+        width: 22px;
+        display: inline-grid;
+        place-items: center;
+        font-size: 1.05rem;
+        opacity: 0.9;
+      }
+
+      .nav-link:hover {
+        color: var(--sidebar-text);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      /* Active pill like your screenshot */
+      .nav-link.active {
+        background: var(--primary-color);
+        color: white;
+        border-radius: 999px;
+        padding: 1.05rem 1.75rem;
+        margin: 0.45rem 0.9rem;
+        box-shadow: 0 18px 30px rgba(37, 99, 235, 0.25);
+      }
+
+      .nav-link.active i {
+        opacity: 1;
+      }
+
+      /* Main Content */
+      .main-content {
+        margin-left: 300px;
+        padding: 2.5rem;
+        min-height: 100vh;
+      }
+
+      .header-section {
+        margin-bottom: 1.75rem;
+      }
+
+      .page-title {
+        font-weight: 800;
+        color: var(--text-dark);
+        font-size: 2rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .page-subtitle {
+        color: var(--text-muted);
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .system-badge {
+        padding: 0.55rem 1rem;
+        background: #f0fdf4;
+        color: #16a34a;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: var(--card-shadow);
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        background: #16a34a;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      /* Cards */
+      .summary-card {
+        background: white;
+        border-radius: var(--radius-md);
+        padding: 1.25rem 1.35rem;
+        box-shadow: var(--card-shadow);
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .summary-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .summary-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: #eff6ff;
+        color: var(--primary-color);
+        display: grid;
+        place-items: center;
+        font-size: 1.1rem;
+      }
+
+      .summary-label {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .summary-value {
+        font-size: 1.35rem;
+        font-weight: 900;
+        color: var(--text-dark);
+        line-height: 1.1;
+      }
+
+      .page-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 1.75rem;
+        box-shadow: var(--card-shadow);
+      }
+
+      .control-input,
+      .control-select {
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        padding: 0.7rem 0.9rem;
+        font-weight: 600;
+      }
+
+      .btn-primary {
+        background: var(--primary-color);
+        border: none;
+        font-weight: 800;
+        border-radius: 14px;
+        padding: 0.7rem 1.05rem;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+      }
+
+      .btn-soft {
+        background: #f1f5f9;
+        border: none;
+        font-weight: 800;
+        border-radius: 14px;
+        padding: 0.7rem 1.05rem;
+        color: var(--text-dark);
+      }
+
+      .btn-soft:hover {
+        background: #e2e8f0;
+      }
+
+      /* Table */
+      .table thead {
+        background: #f1f5f9;
+      }
+
+      .table th {
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #475569;
+        font-weight: 900;
+        border-bottom: 0;
+      }
+
+      .table td {
+        vertical-align: middle;
+        font-weight: 650;
+      }
+
+      .badge-type {
+        font-size: 0.75rem;
+        font-weight: 900;
+        padding: 0.35rem 0.6rem;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .b-asset { background: #dbeafe; color: #1d4ed8; }
+      .b-liability { background: #fee2e2; color: #dc2626; }
+      .b-equity { background: #ede9fe; color: #7c3aed; }
+      .b-revenue { background: #dcfce7; color: #16a34a; }
+      .b-expense { background: #fef9c3; color: #a16207; }
+
+      .status-pill {
+        font-size: 0.75rem;
+        font-weight: 900;
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        background: #dcfce7;
+        color: #16a34a;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .mini-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: #16a34a;
+        display: inline-block;
+      }
+
+      .child-row td:nth-child(2) {
+        padding-left: 2.25rem;
+        color: #475569;
+        font-weight: 650;
+      }
+
+      .code-pill {
+        font-weight: 900;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.25rem 0.55rem;
+        display: inline-block;
+        color: #0f172a;
+      }
+
+      .actions .btn {
+        border-radius: 12px;
+        font-weight: 800;
+      }
+
+      @media (max-width: 992px) {
+        .sidebar {
+          position: static;
+          width: 100%;
+          height: auto;
+          border-right: none;
+        }
+        .sidebar-scroll {
+          height: auto;
+        }
+        .main-content {
+          margin-left: 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fa-solid fa-cube"></i></div>
+        <div>
+          <p class="brand-title">IT3B Inc.</p>
+          <p class="brand-subtitle">Enterprise Central</p>
+        </div>
+      </div>
+
+      <div class="sidebar-scroll">
+        <div class="nav-group-label">General</div>
+        <a href="../dashboard.html" class="nav-link">
+          <i class="fa-solid fa-gauge-high"></i> Enterprise Hub
+        </a>
+        <a href="../reports.html" class="nav-link">
+          <i class="fa-solid fa-chart-line"></i> Reports
+        </a>
+
+        <div class="nav-group-label">Accounts</div>
+        <a href="accounts_dashboard.html" class="nav-link">
+          <i class="fa-solid fa-calculator"></i> Overview
+        </a>
+        <a href="charts_of_accounts.html" class="nav-link active">
+          <i class="fa-solid fa-sitemap"></i> Charts of Accounts
+        </a>
+        <a href="cost_centers.html" class="nav-link">
+          <i class="fa-solid fa-diagram-project"></i> Cost Centers
+        </a>
+        <a href="landed_cost.html" class="nav-link">
+          <i class="fa-solid fa-boxes-stacked"></i> Landed Cost
+        </a>
+        <a href="journal_entries.html" class="nav-link">
+          <i class="fa-solid fa-book"></i> Journal Entries
+        </a>
+
+        <div class="mt-4 pt-3" style="border-top: 1px solid var(--sidebar-border)">
+          <a href="../login.html" class="nav-link" style="color:#fca5a5;">
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="main-content">
+      <!-- Header -->
+      <div class="header-section d-flex justify-content-between align-items-end flex-wrap gap-3">
+        <div>
+          <div class="page-title">Charts of Accounts</div>
+          <p class="page-subtitle">
+            Configure and manage GL accounts, hierarchy, and classifications.
+          </p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <div class="system-badge"><span class="dot"></span> All Operational</div>
+          <button class="btn btn-primary">
+            <i class="fa-solid fa-plus me-2"></i> New Account
+          </button>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+          <div class="summary-card">
+            <div class="summary-left">
+              <div class="summary-icon"><i class="fa-solid fa-layer-group"></i></div>
+              <div>
+                <div class="summary-label">Total Accounts</div>
+                <div class="summary-value">128</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-ellipsis-vertical text-muted"></i>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+          <div class="summary-card">
+            <div class="summary-left">
+              <div class="summary-icon"><i class="fa-solid fa-wallet"></i></div>
+              <div>
+                <div class="summary-label">Assets</div>
+                <div class="summary-value">35</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-ellipsis-vertical text-muted"></i>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+          <div class="summary-card">
+            <div class="summary-left">
+              <div class="summary-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+              <div>
+                <div class="summary-label">Liabilities</div>
+                <div class="summary-value">22</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-ellipsis-vertical text-muted"></i>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+          <div class="summary-card">
+            <div class="summary-left">
+              <div class="summary-icon"><i class="fa-solid fa-chart-line"></i></div>
+              <div>
+                <div class="summary-label">Rev & Exp</div>
+                <div class="summary-value">71</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-ellipsis-vertical text-muted"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table Card -->
+      <div class="page-card">
+        <!-- Controls -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+          <div class="d-flex flex-wrap gap-2">
+            <div class="input-group" style="min-width: 320px">
+              <span
+                class="input-group-text bg-white border-0"
+                style="border-radius: 14px 0 0 14px"
+              >
+                <i class="fa-solid fa-magnifying-glass text-muted"></i>
+              </span>
+              <input
+                class="form-control control-input"
+                style="border-radius: 0 14px 14px 0"
+                placeholder="Search by code, name, or parent..."
+                type="text"
+              />
+            </div>
+
+            <select class="form-select control-select" style="min-width: 180px">
+              <option selected>All Types</option>
+              <option>Asset</option>
+              <option>Liability</option>
+              <option>Equity</option>
+              <option>Revenue</option>
+              <option>Expense</option>
+            </select>
+
+            <select class="form-select control-select" style="min-width: 180px">
+              <option selected>Status: Active</option>
+              <option>Active</option>
+              <option>Inactive</option>
+              <option>All</option>
+            </select>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-soft">
+              <i class="fa-solid fa-file-export me-2"></i> Export
+            </button>
+            <button class="btn btn-primary">
+              <i class="fa-solid fa-sliders me-2"></i> Advanced Filters
+            </button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th style="width: 120px">Code</th>
+                <th>Account Name</th>
+                <th style="width: 150px">Type</th>
+                <th style="width: 140px">Parent</th>
+                <th style="width: 150px">Balance</th>
+                <th style="width: 130px">Status</th>
+                <th class="text-end" style="width: 140px">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <!-- Parent -->
+              <tr>
+                <td><span class="code-pill">1000</span></td>
+                <td class="fw-bold">
+                  <i class="fa-solid fa-caret-down me-2 text-muted"></i>
+                  Cash and Cash Equivalents
+                </td>
+                <td><span class="badge-type b-asset"><i class="fa-solid fa-coins"></i> Asset</span></td>
+                <td class="text-muted fw-semibold">Main</td>
+                <td class="fw-bold">$45,000.00</td>
+                <td><span class="status-pill"><span class="mini-dot"></span> Active</span></td>
+                <td class="text-end actions">
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-eye"></i></button>
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-pen"></i></button>
+                </td>
+              </tr>
+
+              <!-- Children -->
+              <tr class="child-row">
+                <td><span class="code-pill">1010</span></td>
+                <td>Cash on Hand</td>
+                <td><span class="badge-type b-asset"><i class="fa-solid fa-coins"></i> Asset</span></td>
+                <td class="text-muted fw-semibold">1000</td>
+                <td class="fw-bold">$15,000.00</td>
+                <td><span class="status-pill"><span class="mini-dot"></span> Active</span></td>
+                <td class="text-end actions">
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-eye"></i></button>
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-pen"></i></button>
+                </td>
+              </tr>
+
+              <tr class="child-row">
+                <td><span class="code-pill">1020</span></td>
+                <td>Bank Account - Operating</td>
+                <td><span class="badge-type b-asset"><i class="fa-solid fa-coins"></i> Asset</span></td>
+                <td class="text-muted fw-semibold">1000</td>
+                <td class="fw-bold">$30,000.00</td>
+                <td><span class="status-pill"><span class="mini-dot"></span> Active</span></td>
+                <td class="text-end actions">
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-eye"></i></button>
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-pen"></i></button>
+                </td>
+              </tr>
+
+              <tr>
+                <td><span class="code-pill">2000</span></td>
+                <td class="fw-bold">
+                  <i class="fa-solid fa-caret-right me-2 text-muted"></i>
+                  Accounts Payable
+                </td>
+                <td><span class="badge-type b-liability"><i class="fa-solid fa-file-invoice"></i> Liability</span></td>
+                <td class="text-muted fw-semibold">Main</td>
+                <td class="fw-bold">$18,200.00</td>
+                <td><span class="status-pill"><span class="mini-dot"></span> Active</span></td>
+                <td class="text-end actions">
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-eye"></i></button>
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-pen"></i></button>
+                </td>
+              </tr>
+
+              <tr>
+                <td><span class="code-pill">3000</span></td>
+                <td class="fw-bold">Owner’s Equity</td>
+                <td><span class="badge-type b-equity"><i class="fa-solid fa-scale-balanced"></i> Equity</span></td>
+                <td class="text-muted fw-semibold">Main</td>
+                <td class="fw-bold">$42,500.00</td>
+                <td><span class="status-pill"><span class="mini-dot"></span> Active</span></td>
+                <td class="text-end actions">
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-eye"></i></button>
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-pen"></i></button>
+                </td>
+              </tr>
+
+              <tr>
+                <td><span class="code-pill">4000</span></td>
+                <td class="fw-bold">Sales Revenue</td>
+                <td><span class="badge-type b-revenue"><i class="fa-solid fa-arrow-trend-up"></i> Revenue</span></td>
+                <td class="text-muted fw-semibold">Main</td>
+                <td class="fw-bold">$180,000.00</td>
+                <td><span class="status-pill"><span class="mini-dot"></span> Active</span></td>
+                <td class="text-end actions">
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-eye"></i></button>
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-pen"></i></button>
+                </td>
+              </tr>
+
+              <tr>
+                <td><span class="code-pill">6000</span></td>
+                <td class="fw-bold">
+                  <i class="fa-solid fa-caret-down me-2 text-muted"></i>
+                  Operating Expenses
+                </td>
+                <td><span class="badge-type b-expense"><i class="fa-solid fa-receipt"></i> Expense</span></td>
+                <td class="text-muted fw-semibold">Main</td>
+                <td class="fw-bold">$72,400.00</td>
+                <td><span class="status-pill"><span class="mini-dot"></span> Active</span></td>
+                <td class="text-end actions">
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-eye"></i></button>
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-pen"></i></button>
+                </td>
+              </tr>
+
+              <tr class="child-row">
+                <td><span class="code-pill">6110</span></td>
+                <td>Salaries Expense</td>
+                <td><span class="badge-type b-expense"><i class="fa-solid fa-receipt"></i> Expense</span></td>
+                <td class="text-muted fw-semibold">6000</td>
+                <td class="fw-bold">$30,000.00</td>
+                <td><span class="status-pill"><span class="mini-dot"></span> Active</span></td>
+                <td class="text-end actions">
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-eye"></i></button>
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-pen"></i></button>
+                </td>
+              </tr>
+
+              <tr class="child-row">
+                <td><span class="code-pill">6120</span></td>
+                <td>Rent Expense</td>
+                <td><span class="badge-type b-expense"><i class="fa-solid fa-receipt"></i> Expense</span></td>
+                <td class="text-muted fw-semibold">6000</td>
+                <td class="fw-bold">$20,000.00</td>
+                <td><span class="status-pill"><span class="mini-dot"></span> Active</span></td>
+                <td class="text-end actions">
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-eye"></i></button>
+                  <button class="btn btn-sm btn-light"><i class="fa-solid fa-pen"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+          <small class="text-muted fw-semibold">Showing 1 to 9 of 128 accounts</small>
+          <nav>
+            <ul class="pagination mb-0">
+              <li class="page-item disabled"><a class="page-link">Prev</a></li>
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service System - Maintenance Service Form</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --sidebar-bg: #1e293b;
+      --bg-color: #badcfd;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --card-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: var(--bg-color);
+      color: var(--text-dark);
+    }
+
+    /* ===== LAYOUT ===== */
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR FRAME ===== */
+    .sidebar-frame {
+      width: 280px;
+      height: 100vh;
+      border: none;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main {
+      padding: 2.5rem;
+      overflow-y: auto;
+      max-height: 100vh;
+      margin-left: 0;
+      min-height: 100vh;
+    }
+
+    /* top header area */
+    .topbar {
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .title h1 {
+      font-weight: 700;
+      color: var(--text-dark);
+      font-size: 1.75rem;
+      margin: 0 0 0.25rem;
+      letter-spacing: 0;
+    }
+
+    .title p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* ===== FORM CONTAINER ===== */
+    .form-container {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+      border: none;
+      margin-bottom: 18px;
+    }
+
+    .form-header {
+      margin-bottom: 2rem;
+    }
+
+    .form-header h2 {
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+    }
+
+    .form-header .sub {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* ===== FORM STYLES ===== */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .form-label .required {
+      color: #ef4444;
+      margin-left: 2px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      padding: 0.75rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      background: white;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    /* ===== ACTIONS ===== */
+    .actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      align-items: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+      text-decoration: none;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+    }
+
+    .btn-secondary {
+      background: #f8fafc;
+      color: var(--text-dark);
+      border: 2px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; }
+      .main { max-height: none; }
+      .form-grid { grid-template-columns: 1fr; }
+      .actions { flex-direction: column; gap: 0.75rem; }
+      .btn { width: 100%; justify-content: center; }
+    }
+
+    /* ===== TABLE ===== */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(30,41,59,0.12);
+      margin-top: 2rem;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .data-table th {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+      color: white;
+      padding: 12px 10px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 2px solid var(--primary-hover);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(30,41,59,0.10);
+      color: var(--text-dark);
+      vertical-align: middle;
+    }
+
+    .data-table td:nth-child(1) {
+      font-weight: 800;
+      text-align: center;
+      background: #eff6ff;
+      color: var(--primary-color);
+      font-size: 11px;
+    }
+
+    .data-table tr:hover td {
+      border-color: rgba(37,99,235,0.35);
+      background: rgba(37,99,235,0.04);
+    }
+
+    /* ===== ACTION BUTTONS ===== */
+    .action-buttons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-edit {
+      padding: 6px 10px !important;
+      font-size: 11px !important;
+      background: #eff6ff !important;
+      color: var(--primary-color) !important;
+      border: 1px solid rgba(37,99,235,0.25) !important;
+    }
+
+    .btn-edit:hover {
+      background: #dbeafe !important;
+    }
+
+    .btn-delete {
+      padding: 6px 10px !important;
+      font-size: 11px !important;
+      background: #fef2f2 !important;
+      color: #dc2626 !important;
+      border: 1px solid rgba(220,38,38,0.25) !important;
+    }
+
+    .btn-delete:hover {
+      background: #fee2e2 !important;
+    }
+
+    /* ===== SEARCH BAR ===== */
+    .search-container {
+      margin-bottom: 16px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid rgba(37,99,235,0.2);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary-color);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    /* ===== STATUS BADGES ===== */
+    .status-badge {
+      background: #dcfce7;
+      color: #166534;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      text-align: center;
+      font-size: 11px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <iframe src="sidebar.html" class="sidebar-frame" frameborder="0"></iframe>
+
+    <main class="main" id="main-content">
+      <!-- MAINTENANCE SERVICE FORM -->
+      <section class="view active" id="view-maintenance-service-form">
+        <div class="topbar">
+          <div class="title">
+            <h1>Maintenance Service Form</h1>
+            <p>Create new maintenance service request</p>
+          </div>
+        </div>
+
+        <div class="form-container">
+          <div class="form-header">
+            <h2>Service Information</h2>
+            <p class="sub">Fill in the maintenance service details below</p>
+          </div>
+
+          <form id="maintenanceServiceForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Service ID <span class="required">*</span></label>
+                <input type="text" class="form-input" id="serviceId" readonly style="background-color: #f8fafc; cursor: not-allowed;">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Customer ID <span class="required">*</span></label>
+                <select class="form-select" id="customerId" required>
+                  <option value="">Select Customer</option>
+                  <option value="SC0001">SC0001</option>
+                  <option value="SC0002">SC0002</option>
+                  <option value="SC0003">SC0003</option>
+                  <option value="SC0004">SC0004</option>
+                  <option value="SC0005">SC0005</option>
+                  <option value="SC0006">SC0006</option>
+                  <option value="SC0007">SC0007</option>
+                  <option value="SC0008">SC0008</option>
+                  <option value="SC0009">SC0009</option>
+                  <option value="SC0010">SC0010</option>
+                  <option value="SC0011">SC0011</option>
+                  <option value="SC0012">SC0012</option>
+                  <option value="SC0013">SC0013</option>
+                  <option value="SC0014">SC0014</option>
+                  <option value="SC0015">SC0015</option>
+                  <option value="SC0016">SC0016</option>
+                  <option value="SC0017">SC0017</option>
+                  <option value="SC0018">SC0018</option>
+                  <option value="SC0019">SC0019</option>
+                  <option value="SC0020">SC0020</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Sales Order ID</label>
+                <select class="form-select" id="salesOrderId">
+                  <option value="">Select Sales Order</option>
+                  <option value="SSO0001">SSO0001</option>
+                  <option value="SSO0002">SSO0002</option>
+                  <option value="SSO0003">SSO0003</option>
+                  <option value="SSO0004">SSO0004</option>
+                  <option value="SSO0005">SSO0005</option>
+                  <option value="SSO0006">SSO0006</option>
+                  <option value="SSO0007">SSO0007</option>
+                  <option value="SSO0008">SSO0008</option>
+                  <option value="SSO0009">SSO0009</option>
+                  <option value="SSO0010">SSO0010</option>
+                  <option value="SSO0011">SSO0011</option>
+                  <option value="SSO0012">SSO0012</option>
+                  <option value="SSO0013">SSO0013</option>
+                  <option value="SSO0014">SSO0014</option>
+                  <option value="SSO0015">SSO0015</option>
+                  <option value="SSO0016">SSO0016</option>
+                  <option value="SSO0017">SSO0017</option>
+                  <option value="SSO0018">SSO0018</option>
+                  <option value="SSO0019">SSO0019</option>
+                  <option value="SSO0020">SSO0020</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Project ID</label>
+                <select class="form-select" id="projectId">
+                  <option value="">Select Project</option>
+                  <option value="PP0001">PP0001</option>
+                  <option value="PP0002">PP0002</option>
+                  <option value="PP0003">PP0003</option>
+                  <option value="PP0004">PP0004</option>
+                  <option value="PP0005">PP0005</option>
+                  <option value="PP0006">PP0006</option>
+                  <option value="PP0007">PP0007</option>
+                  <option value="PP0008">PP0008</option>
+                  <option value="PP0009">PP0009</option>
+                  <option value="PP0010">PP0010</option>
+                  <option value="PP0011">PP0011</option>
+                  <option value="PP0012">PP0012</option>
+                  <option value="PP0013">PP0013</option>
+                  <option value="PP0014">PP0014</option>
+                  <option value="PP0015">PP0015</option>
+                  <option value="PP0016">PP0016</option>
+                  <option value="PP0017">PP0017</option>
+                  <option value="PP0018">PP0018</option>
+                  <option value="PP0019">PP0019</option>
+                  <option value="PP0020">PP0020</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Service Type <span class="required">*</span></label>
+                <select class="form-select" id="serviceType" required>
+                  <option value="">Select Service Type</option>
+                  <option value="SST0001">System Installation</option>
+                  <option value="SST0002">Scheduled Maintenance</option>
+                  <option value="SST0003">Equipment Repair</option>
+                  <option value="SST0004">Expert Consultation</option>
+                  <option value="SST0005">System Upgrade</option>
+                  <option value="SST0006">Issue Troubleshooting</option>
+                  <option value="SST0007">System Configuration</option>
+                  <option value="SST0008">Network Support</option>
+                  <option value="SST0009">Software Repair</option>
+                  <option value="SST0010">Hardware Replacement</option>
+                  <option value="SST0011">Data Backup</option>
+                  <option value="SST0012">Data Recovery</option>
+                  <option value="SST0013">Security Incident</option>
+                  <option value="SST0014">Performance Issue</option>
+                  <option value="SST0015">Access Management</option>
+                  <option value="SST0016">Downtime Resolution</option>
+                  <option value="SST0017">User Training</option>
+                  <option value="SST0018">License Management</option>
+                  <option value="SST0019">System Audit</option>
+                  <option value="SST0020">System Decommissioning</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Status <span class="required">*</span></label>
+                <select class="form-select" id="status" required>
+                  <option value="">Select Status</option>
+                  <option value="SSS0001">Pending</option>
+                  <option value="SSS0002">Received</option>
+                  <option value="SSS0003">Verified</option>
+                  <option value="SSS0004">Scheduled</option>
+                  <option value="SSS0005">Assigned</option>
+                  <option value="SSS0006">In Progress</option>
+                  <option value="SSS0007">On Hold</option>
+                  <option value="SSS0008">Awaiting Parts</option>
+                  <option value="SSS0009">Awaiting Approval</option>
+                  <option value="SSS0010">Rescheduled</option>
+                  <option value="SSS0011">Escalated</option>
+                  <option value="SSS0012">Under Review</option>
+                  <option value="SSS0013">Testing</option>
+                  <option value="SSS0014">Completed</option>
+                  <option value="SSS0015">Closed</option>
+                  <option value="SSS0016">Cancelled</option>
+                  <option value="SSS0017">Rejected</option>
+                  <option value="SSS0018">Failed</option>
+                  <option value="SSS0019">Reopened</option>
+                  <option value="SSS0020">Archived</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Created Date <span class="required">*</span></label>
+                <input type="datetime-local" class="form-input" id="createdAt" required>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="form-label">Notes</label>
+                <textarea class="form-textarea" id="notes" placeholder="Enter any additional notes or comments..."></textarea>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                <span>↺</span> Reset Form
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <span>✓</span> Create Service
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- MAINTENANCE SERVICE TABLE -->
+      <section class="view active" id="view-maintenance-service-table">
+        <div class="form-container">
+          <h2>📋 Maintenance Service Records</h2>
+          <p class="sub">Recently created maintenance service requests</p>
+          
+          <!-- SEARCH BAR -->
+          <div class="search-container">
+            <input type="text" id="searchInput" placeholder="🔍 Search " class="search-input">
+          </div>
+          
+          <div class="table-container">
+            <table class="data-table" id="maintenanceServiceTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Service ID</th>
+                  <th>Customer ID</th>
+                  <th>Sales Order ID</th>
+                  <th>Project ID</th>
+                  <th>Service Type</th>
+                  <th>Status</th>
+                  <th>Created Date</th>
+                  <th>Notes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="maintenanceServiceTableBody">
+                <!-- Maintenance services will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Maintenance service data storage
+    let maintenanceServices = JSON.parse(localStorage.getItem('maintenanceServices') || '[]');
+    
+    // Add initial records if empty
+    if (maintenanceServices.length === 0) {
+      maintenanceServices = [
+        { maintenance_service_id: "SMS0001", customer_id: "SC0001", sales_order_id: "SSO0001", project_id: "PP0001", service_type_id: "SST0001", status_id: "SSS0001", created_at: "2026-01-15T09:00:00", notes: "Initial system installation completed" },
+        { maintenance_service_id: "SMS0002", customer_id: "SC0002", sales_order_id: "SSO0002", project_id: "PP0002", service_type_id: "SST0002", status_id: "SSS0002", created_at: "2026-01-16T10:30:00", notes: "Scheduled maintenance performed" },
+        { maintenance_service_id: "SMS0003", customer_id: "SC0003", sales_order_id: "SSO0003", project_id: "PP0003", service_type_id: "SST0003", status_id: "SSS0003", created_at: "2026-01-17T14:15:00", notes: "Equipment repair completed successfully" },
+        { maintenance_service_id: "SMS0004", customer_id: "SC0004", sales_order_id: "SSO0004", project_id: "PP0004", service_type_id: "SST0004", status_id: "SSS0004", created_at: "2026-01-18T11:45:00", notes: "Expert consultation provided" },
+        { maintenance_service_id: "SMS0005", customer_id: "SC0005", sales_order_id: "SSO0005", project_id: "PP0005", service_type_id: "SST0005", status_id: "SSS0005", created_at: "2026-01-19T09:30:00", notes: "System upgrade initiated" },
+        { maintenance_service_id: "SMS0006", customer_id: "SC0006", sales_order_id: "SSO0006", project_id: "PP0006", service_type_id: "SST0006", status_id: "SSS0006", created_at: "2026-01-20T08:00:00", notes: "Issue troubleshooting completed" },
+        { maintenance_service_id: "SMS0007", customer_id: "SC0007", sales_order_id: "SSO0007", project_id: "PP0007", service_type_id: "SST0007", status_id: "SSS0007", created_at: "2026-01-21T10:15:00", notes: "System configuration updated" },
+        { maintenance_service_id: "SMS0008", customer_id: "SC0008", sales_order_id: "SSO0008", project_id: "PP0008", service_type_id: "SST0008", status_id: "SSS0008", created_at: "2026-01-22T12:30:00", notes: "Network support provided" },
+        { maintenance_service_id: "SMS0009", customer_id: "SC0009", sales_order_id: "SSO0009", project_id: "PP0009", service_type_id: "SST0009", status_id: "SSS0009", created_at: "2026-01-23T14:45:00", notes: "Software repair completed" },
+        { maintenance_service_id: "SMS0010", customer_id: "SC0010", sales_order_id: "SSO0010", project_id: "PP0010", service_type_id: "SST0010", status_id: "SSS0010", created_at: "2026-01-24T09:00:00", notes: "Hardware replacement completed" },
+        { maintenance_service_id: "SMS0011", customer_id: "SC0011", sales_order_id: "SSO0011", project_id: "PP0011", service_type_id: "SST0011", status_id: "SSS0011", created_at: "2026-01-25T10:30:00", notes: "Data backup performed successfully" },
+        { maintenance_service_id: "SMS0012", customer_id: "SC0012", sales_order_id: "SSO0012", project_id: "PP0012", service_type_id: "SST0012", status_id: "SSS0012", created_at: "2026-01-26T11:15:00", notes: "Data recovery completed" },
+        { maintenance_service_id: "SMS0013", customer_id: "SC0013", sales_order_id: "SSO0013", project_id: "PP0013", service_type_id: "SST0013", status_id: "SSS0013", created_at: "2026-01-27T08:45:00", notes: "Security incident resolved" },
+        { maintenance_service_id: "SMS0014", customer_id: "SC0014", sales_order_id: "SSO0014", project_id: "PP0014", service_type_id: "SST0014", status_id: "SSS0014", created_at: "2026-01-28T12:00:00", notes: "Performance issue addressed" },
+        { maintenance_service_id: "SMS0015", customer_id: "SC0015", sales_order_id: "SSO0015", project_id: "PP0015", service_type_id: "SST0015", status_id: "SSS0015", created_at: "2026-01-29T09:30:00", notes: "Access management updated" },
+        { maintenance_service_id: "SMS0016", customer_id: "SC0016", sales_order_id: "SSO0016", project_id: "PP0016", service_type_id: "SST0016", status_id: "SSS0016", created_at: "2026-01-30T10:15:00", notes: "Downtime resolution completed" },
+        { maintenance_service_id: "SMS0017", customer_id: "SC0017", sales_order_id: "SSO0017", project_id: "PP0017", service_type_id: "SST0017", status_id: "SSS0017", created_at: "2026-01-31T11:45:00", notes: "User training session conducted" },
+        { maintenance_service_id: "SMS0018", customer_id: "SC0018", sales_order_id: "SSO0018", project_id: "PP0018", service_type_id: "SST0018", status_id: "SSS0018", created_at: "2026-02-01T08:30:00", notes: "License management completed" },
+        { maintenance_service_id: "SMS0019", customer_id: "SC0019", sales_order_id: "SSO0019", project_id: "PP0019", service_type_id: "SST0019", status_id: "SSS0019", created_at: "2026-02-02T09:00:00", notes: "System audit performed" },
+        { maintenance_service_id: "SMS0020", customer_id: "SC0020", sales_order_id: "SSO0020", project_id: "PP0020", service_type_id: "SST0020", status_id: "SSS0020", created_at: "2026-02-03T10:30:00", notes: "System decommissioning completed" }
+      ];
+      saveMaintenanceServices();
+    }
+    let editingIndex = -1; // Track which service is being edited
+
+    // Save data to localStorage
+    function saveMaintenanceServices() {
+      localStorage.setItem('maintenanceServices', JSON.stringify(maintenanceServices));
+    }
+
+    // Render table
+    function renderMaintenanceServiceTable() {
+      const tbody = document.getElementById('maintenanceServiceTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = maintenanceServices.map((service, index) => `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${service.maintenance_service_id}</td>
+          <td>${service.customer_id}</td>
+          <td>${service.sales_order_id || '-'}</td>
+          <td>${service.project_id || '-'}</td>
+          <td>${service.service_type_id}</td>
+          <td><span class="status-badge">${service.status_id}</span></td>
+          <td>${formatDateTime(service.created_at)}</td>
+          <td>${service.notes ? service.notes.substring(0, 30) + (service.notes.length > 30 ? '...' : '') : '-'}</td>
+          <td>
+            <div class="action-buttons" style="display:flex;gap:4px;">
+              <button class="btn btn-soft" onclick="editService(${index})" style="padding: 4px 8px; font-size: 11px;">✏️ Edit</button>
+              <button class="btn btn-soft" onclick="deleteService(${index})" style="padding: 4px 8px; font-size: 11px; background: #fef2f2; color: #b91c1c;">🗑 Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Format date/time
+    function formatDateTime(dateTime) {
+      if (!dateTime) return '-';
+      const date = new Date(dateTime);
+      return date.toLocaleString();
+    }
+
+    // Generate next Service ID
+    function generateServiceId() {
+      if (maintenanceServices.length === 0) return "SMS0001";
+      const max = maintenanceServices.reduce((max, service) => {
+        const num = parseInt(service.maintenance_service_id.replace('SMS', ''));
+        return num > max ? num : max;
+      }, 0);
+      return `SMS${String(max + 1).padStart(4, '0')}`;
+    }
+
+    // Edit service
+    function editService(index) {
+      editingIndex = index; // Set editing mode
+      const service = maintenanceServices[index];
+      document.getElementById('serviceId').value = service.maintenance_service_id;
+      document.getElementById('customerId').value = service.customer_id;
+      document.getElementById('salesOrderId').value = service.sales_order_id || '';
+      document.getElementById('projectId').value = service.project_id || '';
+      document.getElementById('serviceType').value = service.service_type_id;
+      document.getElementById('status').value = service.status_id;
+      document.getElementById('createdAt').value = service.created_at;
+      document.getElementById('notes').value = service.notes || '';
+      
+      // Change submit button text and color
+      const submitBtn = document.querySelector('#maintenanceServiceForm button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.textContent = '✅ Update Service';
+        submitBtn.style.background = '#10b981';
+      }
+      
+      // Scroll to form
+      document.getElementById('view-maintenance-service-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Delete service
+    function deleteService(index) {
+      if (confirm('Are you sure you want to delete this maintenance service?')) {
+        maintenanceServices.splice(index, 1);
+        saveMaintenanceServices();
+        renderMaintenanceServiceTable();
+      }
+    }
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const filteredServices = maintenanceServices.filter(service => 
+        service.maintenance_service_id.toLowerCase().includes(searchTerm) ||
+        service.customer_id.toLowerCase().includes(searchTerm) ||
+        (service.sales_order_id && service.sales_order_id.toLowerCase().includes(searchTerm)) ||
+        (service.project_id && service.project_id.toLowerCase().includes(searchTerm)) ||
+        service.service_type_id.toLowerCase().includes(searchTerm) ||
+        service.status_id.toLowerCase().includes(searchTerm) ||
+        (service.notes && service.notes.toLowerCase().includes(searchTerm))
+      );
+      
+      const tbody = document.getElementById('maintenanceServiceTableBody');
+      if (filteredServices.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 20px;">No records found</td></tr>';
+      } else {
+        tbody.innerHTML = filteredServices.map((service, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${service.maintenance_service_id}</td>
+            <td>${service.customer_id}</td>
+            <td>${service.sales_order_id || '-'}</td>
+            <td>${service.project_id || '-'}</td>
+            <td>${service.service_type_id}</td>
+            <td><span class="status-badge">${service.status_id}</span></td>
+            <td>${formatDateTime(service.created_at)}</td>
+            <td>${service.notes ? service.notes.substring(0, 30) + (service.notes.length > 30 ? '...' : '') : '-'}</td>
+            <td>
+              <div class="action-buttons" style="display:flex;gap:4px;">
+                <button class="btn btn-soft" onclick="editService(${index})" style="padding: 4px 8px; font-size: 11px;">✏️ Edit</button>
+                <button class="btn btn-soft" onclick="deleteService(${index})" style="padding: 4px 8px; font-size: 11px; background: #fef2f2; color: #b91c1c;">🗑 Delete</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+    });
+
+    // Form handling
+    document.getElementById('maintenanceServiceForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Get form values
+      const formData = {
+        maintenance_service_id: document.getElementById('serviceId').value,
+        customer_id: document.getElementById('customerId').value,
+        sales_order_id: document.getElementById('salesOrderId').value,
+        project_id: document.getElementById('projectId').value,
+        service_type_id: document.getElementById('serviceType').value,
+        status_id: document.getElementById('status').value,
+        created_at: document.getElementById('createdAt').value,
+        notes: document.getElementById('notes').value
+      };
+
+      // Validate required fields
+      if (!formData.maintenance_service_id || !formData.customer_id || 
+          !formData.service_type_id || !formData.status_id || !formData.created_at) {
+        alert('Please fill in all required fields marked with *');
+        return;
+      }
+
+      if (editingIndex >= 0) {
+        // Update existing service
+        maintenanceServices[editingIndex] = formData;
+        saveMaintenanceServices();
+        renderMaintenanceServiceTable();
+        editingIndex = -1; // Reset editing mode
+        
+        // Show success message
+        alert('Maintenance Service updated successfully!\n\nService ID: ' + formData.maintenance_service_id + '\nCustomer: ' + formData.customer_id);
+        
+        // Reset submit button text and color
+        const submitBtn = document.querySelector('#maintenanceServiceForm button[type="submit"]');
+        if (submitBtn) {
+          submitBtn.textContent = '✓ Create Service';
+          submitBtn.style.background = '';
+        }
+      } else {
+        // Add new service
+        maintenanceServices.push(formData);
+        saveMaintenanceServices();
+        renderMaintenanceServiceTable();
+
+        // Show success message
+        alert('Maintenance Service created successfully!\n\nService ID: ' + formData.maintenance_service_id + '\nCustomer: ' + formData.customer_id);
+      }
+      
+      // Reset form
+      resetForm();
+    });
+
+    function resetForm() {
+      document.getElementById('maintenanceServiceForm').reset();
+      editingIndex = -1; // Reset editing mode
+      
+      // Set next Service ID
+      document.getElementById('serviceId').value = generateServiceId();
+      
+      // Reset submit button text and color
+      const submitBtn = document.querySelector('#maintenanceServiceForm button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.textContent = '✓ Create Service';
+        submitBtn.style.background = '';
+      }
+    }
+
+    // Set default created date to current date/time
+    function setDefaultDateTime() {
+      const now = new Date();
+      const dateTimeLocal = now.toISOString().slice(0, 16);
+      document.getElementById('createdAt').value = dateTimeLocal;
+      
+      // Set next Service ID
+      document.getElementById('serviceId').value = generateServiceId();
+    }
+
+    // Initialize form when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      setDefaultDateTime();
+      renderMaintenanceServiceTable();
+    });
+  </script>
+</body>
+</html>

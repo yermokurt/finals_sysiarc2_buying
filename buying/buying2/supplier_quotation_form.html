@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supplier Quotation - IT3B Inc.</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../universal.css" />
+  <style>
+    .line-item-row:hover {
+      background: #f1f5f9;
+    }
+
+    .read-only-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.5);
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="sidebar">
+    <div class="logo-area">
+      <div class="logo-icon"><i class="fa-solid fa-cube"></i></div>
+      <div>
+        <h6 class="mb-0 fw-bold">IT3B Inc.</h6>
+        <small class="text-white-50">Bid Management</small>
+      </div>
+    </div>
+    <div class="py-4">
+      <a href="buying.html" class="nav-link"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+      <div class="px-3 mt-4 mb-2 small text-uppercase opacity-50 fw-bold">
+        Analytics
+      </div>
+      <a href="buying_reports.html" class="nav-link"><i class="fa-solid fa-chart-bar"></i> Reports</a>
+      <div class="px-3 mt-4 mb-2 small text-uppercase opacity-50 fw-bold">
+        Procurement Cycle
+      </div>
+      <a href="material_request_form.html" class="nav-link"><i class="fa-solid fa-file-invoice"></i> Material
+        Request</a>
+      <a href="rfq_form.html" class="nav-link"><i class="fa-solid fa-magnifying-glass-dollar"></i> RFQ</a>
+      <a href="supplier_quotation_form.html" class="nav-link active"><i class="fa-solid fa-hand-holding-dollar"></i>
+        Quotation</a>
+      <a href="purchase_order_form.html" class="nav-link"><i class="fa-solid fa-file-signature"></i> Purchase Order</a>
+      <div style="padding-top: 100px">
+        <a href="../login.html" class="nav-link text-danger"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="row g-4">
+      <div class="col-12">
+        <div class="form-card position-relative">
+          <div id="readOnlyOverlay" class="read-only-overlay"></div>
+          <div class="form-header d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="fw-bold mb-1">Supplier Quotation</h4>
+              <p class="text-muted mb-0 small">
+                Log official pricing bid received from a vendor responding to
+                an RFQ.
+              </p>
+            </div>
+            <span id="sqStatusBadge" class="badge bg-secondary p-2 px-3">PENDING</span>
+          </div>
+          <div class="form-body p-4">
+            <form id="sqForm" class="needs-validation" novalidate>
+              <div class="row g-3 mb-4">
+                <div class="col-md-2">
+                  <label class="form-label">SQ ID</label>
+                  <div class="input-group">
+                    <input type="text" id="sq_id" name="id" class="form-control" placeholder="BSQ0001" required
+                      readonly />
+                    <button type="button" class="btn btn-outline-primary px-2" id="btnGenId">
+                      Gen
+                    </button>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">RFQ Reference</label>
+                  <select name="rfq_id" id="rfqLookup" class="form-select" required>
+                    <option value="">Select RFQ...</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Supplier</label>
+                  <select name="supplier_id" id="supplierLookup" class="form-select" required>
+                    <option value="">Select Supplier...</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label">Date</label>
+                  <input type="date" name="date" class="form-control" id="sqDate" required />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label">Workflow Status</label>
+                  <select name="status_id" id="statusSelect" class="form-select" required></select>
+                </div>
+              </div>
+
+              <!-- Line Items -->
+              <div class="card p-0 mb-4 overflow-hidden border">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center p-3">
+                  <h6 class="fw-bold mb-0">Quoted Prices</h6>
+                  <button type="button" class="btn btn-sm btn-premium" id="btnAddLine">
+                    <i class="fa-solid fa-plus me-1"></i> Add Item
+                  </button>
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-hover align-middle mb-0" id="linesTable">
+                    <thead class="bg-light small">
+                      <tr>
+                        <th style="width: 35%">Item Selection</th>
+                        <th style="width: 15%">Qty</th>
+                        <th style="width: 20%">Unit Price ($)</th>
+                        <th style="width: 20%">Total</th>
+                        <th style="width: 10%">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="linesTableBody"></tbody>
+                    <tfoot class="table-light fw-bold">
+                      <tr>
+                        <td colspan="3" class="text-end">Grand Total:</td>
+                        <td id="grandTotalLabel">$0.00</td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Evaluation Notes</label>
+                <textarea name="remarks" class="form-control" rows="2"></textarea>
+              </div>
+
+              <div class="mt-4 d-flex justify-content-between">
+                <button type="button" class="btn btn-light" id="btnReset">
+                  New Quotation
+                </button>
+                <div class="d-flex gap-2">
+                  <button type="button" id="btnAccept" class="btn btn-success d-none" style="padding: 0.5rem 2rem">
+                    Accept & Generate PO
+                  </button>
+                  <button type="submit" class="btn btn-primary px-5 py-2">
+                    Save Quotation
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="card p-4">
+          <h5 class="fw-bold mb-4">Quotation History</h5>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>RFQ</th>
+                  <th>Supplier</th>
+                  <th>Date</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="registryTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/id_generator.js"></script>
+  <script src="../js/auth_guard.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!window.Store) return;
+
+      const form = document.getElementById("sqForm");
+      const linesTableBody = document.getElementById("linesTableBody");
+      const rfqLookup = document.getElementById("rfqLookup");
+      const supplierLookup = document.getElementById("supplierLookup");
+      const statusSelect = document.getElementById("statusSelect");
+      const registryBody = document.getElementById("registryTableBody");
+      const readOnlyOverlay = document.getElementById("readOnlyOverlay");
+      const grandTotalLabel = document.getElementById("grandTotalLabel");
+      const btnAccept = document.getElementById("btnAccept");
+
+      const items = window.Store.getTable("buying_items");
+      const sups = window.Store.getTable("buying_supplier");
+      const rfqs = window.Store.getTable("buying_rfq");
+      const statuses = window.Store.getTable(
+        "buying_supplier_quotation_status",
+      );
+
+      // Setup Dropdowns
+      rfqLookup.innerHTML += rfqs
+        .map((r) => `<option value="${r.id}">${r.id}: ${r.title}</option>`)
+        .join("");
+      supplierLookup.innerHTML += sups
+        .map((s) => `<option value="${s.id}">${s.name}</option>`)
+        .join("");
+      statusSelect.innerHTML = statuses
+        .map((s) => `<option value="${s.id}">${s.name}</option>`)
+        .join("");
+
+      const updateTotals = () => {
+        let grandTotal = 0;
+        Array.from(linesTableBody.rows).forEach((row) => {
+          const qty = parseFloat(row.querySelector(".item-qty").value) || 0;
+          const price =
+            parseFloat(row.querySelector(".item-price").value) || 0;
+          const total = qty * price;
+          row.querySelector(".item-total").textContent =
+            "$" +
+            total.toLocaleString(undefined, { minimumFractionDigits: 2 });
+          grandTotal += total;
+        });
+        grandTotalLabel.textContent =
+          "$" +
+          grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
+      };
+
+      const addLine = (data = {}) => {
+        const row = document.createElement("tr");
+        row.className = "line-item-row";
+        row.innerHTML = `
+            <td>
+              <select class="form-select item-select" required>
+                <option value="">Choose item...</option>
+                ${items.map((i) => `<option value="${i.id}" ${data.item_id === i.id ? "selected" : ""}>${i.name}</option>`).join("")}
+              </select>
+            </td>
+            <td><input type="number" class="form-control item-qty" min="1" value="${data.qty || 1}" required /></td>
+            <td><input type="number" class="form-control item-price" step="0.01" min="0.01" value="${data.price || 0}" required /></td>
+            <td class="item-total fw-bold text-primary">$0.00</td>
+            <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove(); updateTotals()"><i class="fa-solid fa-times"></i></button></td>
+          `;
+        linesTableBody.appendChild(row);
+        row
+          .querySelectorAll("input")
+          .forEach((i) => i.addEventListener("input", updateTotals));
+        updateTotals();
+      };
+      // global for inline event
+      window.updateTotals = updateTotals;
+
+      const renderRegistry = () => {
+        const sqs = window.Store.getTable("buying_supplier_quotation");
+        const sqLines = window.Store.getTable(
+          "buying_supplier_quotation_line",
+        );
+
+        registryBody.innerHTML = sqs
+          .map((q) => {
+            const supName =
+              sups.find((s) => s.id === q.supplier_id)?.name || q.supplier_id;
+            const status =
+              statuses.find((s) => s.id === q.status_id)?.name || q.status_id;
+            const total = sqLines
+              .filter((l) => l.sq_id === q.id)
+              .reduce((sum, l) => sum + l.total, 0);
+            return `
+               <tr>
+                 <td class="fw-bold">${q.id}</td>
+                 <td>${q.rfq_id}</td>
+                 <td>${supName}</td>
+                 <td>${q.date}</td>
+                 <td class="fw-bold">$${total.toLocaleString()}</td>
+                 <td><span class="badge ${q.status_id === "SSQ03" ? "bg-success" : q.status_id === "SSQ04" ? "bg-danger" : "bg-warning text-dark"}">${status}</span></td>
+                 <td>
+                   <button class="btn btn-sm btn-outline-primary btn-view" data-id="${q.id}"><i class="fa-solid fa-folder-open"></i></button>
+                   <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${q.id}"><i class="fa-solid fa-trash"></i></button>
+                 </td>
+               </tr>
+             `;
+          })
+          .join("");
+
+        document
+          .querySelectorAll(".btn-view")
+          .forEach((btn) =>
+            btn.addEventListener("click", () => viewSQ(btn.dataset.id)),
+          );
+        document
+          .querySelectorAll(".btn-delete")
+          .forEach((btn) =>
+            btn.addEventListener("click", () => deleteSQ(btn.dataset.id)),
+          );
+      };
+
+      const viewSQ = (id) => {
+        const q = window.Store.find("buying_supplier_quotation", id);
+        if (!q) return;
+
+        form.id.value = q.id;
+        form.rfq_id.value = q.rfq_id;
+        form.supplier_id.value = q.supplier_id;
+        form.date.value = q.date;
+        form.status_id.value = q.status_id;
+        form.remarks.value = q.remarks || "";
+
+        linesTableBody.innerHTML = "";
+        window.Store.getTable("buying_supplier_quotation_line")
+          .filter((l) => l.sq_id === id)
+          .forEach((l) => addLine(l));
+
+        if (q.status_id === "SSQ03" || q.status_id === "SSQ04") {
+          readOnlyOverlay.style.display = "block";
+          form.querySelector('button[type="submit"]').disabled = true;
+        } else {
+          readOnlyOverlay.style.display = "none";
+          form.querySelector('button[type="submit"]').disabled = false;
+        }
+
+        // Bonus: Accepted logic
+        if (q.status_id === "SSQ03") {
+          btnAccept.classList.remove("d-none");
+        } else {
+          btnAccept.classList.add("d-none");
+        }
+
+        document.getElementById("sqStatusBadge").textContent = statuses
+          .find((s) => s.id === q.status_id)
+          ?.name.toUpperCase();
+        document.getElementById("btnGenId").disabled = true;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+
+      const deleteSQ = (id) => {
+        if (confirm("Delete this quotation?")) {
+          window.Store.delete("buying_supplier_quotation", id);
+          renderRegistry();
+        }
+      };
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (linesTableBody.rows.length === 0) {
+          alert("Add at least one item line.");
+          return;
+        }
+        if (!form.checkValidity()) {
+          form.classList.add("was-validated");
+          return;
+        }
+
+        const data = Object.fromEntries(new FormData(form).entries());
+        const lines = Array.from(linesTableBody.rows).map((row) => {
+          const qty = parseFloat(row.querySelector(".item-qty").value);
+          const price = parseFloat(row.querySelector(".item-price").value);
+          return {
+            id: "BSQL" + Date.now() + Math.random().toString(36).substr(2, 3),
+            sq_id: data.id,
+            item_id: row.querySelector(".item-select").value,
+            item_name:
+              row.querySelector(".item-select").selectedOptions[0].text,
+            qty: qty,
+            price: price,
+            total: qty * price,
+          };
+        });
+
+        const existing = window.Store.find(
+          "buying_supplier_quotation",
+          data.id,
+        );
+        if (existing) {
+          window.Store.update("buying_supplier_quotation", data.id, data);
+          const db = window.Store.getDB();
+          db.buying_supplier_quotation_line =
+            db.buying_supplier_quotation_line.filter(
+              (l) => l.sq_id !== data.id,
+            );
+          db.buying_supplier_quotation_line.push(...lines);
+          window.Store.saveDB(db);
+        } else {
+          window.Store.create("buying_supplier_quotation", data);
+          lines.forEach((l) =>
+            window.Store.create("buying_supplier_quotation_line", l),
+          );
+        }
+
+        alert("Quotation saved.");
+        resetPage();
+      });
+
+      const resetPage = () => {
+        form.reset();
+        linesTableBody.innerHTML = "";
+        readOnlyOverlay.style.display = "none";
+        form.querySelector('button[type="submit"]').disabled = false;
+        document.getElementById("btnGenId").disabled = false;
+        document.getElementById("sqStatusBadge").textContent = "PENDING";
+        document.getElementById("sqDate").valueAsDate = new Date();
+        btnAccept.classList.add("d-none");
+        renderRegistry();
+      };
+
+      btnAccept.addEventListener("click", () => {
+        const id = form.id.value;
+        const q = window.Store.find("buying_supplier_quotation", id);
+        const lines = window.Store.getTable(
+          "buying_supplier_quotation_line",
+        ).filter((l) => l.sq_id === id);
+        const total = lines.reduce((sum, l) => sum + l.total, 0);
+
+        const poId = window.IDGenerator.generate("buying_purchase_order");
+        window.Store.create("buying_purchase_order", {
+          id: poId,
+          sq_id: id,
+          supplier_id: q.supplier_id,
+          date: new Date().toISOString().split("T")[0],
+          status_id: "SPO01",
+          total_amount: total,
+          remarks: "Auto-generated from Quotation " + id,
+        });
+
+        lines.forEach((l) => {
+          window.Store.create("buying_purchase_order_line", {
+            id: "BPOL" + Date.now() + Math.random().toString(36).substr(2, 3),
+            po_id: poId,
+            item_id: l.item_id,
+            item_name: l.item_name,
+            qty: l.qty,
+            price: l.price,
+            total: l.total,
+          });
+        });
+
+        alert("Draft Purchase Order " + poId + " has been created!");
+        window.location.href = "purchase_order_form.html?id=" + poId;
+      });
+
+      document.getElementById("btnGenId").addEventListener("click", () => {
+        document.getElementById("sq_id").value = window.IDGenerator.generate(
+          "buying_supplier_quotation",
+        );
+      });
+      document
+        .getElementById("btnAddLine")
+        .addEventListener("click", () => addLine());
+      document
+        .getElementById("btnReset")
+        .addEventListener("click", resetPage);
+
+      resetPage();
+      addLine();
+
+      // Logout handler
+      document
+        .querySelector('a[href="../login.html"]')
+        ?.addEventListener("click", (e) => {
+          e.preventDefault();
+          AuthGuard.logout();
+        });
+    });
+  </script>
+</body>
+
+</html>

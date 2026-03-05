@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service System - Issue Report</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --sidebar-bg: #1e293b;
+      --bg-color: #badcfd;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --card-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: var(--bg-color);
+      color: var(--text-dark);
+    }
+
+    /* ===== LAYOUT ===== */
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR FRAME ===== */
+    .sidebar-frame {
+      width: 280px;
+      height: 100vh;
+      border: none;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand {
+      padding: 2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 0;
+    }
+
+    .brand .logo {
+      width: 35px;
+      height: 35px;
+      background: white;
+      color: var(--primary-color);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      font-weight: 800;
+      border: none;
+    }
+
+    .brand .t1 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.1;
+      color: #fff;
+    }
+
+    .brand .t2 {
+      margin-top: 3px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 600;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 1rem 0;
+      flex: 1;
+    }
+
+    .nav .section-label {
+      padding: 1.5rem 1.5rem 0.5rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .nav a {
+      padding: 0.8rem 1.5rem;
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      border-radius: 0;
+      border: none;
+      font-size: 14px;
+      position: relative;
+      overflow: hidden;
+      transform: translateX(0);
+    }
+
+    .nav a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .nav a:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(4px);
+      padding-left: 2rem;
+    }
+
+    .nav a:hover::before {
+      left: 100%;
+    }
+
+    .nav a:active {
+      transform: translateX(2px) scale(0.98);
+      transition: all 0.1s ease;
+    }
+
+    .nav a.active {
+      color: white;
+      background: var(--primary-color);
+      border-radius: 0 50px 50px 0;
+      margin-right: 1.5rem;
+      transform: translateX(0);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      animation: activeSlide 0.4s ease;
+    }
+
+    .nav a.active::before {
+      display: none;
+    }
+
+    @keyframes activeSlide {
+      0% {
+        transform: translateX(-20px);
+        opacity: 0.7;
+      }
+      50% {
+        transform: translateX(8px);
+      }
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Icon animations */
+    .nav .icon {
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      background: transparent;
+      display: inline;
+      place-items: unset;
+      color: inherit;
+      font-size: 14px;
+      transition: transform 0.3s ease;
+    }
+
+    .nav a:hover .icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .nav a.active .icon {
+      transform: scale(1.1);
+      animation: iconBounce 0.6s ease;
+    }
+
+    @keyframes iconBounce {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.2); }
+      50% { transform: scale(0.95); }
+      75% { transform: scale(1.05); }
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    @keyframes slideOut {
+      0% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(-20px);
+        opacity: 0.5;
+      }
+    }
+
+    .signout {
+      padding: 10px 0 0;
+      border-top: none;
+      margin-top: auto;
+    }
+
+    .signout a {
+      padding: 0.8rem 1.5rem;
+      color: #ff6b6b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 0;
+    }
+
+    .signout a:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ff6b6b;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main {
+      padding: 2.5rem;
+      overflow-y: auto;
+      max-height: 100vh;
+      margin-left: 0;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .title h1 {
+      font-weight: 700;
+      color: var(--text-dark);
+      font-size: 1.75rem;
+      margin: 0 0 0.25rem;
+      letter-spacing: 0;
+    }
+
+    .title p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* ===== PANELS ===== */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+      border: none;
+    }
+
+    .panel h2 {
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+    }
+
+    .panel .sub {
+      margin: 0 0 12px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .chart-wrap {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    canvas {
+      width: 240px;
+      height: 240px;
+      border-radius: 16px;
+      border: 1px solid rgba(30, 41, 59, 0.12);
+      background: #fff;
+    }
+
+    .legend {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 240px;
+      overflow: auto;
+      padding-right: 6px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid rgba(30, 41, 59, 0.10);
+      border-radius: 14px;
+      background: #f8fafc;
+    }
+
+    .legend-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .swatch { width: 12px; height: 12px; border-radius: 4px; border: 1px solid rgba(2,6,23,.10); }
+    .legend-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-dark);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 240px;
+    }
+    .legend-count { font-size: 12px; font-weight: 800; color: var(--text-dark); white-space: nowrap; }
+
+    /* ===== BAR SECTIONS ===== */
+    .bar-section {
+      margin: 24px 0 10px;
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+      border: none;
+    }
+
+    .bar-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dark);
+    }
+
+    .bar-title span { font-size: 22px; }
+
+    .bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bar-label {
+      width: 200px;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-dark);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .bar-fill-bg {
+      flex: 1;
+      height: 30px;
+      background: #eaf1ff;
+      border-radius: 40px;
+      overflow: hidden;
+      border: 1px solid rgba(37,99,235,0.25);
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--primary-color);
+      width: 0%;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-right: 12px;
+      color: white;
+      font-weight: 800;
+      font-size: 12px;
+      transition: width 0.2s;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .bar-count {
+      min-width: 90px;
+      text-align: right;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    /* ===== TABLE ===== */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(30,41,59,0.12);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .data-table th {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+      color: white;
+      padding: 12px 10px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 2px solid var(--primary-hover);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(30,41,59,0.10);
+      color: var(--text-dark);
+      vertical-align: middle;
+    }
+
+    .data-table td:nth-child(1) {
+      font-weight: 800;
+      text-align: center;
+      background: #eff6ff;
+      color: var(--primary-color);
+      font-size: 11px;
+    }
+
+    .data-table tr:nth-child(even) td:nth-child(1) {
+      background: #dbeafe;
+    }
+
+    .data-table tr:hover td {
+      border-color: rgba(37,99,235,0.35);
+      background: rgba(37,99,235,0.04);
+    }
+
+    /* ===== ACTIONS ===== */
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 10px rgba(0,0,0,.08);
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .btn-primary { background: var(--primary-color); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-soft { background: #eff6ff; color: var(--primary-color); border: 1px solid rgba(37,99,235,.25); }
+    .btn-soft:hover { background: #dbeafe; }
+
+    /* little pill badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 11px;
+      border: 1px solid rgba(30,41,59,.12);
+      background: #f8fafc;
+      white-space: nowrap;
+    }
+    .badge.ok { background: #ecfdf5; border-color: rgba(16,185,129,.25); color: #047857; }
+    .badge.warn { background: #fff7ed; border-color: rgba(249,115,22,.25); color: #9a3412; }
+    .badge.off { background: #fef2f2; border-color: rgba(239,68,68,.25); color: #b91c1c; }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; }
+      .main { max-height: none; }
+      .grid { grid-template-columns: 1fr; }
+      .chart-wrap { grid-template-columns: 1fr; }
+      canvas { width: 100%; height: auto; max-height: 280px; }
+      .bar-label { width: 140px; }
+      .actions { justify-content: flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <iframe src="sidebar.html" class="sidebar-frame" frameborder="0"></iframe>
+
+    <main class="main" id="main-content">
+      <!-- REPORT: ISSUE -->
+      <section class="view active" id="view-report-issue">
+        <div class="topbar">
+          <div class="title">
+            <h1>⚠ Issue Report</h1>
+            <p>Summary + full list of Issues</p>
+          </div>
+          <div class="actions">
+            <a class="btn btn-soft" href="issue-standalone.html">⚠ Back to Issue</a>
+            <a class="btn btn-soft" href="dashboard-standalone.html">⌂ Dashboard</a>
+          </div>
+        </div>
+
+        <div class="grid">
+          <section class="panel">
+            <h2>Issue Status</h2>
+            <p class="sub">issue statuses</p>
+            <div class="chart-wrap">
+              <canvas id="issueStatusPie" width="240" height="240"></canvas>
+              <div class="legend" id="issueStatusLegend"></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>Issue Type</h2>
+            <p class="sub">issue types</p>
+            <div class="chart-wrap">
+              <canvas id="issueTypePie" width="240" height="240"></canvas>
+              <div class="legend" id="issueTypeLegend"></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="bar-section">
+          <div class="bar-title"><span>📊</span> Issue Status Summary</div>
+          <div class="bar-container" id="reportIssueStatusBars"></div>
+        </div>
+
+        <div class="bar-section">
+          <div class="bar-title"><span>📋</span> All Issues</div>
+          <div class="table-container" id="reportIssueTable"></div>
+          <div class="actions" style="margin-top: 16px; justify-content: center;">
+            <button class="btn btn-primary" onclick="printActiveTables()">🖨 Print Reports</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Sample issue data (replace with actual data)
+    let issues = [
+      { issue_id: "SI0001", issue_no: "SI0001", customer_id: "SC0001", issue_type: "Equipment Failure", status: "Open", status_name: "Open", reported_date: "2026-01-30 9:00:00", priority: "High", description: "Installation failed - equipment won't power on" },
+      { issue_id: "SI0002", issue_no: "SI0002", customer_id: "SC0002", issue_type: "Power Outage", status: "In Progress", status_name: "In Progress", reported_date: "2026-01-30 9:15:00", priority: "Medium", description: "Maintenance schedule not being triggered" },
+      { issue_id: "SI0003", issue_no: "SI0003", customer_id: "SC0003", issue_type: "Water Leak", status: "Resolved", status_name: "Resolved", reported_date: "2026-01-30 9:30:00", priority: "Low", description: "Repair request - compressor making loud noise" },
+      { issue_id: "SI0004", issue_no: "SI0004", customer_id: "SC0004", issue_type: "Equipment Failure", status: "Closed", status_name: "Pending", reported_date: "2026-01-30 9:45:00", priority: "High", description: "Consultation needed for energy efficiency upgrade" },
+      { issue_id: "SI0005", issue_no: "SI0005", customer_id: "SC0005", issue_type: "Power Outage", status: "Open", status_name: "On Hold", reported_date: "2026-01-30 10:00:00", priority: "Critical", description: "Upgrading of existing HVAC unit - missing parts" },
+      { issue_id: "SI0006", issue_no: "SI0006", customer_id: "SC0006", issue_type: "Equipment Failure", status: "Open", status_name: "Assigned", reported_date: "2026-01-30 10:15:00", priority: "Medium", description: "Troubleshooting required due to repeated system errors" },
+      { issue_id: "SI0007", issue_no: "SI0007", customer_id: "SC0007", issue_type: "Water Leak", status: "In Progress", status_name: "Reopened", reported_date: "2026-01-30 10:30:00", priority: "High", description: "Configuration update needed for newly installed software" },
+      { issue_id: "SI0008", issue_no: "SI0008", customer_id: "SC0008", issue_type: "Power Outage", status: "Resolved", status_name: "Escalated", reported_date: "2026-01-30 10:45:00", priority: "Low", description: "Network issue causing intermittent connectivity loss" },
+      { issue_id: "SI0009", issue_no: "SI0009", customer_id: "SC0009", issue_type: "Equipment Failure", status: "Open", status_name: "Waiting for User", reported_date: "2026-01-30 11:00:00", priority: "Medium", description: "Software bug affecting report generation feature" },
+      { issue_id: "SI0010", issue_no: "SI0010", customer_id: "SC0010", issue_type: "Water Leak", status: "Closed", status_name: "Waiting for Vendor", reported_date: "2026-01-30 11:15:00", priority: "Low", description: "Hardware failure detected in primary server unit" },
+      { issue_id: "SI0011", issue_no: "SI0011", customer_id: "SC0011", issue_type: "Power Outage", status: "In Progress", status_name: "Under Review", reported_date: "2026-01-30 11:30:00", priority: "High", description: "Data backup process failed during scheduled run" },
+      { issue_id: "SI0012", issue_no: "SI0012", customer_id: "SC0012", issue_type: "Equipment Failure", status: "Open", status_name: "Scheduled", reported_date: "2026-01-30 11:45:00", priority: "Critical", description: "Data recovery requested for accidentally deleted files" },
+      { issue_id: "SI0013", issue_no: "SI0013", customer_id: "SC0013", issue_type: "Water Leak", status: "Resolved", status_name: "Deferred", reported_date: "2026-01-30 12:00:00", priority: "Medium", description: "Security incident reported due to unauthorized access attempt" },
+      { issue_id: "SI0014", issue_no: "SI0014", customer_id: "SC0014", issue_type: "Power Outage", status: "Closed", status_name: "Cancelled", reported_date: "2026-01-30 12:15:00", priority: "Low", description: "Performance issue observed during high system usage" },
+      { issue_id: "SI0015", issue_no: "SI0015", customer_id: "SC0015", issue_type: "Equipment Failure", status: "Open", status_name: "Closed", reported_date: "2026-01-30 12:30:00", priority: "High", description: "Account access issue reported by user unable to log in" },
+      { issue_id: "SI0016", issue_no: "SI0016", customer_id: "SC0016", issue_type: "Water Leak", status: "In Progress", status_name: "Completed", reported_date: "2026-01-30 12:45:00", priority: "Medium", description: "System downtime experienced during scheduled operations" },
+      { issue_id: "SI0017", issue_no: "SI0017", customer_id: "SC0017", issue_type: "Power Outage", status: "Resolved", status_name: "Approved", reported_date: "2026-01-30 13:00:00", priority: "Low", description: "User training requested for new system features" },
+      { issue_id: "SI0018", issue_no: "SI0018", customer_id: "SC0018", issue_type: "Equipment Failure", status: "Closed", status_name: "Rejected", reported_date: "2026-01-30 13:15:00", priority: "Medium", description: "License management issue due to expired software license" },
+      { issue_id: "SI0019", issue_no: "SI0019", customer_id: "SC0019", issue_type: "Water Leak", status: "Open", status_name: "Testing", reported_date: "2026-01-30 13:30:00", priority: "High", description: "System audit requested to meet compliance requirements" },
+      { issue_id: "SI0020", issue_no: "SI0020", customer_id: "SC0020", issue_type: "Power Outage", status: "In Progress", status_name: "Monitoring", reported_date: "2026-01-30 13:45:00", priority: "Critical", description: "Decommissioning planned for outdated system equipment" }
+    ];
+
+    // Helper functions
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    function escapeHtml(s) { return String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m]); }
+
+    function groupCount(arr, key) {
+      const m = new Map();
+      arr.forEach(x => {
+        const k = (x[key] ?? "Unknown").toString();
+        m.set(k, (m.get(k) || 0) + 1);
+      });
+      return [...m.entries()].sort((a,b)=>b[1]-a[1]);
+    }
+
+    function makeTable(containerId, columns, rows) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      const thead = columns.map(c => `<th>${c.label}</th>`).join("");
+      const tbody = rows.map((r, idx) => {
+        const tds = columns.map(c => {
+          let v = r[c.key];
+          if (c.render) v = c.render(r);
+          return `<td>${v ?? ""}</td>`;
+        }).join("");
+        return `<tr>${tds}</tr>`;
+      }).join("");
+
+      el.innerHTML = `
+        <table class="data-table">
+          <thead><tr>${thead}</tr></thead>
+          <tbody>${tbody}</tbody>
+        </table>
+      `;
+    }
+
+    function makeBars(containerId, pairs, total) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = pairs.map(([name, count]) => {
+        const pct = total ? Math.round((count / total) * 100) : 0;
+        return `
+          <div class="bar-row">
+            <div class="bar-label">${name}</div>
+            <div class="bar-fill-bg">
+              <div class="bar-fill" style="width:${pct}%;">${pct}%</div>
+            </div>
+            <div class="bar-count">${count}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function drawPie(canvasId, legendId, pairs) {
+      const canvas = document.getElementById(canvasId);
+      const legend = document.getElementById(legendId);
+      if (!canvas || !legend) return;
+
+      const ctx = canvas.getContext("2d");
+      const total = pairs.reduce((s, [,v]) => s + v, 0) || 1;
+
+      const colors = [
+        "#2563eb","#0ea5e9","#10b981","#f59e0b","#ef4444",
+        "#8b5cf6","#14b8a6","#f97316","#64748b","#22c55e"
+      ];
+
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+
+      const cx = canvas.width/2, cy = canvas.height/2;
+      const r = Math.min(cx,cy) - 8;
+      let start = -Math.PI/2;
+
+      legend.innerHTML = "";
+      pairs.forEach(([name, value], i) => {
+        const frac = value / total;
+        const end = start + frac * Math.PI * 2;
+        const col = colors[i % colors.length];
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, start, end);
+        ctx.closePath();
+        ctx.fillStyle = col;
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(30,41,59,0.10)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        const item = document.createElement("div");
+        item.className = "legend-item";
+        item.innerHTML = `
+          <div class="legend-left">
+            <span class="swatch" style="background:${col}"></span>
+            <div class="legend-name">${name}</div>
+          </div>
+          <div class="legend-count">${value}</div>
+        `;
+        legend.appendChild(item);
+
+        start = end;
+      });
+    }
+
+    function statusBadge(status) {
+      const s = (status || "").toLowerCase();
+      if (s === "resolved" || s === "closed") return `<span class="badge ok">● ${status}</span>`;
+      if (s === "in progress") return `<span class="badge warn">● In Progress</span>`;
+      return `<span class="badge off">● Open</span>`;
+    }
+
+    function priorityBadge(priority) {
+      const p = (priority || "").toLowerCase();
+      if (p === "critical") return `<span class="badge off">● Critical</span>`;
+      if (p === "high") return `<span class="badge warn">● High</span>`;
+      if (p === "medium") return `<span class="badge ok">● Medium</span>`;
+      return `<span class="badge ok">● Low</span>`;
+    }
+
+    function printActiveTables() {
+      window.print();
+    }
+
+    // Navigation functionality
+    function initNav() {
+      const nav = document.getElementById('nav');
+      if (!nav) return;
+
+      nav.addEventListener('click', e => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        
+        // Add ripple effect
+        createRippleEffect(a, e);
+        
+        // Handle navigation
+        if (a.href.includes('.html')) {
+          // External link - just add visual feedback
+          setTimeout(() => {
+            window.location.href = a.href;
+          }, 200);
+        }
+      });
+
+      // Add hover sound effect (visual feedback)
+      nav.addEventListener('mouseenter', e => {
+        const a = e.target.closest('a');
+        if (a && !a.classList.contains('active')) {
+          a.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        }
+      }, true);
+    }
+
+    function createRippleEffect(element, event) {
+      const ripple = document.createElement('span');
+      const rect = element.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = event.clientX - rect.left - size / 2;
+      const y = event.clientY - rect.top - size / 2;
+      
+      ripple.style.cssText = `
+        position: absolute;
+        width: ${size}px;
+        height: ${size}px;
+        left: ${x}px;
+        top: ${y}px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: scale(0);
+        animation: ripple 0.6s ease-out;
+        pointer-events: none;
+      `;
+      
+      element.style.position = 'relative';
+      element.style.overflow = 'hidden';
+      element.appendChild(ripple);
+      
+      setTimeout(() => {
+        ripple.remove();
+      }, 600);
+    }
+
+    // Initialize report
+    document.addEventListener('DOMContentLoaded', function() {
+      // Status distribution
+      const statusPairs = groupCount(issues, 'status');
+      drawPie('issueStatusPie', 'issueStatusLegend', statusPairs);
+      makeBars('reportIssueStatusBars', statusPairs, issues.length);
+
+      // Type distribution
+      const typePairs = groupCount(issues, 'issue_type');
+      drawPie('issueTypePie', 'issueTypeLegend', typePairs);
+
+      // Main table
+      makeTable('reportIssueTable', [
+        {key: 'issue_id', label: 'Issue ID'},
+        {key: 'issue_no', label: 'Issue No.'},
+        {key: 'customer_id', label: 'Customer ID'},
+        {key: 'issue_type', label: 'Issue Type'},
+        {key: 'status', label: 'Status', render: r => statusBadge(r.status)},
+        {key: 'reported_date', label: 'Reported Date'},
+        {key: 'description', label: 'Description'},
+        {key: 'status_name', label: 'Status Name'}
+      ], issues);
+      
+      // Initialize navigation
+      initNav();
+    });
+  </script>
+</body>
+</html>

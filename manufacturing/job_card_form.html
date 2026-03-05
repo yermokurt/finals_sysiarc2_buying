@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Card - Manufacturing</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../universal.css" />
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --primary-hover: #1d4ed8;
+        --sidebar-bg: #1e293b;
+        --bg-color: #badcfd;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+        --card-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: var(--bg-color);
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      .sidebar {
+        width: 280px;
+        background: var(--sidebar-bg);
+        height: 100vh;
+        position: fixed;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+      }
+
+      .sidebar-nav-wrap {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .logo-area {
+        padding: 2rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .logo-icon {
+        width: 35px;
+        height: 35px;
+        background: white;
+        color: var(--primary-color);
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-size: 1rem;
+      }
+
+      .nav-group-label {
+        padding: 1.5rem 1.5rem 0.5rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(255, 255, 255, 0.4);
+        font-weight: 700;
+      }
+
+      .nav-link {
+        padding: 0.8rem 1.5rem;
+        color: rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 500;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+
+      .nav-link:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .nav-link.active {
+        color: white;
+        background: var(--primary-color);
+        border-radius: 0 50px 50px 0;
+        margin-right: 1.5rem;
+      }
+
+      .main-content {
+        margin-left: 280px;
+        padding: 2.5rem;
+        min-height: 100vh;
+      }
+
+      .header-section {
+        margin-bottom: 2.5rem;
+      }
+
+      .header-section h2 {
+        font-weight: 700;
+        color: var(--text-dark);
+        font-size: 1.75rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .content-section {
+        background: white;
+        border-radius: 24px;
+        padding: 2.5rem;
+        box-shadow: var(--card-shadow);
+        margin-top: 1.5rem;
+      }
+
+      .content-section h2 {
+        font-weight: 700;
+        color: var(--text-dark);
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .form-section-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 1.5rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e2e8f0;
+      }
+      .form-section-title:first-of-type { margin-top: 0; }
+      .module-form .form-label { font-weight: 600; color: var(--text-dark); }
+      .module-form .form-control:focus, .module-form .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.15);
+      }
+      .module-form .btn { min-width: 100px; }
+      .module-form .form-actions { margin-top: 1.5rem; gap: 0.5rem; }
+      .invalid-feedback { font-size: 0.875rem; }
+    </style>
+  </head>
+  <body>
+    <nav class="sidebar">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fa-solid fa-industry"></i></div>
+        <div>
+          <h6 class="mb-0 fw-bold">IT3B Inc.</h6>
+          <small class="text-white-50">Manufacturing</small>
+        </div>
+      </div>
+
+      <div class="sidebar-nav-wrap">
+        <div class="py-4">
+          <div class="nav-group-label">Core Dashboard</div>
+          <a href="manufacturing.html" class="nav-link">
+            <i class="fa-solid fa-gauge-high"></i> Overview
+          </a>
+
+          <div class="nav-group-label">Master Data</div>
+          <a href="item_master_form.html" class="nav-link">
+            <i class="fa-solid fa-boxes-stacked"></i> Item Master
+          </a>
+          <a href="bom_form.html" class="nav-link">
+            <i class="fa-solid fa-list-check"></i> BOMs
+          </a>
+          <a href="operations_form.html" class="nav-link">
+            <i class="fa-solid fa-gears"></i> Operations
+          </a>
+          <a href="workstation_form.html" class="nav-link">
+            <i class="fa-solid fa-warehouse"></i> Workstation
+          </a>
+
+          <div class="nav-group-label">Operations</div>
+          <a href="production_planning_form.html" class="nav-link">
+            <i class="fa-solid fa-calendar-days"></i> Production Planning
+          </a>
+          <a href="work_order_form.html" class="nav-link">
+            <i class="fa-solid fa-file-lines"></i> Work Order
+          </a>
+          <a href="job_card_form.html" class="nav-link active">
+            <i class="fa-solid fa-ticket"></i> Job Card
+          </a>
+          <a href="stock_exchange_form.html" class="nav-link">
+            <i class="fa-solid fa-arrows-rotate"></i> Stock Exchange
+          </a>
+          <a href="stock_transfer_form.html" class="nav-link">
+            <i class="fa-solid fa-truck-fast"></i> Stock Transfer
+          </a>
+          <a href="manufacturing_entry_form.html" class="nav-link">
+            <i class="fa-solid fa-industry"></i> Manufacturing Entry
+          </a>
+
+          <div style="padding-top: 10px">
+            <a href="../login.html" class="nav-link text-danger">
+              <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <div class="header-section">
+        <h2>Job Card</h2>
+        <p class="text-muted">
+          Track actual production activity on the shop floor.
+        </p>
+      </div>
+
+      <section class="content-section">
+        <h2>Job Card Form</h2>
+        <p class="text-muted mb-3">Record operation-level production details.</p>
+        <form id="form-job-card" class="module-form" novalidate>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Job Card ID <span class="text-muted">(Auto-generated)</span></label>
+              <input type="text" class="form-control" id="jc_id" name="jc_id" readonly placeholder="JC-001">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Work Order</label>
+              <select class="form-select" id="jc_work_order" name="jc_work_order">
+                <option value="">Select Work Order</option>
+                <option value="WO-001">WO-001</option>
+                <option value="WO-002">WO-002</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Operation</label>
+              <select class="form-select" id="jc_operation" name="jc_operation">
+                <option value="">Select Operation</option>
+                <option value="OP-001">OP-001 - Cutting</option>
+                <option value="OP-002">OP-002 - Welding</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Assigned Operator</label>
+              <input type="text" class="form-control" id="jc_operator" name="jc_operator" placeholder="Operator name">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Start Time</label>
+              <input type="datetime-local" class="form-control" id="jc_start_time" name="jc_start_time">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">End Time</label>
+              <input type="datetime-local" class="form-control" id="jc_end_time" name="jc_end_time">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Actual Quantity Produced</label>
+              <input type="number" class="form-control" id="jc_actual_qty" name="jc_actual_qty" min="0" placeholder="0">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Rejected Quantity</label>
+              <input type="number" class="form-control" id="jc_rejected_qty" name="jc_rejected_qty" min="0" placeholder="0">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Status</label>
+              <select class="form-select" id="jc_status" name="jc_status">
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Remarks</label>
+              <textarea class="form-control" id="jc_remarks" name="jc_remarks" rows="2" placeholder="Remarks"></textarea>
+            </div>
+          </div>
+          <div class="form-actions d-flex flex-wrap gap-2 mt-4">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary">Update</button>
+            <button type="button" class="btn btn-danger" data-action="delete">Delete</button>
+            <button type="reset" class="btn btn-outline-secondary">Cancel</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      (function () {
+        var forms = document.querySelectorAll('.module-form');
+        forms.forEach(function (form) {
+          form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!form.checkValidity()) {
+              e.stopPropagation();
+              form.classList.add('was-validated');
+              return;
+            }
+            form.classList.add('was-validated');
+            console.log('Form submit:', form.id, new FormData(form));
+            alert('Form validated. Ready for backend integration.');
+          });
+
+          form.querySelectorAll('button[data-action="delete"]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              if (confirm('Are you sure you want to delete this record? This action cannot be undone.')) {
+                console.log('Delete requested for form:', form.id);
+                form.reset();
+                form.classList.remove('was-validated');
+                alert('Delete confirmed. Connect to backend to remove record.');
+              }
+            });
+          });
+        });
+
+        document.querySelectorAll('input[type="number"][min]').forEach(function (input) {
+          input.addEventListener('input', function () {
+            var min = parseFloat(this.getAttribute('min'));
+            if (this.value !== '' && parseFloat(this.value) < min) this.setCustomValidity('Value must be at least ' + min);
+            else this.setCustomValidity('');
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

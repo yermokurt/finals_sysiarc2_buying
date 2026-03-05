@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manufacturing Dashboard - IT3B Inc.</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../universal.css" />
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --primary-hover: #1d4ed8;
+        --sidebar-bg: #1e293b;
+        --bg-color: #badcfd;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+        --card-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: var(--bg-color);
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      /* Sidebar Styling */
+      .sidebar {
+        width: 280px;
+        background: var(--sidebar-bg);
+        height: 100vh;
+        position: fixed;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+      }
+
+      .sidebar-nav-wrap {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .logo-area {
+        padding: 2rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .logo-icon {
+        width: 35px;
+        height: 35px;
+        background: white;
+        color: var(--primary-color);
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-size: 1rem;
+      }
+
+      .nav-group-label {
+        padding: 1.5rem 1.5rem 0.5rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(255, 255, 255, 0.4);
+        font-weight: 700;
+      }
+
+      .nav-link {
+        padding: 0.8rem 1.5rem;
+        color: rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 500;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+
+      .nav-link:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .nav-link.active {
+        color: white;
+        background: var(--primary-color);
+        border-radius: 0 50px 50px 0;
+        margin-right: 1.5rem;
+      }
+
+      /* Main Content */
+      .main-content {
+        margin-left: 280px;
+        padding: 2.5rem;
+        min-height: 100vh;
+      }
+
+      .header-section {
+        margin-bottom: 2.5rem;
+      }
+
+      .header-section h2 {
+        font-weight: 700;
+        color: var(--text-dark);
+        font-size: 1.75rem;
+        margin-bottom: 0.25rem;
+      }
+
+      /* Info Cards */
+      .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        border: none;
+        box-shadow: var(--card-shadow);
+        transition: transform 0.3s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .stat-icon-bg {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .stat-title {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-value {
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: var(--text-dark);
+      }
+
+      /* Process Flow Visualization */
+      .flow-card {
+        background: white;
+        border-radius: 24px;
+        padding: 2.5rem;
+        box-shadow: var(--card-shadow);
+        border: none;
+        margin-top: 2.5rem;
+      }
+
+      .flow-title {
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 2rem;
+        font-size: 1.25rem;
+      }
+
+      .process-step {
+        background: #f8fafc;
+        border-radius: 20px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        border: 2px solid transparent;
+        height: 100%;
+      }
+
+      .process-step:hover {
+        background: white;
+        border-color: var(--primary-color);
+        transform: scale(1.05);
+        box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.1);
+      }
+
+      .step-icon-circle {
+        width: 60px;
+        height: 60px;
+        background: white;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 1.25rem;
+        font-size: 1.25rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+      }
+
+      .process-step:hover .step-icon-circle {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .step-name {
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+        color: var(--text-dark);
+      }
+
+      .step-tag {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      .flow-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #cbd5e1;
+        font-size: 1.5rem;
+      }
+
+      /* Manufacturing Lifecycle flowchart (reference layout) */
+      .lifecycle-diagram {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        max-width: 720px;
+        margin: 0 auto;
+      }
+
+      .lifecycle-row {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 2rem;
+        width: 100%;
+      }
+
+      .lifecycle-row.single { justify-content: center; }
+      .lifecycle-row.split-2 { justify-content: center; gap: 4rem; }
+
+      .lifecycle-connector-down {
+        width: 2px;
+        height: 28px;
+        background: linear-gradient(to bottom, #cbd5e1 60%, transparent);
+        margin: 0 auto;
+      }
+
+      .lifecycle-connector-split {
+        display: flex;
+        justify-content: center;
+        gap: 4rem;
+        width: 100%;
+        padding: 0 2rem;
+      }
+
+      .lifecycle-connector-split .line {
+        width: 2px;
+        height: 28px;
+        background: linear-gradient(to bottom, #cbd5e1 60%, transparent);
+      }
+
+      .lifecycle-connector-split .line:first-child { margin-right: auto; }
+      .lifecycle-connector-split .line:last-child { margin-left: auto; }
+
+      .lifecycle-node {
+        flex: 0 0 auto;
+      }
+
+      .lifecycle-node .process-step {
+        min-width: 140px;
+      }
+
+      .back-to-admin {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        margin: 0 1.5rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+      }
+
+      .back-to-admin:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+
+      /* Section anchors: scroll padding so content isn't under sidebar */
+      [id] {
+        scroll-margin-top: 1rem;
+      }
+
+      .content-section {
+        background: white;
+        border-radius: 24px;
+        padding: 2.5rem;
+        box-shadow: var(--card-shadow);
+        margin-top: 2.5rem;
+      }
+
+      .content-section h2 {
+        font-weight: 700;
+        color: var(--text-dark);
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      /* Module forms */
+      .form-section-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 1.5rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e2e8f0;
+      }
+      .form-section-title:first-of-type { margin-top: 0; }
+      .module-form .form-label { font-weight: 600; color: var(--text-dark); }
+      .module-form .form-control:focus, .module-form .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.15);
+      }
+      .module-form .btn { min-width: 100px; }
+      .module-form .form-actions { margin-top: 1.5rem; gap: 0.5rem; }
+      .invalid-feedback { font-size: 0.875rem; }
+      .table-bom-materials { font-size: 0.9rem; }
+      .table-bom-materials th { background: #f8fafc; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fa-solid fa-industry"></i></div>
+        <div>
+          <h6 class="mb-0 fw-bold">IT3B Inc.</h6>
+          <small class="text-white-50">Manufacturing</small>
+        </div>
+      </div>
+
+      <div class="sidebar-nav-wrap">
+        <div class="py-4">
+          <div class="nav-group-label">Core Dashboard</div>
+          <a href="manufacturing.html" class="nav-link active">
+            <i class="fa-solid fa-gauge-high"></i> Overview
+          </a>
+
+          <div class="nav-group-label">Master Data</div>
+          <a href="item_master_form.html" class="nav-link">
+            <i class="fa-solid fa-boxes-stacked"></i> Item Master
+          </a>
+          <a href="bom_form.html" class="nav-link">
+            <i class="fa-solid fa-list-check"></i> BOMs
+          </a>
+          <a href="operations_form.html" class="nav-link">
+            <i class="fa-solid fa-gears"></i> Operations
+          </a>
+          <a href="workstation_form.html" class="nav-link">
+            <i class="fa-solid fa-warehouse"></i> Workstation
+          </a>
+
+          <div class="nav-group-label">Operations</div>
+          <a href="production_planning_form.html" class="nav-link">
+            <i class="fa-solid fa-calendar-days"></i> Production Planning
+          </a>
+          <a href="work_order_form.html" class="nav-link">
+            <i class="fa-solid fa-file-lines"></i> Work Order
+          </a>
+          <a href="job_card_form.html" class="nav-link">
+            <i class="fa-solid fa-ticket"></i> Job Card
+          </a>
+          <a href="stock_exchange_form.html" class="nav-link">
+            <i class="fa-solid fa-arrows-rotate"></i> Stock Exchange
+          </a>
+          <a href="stock_transfer_form.html" class="nav-link">
+            <i class="fa-solid fa-truck-fast"></i> Stock Transfer
+          </a>
+          <a href="manufacturing_entry_form.html" class="nav-link">
+            <i class="fa-solid fa-industry"></i> Manufacturing Entry
+          </a>
+
+          <div style="padding-top: 10px">
+            <a href="../login.html" class="nav-link text-danger">
+              <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="header-section">
+        <h2>Manufacturing Module Dashboard</h2>
+        <p class="text-muted">
+          Welcome back, Production Manager. Here is your manufacturing status.
+        </p>
+      </div>
+
+      <!-- Overview Stats -->
+      <div class="row g-4">
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon-bg bg-primary bg-opacity-10 text-primary">
+              <i class="fa-solid fa-file-lines"></i>
+            </div>
+            <div class="stat-title">Active Work Orders</div>
+            <div class="stat-value">24</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon-bg bg-success bg-opacity-10 text-success">
+              <i class="fa-solid fa-box"></i>
+            </div>
+            <div class="stat-title">Production Output (Units)</div>
+            <div class="stat-value">1,847</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon-bg bg-warning bg-opacity-10 text-warning">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div class="stat-title">Quality Pass Rate</div>
+            <div class="stat-value">98.5%</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon-bg bg-danger bg-opacity-10 text-danger">
+              <i class="fa-solid fa-gear"></i>
+            </div>
+            <div class="stat-title">Machine Utilization</div>
+            <div class="stat-value">87%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lifecycle Flow (matches reference: Production Planning → Work Order → Job card / Stock Exchange → Stock Transfer / Manufacturing Entry) -->
+      <div class="flow-card">
+        <h5 class="flow-title">Manufacturing Lifecycle Navigation</h5>
+        <div class="lifecycle-diagram">
+          <!-- Row 1: Production Planning -->
+          <div class="lifecycle-row single">
+            <div class="lifecycle-node">
+              <a href="production_planning_form.html" class="process-step">
+                <div class="step-icon-circle text-primary">
+                  <i class="fa-solid fa-calendar-days"></i>
+                </div>
+                <div class="step-name">Production Planning</div>
+              </a>
+            </div>
+          </div>
+          <div class="lifecycle-connector-down"></div>
+          <!-- Row 2: Work Order -->
+          <div class="lifecycle-row single">
+            <div class="lifecycle-node">
+              <a href="work_order_form.html" class="process-step">
+                <div class="step-icon-circle text-success">
+                  <i class="fa-solid fa-file-lines"></i>
+                </div>
+                <div class="step-name">Work Order</div>
+              </a>
+            </div>
+          </div>
+          <div class="lifecycle-connector-split">
+            <div class="line"></div>
+            <div class="line"></div>
+          </div>
+          <!-- Row 3: Job card (left) | Stock Exchange (right) -->
+          <div class="lifecycle-row split-2">
+            <div class="lifecycle-node">
+              <a href="job_card_form.html" class="process-step">
+                <div class="step-icon-circle text-warning">
+                  <i class="fa-solid fa-ticket"></i>
+                </div>
+                <div class="step-name">Job card</div>
+              </a>
+            </div>
+            <div class="lifecycle-node">
+              <a href="stock_exchange_form.html" class="process-step">
+                <div class="step-icon-circle text-info">
+                  <i class="fa-solid fa-arrows-rotate"></i>
+                </div>
+                <div class="step-name">Stock Exchange</div>
+              </a>
+            </div>
+          </div>
+          <div class="lifecycle-connector-split">
+            <div class="line"></div>
+            <div class="line"></div>
+          </div>
+          <!-- Row 4: Stock Transfer (left) | Manufacturing Entry (right) -->
+          <div class="lifecycle-row split-2">
+            <div class="lifecycle-node">
+              <a href="stock_transfer_form.html" class="process-step">
+                <div class="step-icon-circle text-secondary">
+                  <i class="fa-solid fa-truck-fast"></i>
+                </div>
+                <div class="step-name">Stock Transfer</div>
+              </a>
+            </div>
+            <div class="lifecycle-node">
+              <a href="manufacturing_entry_form.html" class="process-step">
+                <div class="step-icon-circle text-danger">
+                  <i class="fa-solid fa-industry"></i>
+                </div>
+                <div class="step-name">Manufacturing Entry</div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      /* BOM Materials table: Add / Remove row */
+      (function () {
+        var tbody = document.getElementById('bom-materials-tbody');
+        var addBtn = document.getElementById('bom-add-row');
+        if (!tbody || !addBtn) return;
+
+        var rowTemplate = function () {
+          return '<tr class="bom-material-row">' +
+            '<td><select class="form-select form-select-sm" name="bom_raw_material[]"><option value="">Select Item</option><option value="RAW-001">RAW-001 - Steel Plate</option><option value="RAW-002">RAW-002 - Bolt M8</option></select></td>' +
+            '<td><input type="number" class="form-control form-control-sm" name="bom_qty[]" min="0" step="0.01" placeholder="0"></td>' +
+            '<td><select class="form-select form-select-sm" name="bom_uom[]"><option value="PCS">PCS</option><option value="KG">KG</option><option value="M">M</option></select></td>' +
+            '<td><input type="number" class="form-control form-control-sm" name="bom_scrap_pct[]" min="0" max="100" step="0.01" placeholder="0"></td>' +
+            '<td><input type="text" class="form-control form-control-sm" name="bom_remarks[]" placeholder="Remarks"></td>' +
+            '<td><button type="button" class="btn btn-sm btn-outline-danger bom-remove-row" title="Remove row"><i class="fa-solid fa-trash"></i></button></td></tr>';
+        };
+
+        addBtn.addEventListener('click', function () {
+          tbody.insertAdjacentHTML('beforeend', rowTemplate());
+          bindRemoveButtons();
+        });
+
+        function bindRemoveButtons() {
+          tbody.querySelectorAll('.bom-remove-row').forEach(function (btn) {
+            btn.onclick = function () {
+              var row = this.closest('tr');
+              if (tbody.querySelectorAll('tr').length <= 1) return;
+              row.remove();
+            };
+          });
+        }
+        bindRemoveButtons();
+      })();
+
+      /* Form validation and Delete confirmation */
+      (function () {
+        var forms = document.querySelectorAll('.module-form');
+        forms.forEach(function (form) {
+          form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!form.checkValidity()) {
+              e.stopPropagation();
+              form.classList.add('was-validated');
+              return;
+            }
+            form.classList.add('was-validated');
+            /* Backend: submit form data here (e.g. fetch POST) */
+            console.log('Form submit:', form.id, new FormData(form));
+            alert('Form validated. Ready for backend integration.');
+          });
+
+          form.querySelectorAll('button[data-action="delete"]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              if (confirm('Are you sure you want to delete this record? This action cannot be undone.')) {
+                /* Backend: delete by ID */
+                console.log('Delete requested for form:', form.id);
+                form.reset();
+                form.classList.remove('was-validated');
+                alert('Delete confirmed. Connect to backend to remove record.');
+              }
+            });
+          });
+        });
+
+        /* Numeric and date validation helpers */
+        document.querySelectorAll('input[type="number"][min]').forEach(function (input) {
+          input.addEventListener('input', function () {
+            var min = parseFloat(this.getAttribute('min'));
+            if (this.value !== '' && parseFloat(this.value) < min) this.setCustomValidity('Value must be at least ' + min);
+            else this.setCustomValidity('');
+          });
+        });
+        document.querySelectorAll('input[type="date"]').forEach(function (input) {
+          input.addEventListener('change', function () {
+            var form = this.closest('form');
+            var start = form.querySelector('[id*="start_date"], [id*="start_time"], [name*="start"]');
+            var end = form.querySelector('[id*="end_date"], [id*="end_time"], [name*="end"]');
+            if (start && end && start.value && end.value && new Date(end.value) < new Date(start.value)) {
+              end.setCustomValidity('End date must be after start date');
+            } else if (end) end.setCustomValidity('');
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

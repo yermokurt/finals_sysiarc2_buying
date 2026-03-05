@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Application - IT3B Inc.</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --sidebar-bg: #1e293b;
+        --bg-color: #badcfd;
+        --text-dark: #1e293b;
+        --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background-color: var(--bg-color);
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+      }
+      .sidebar { width: 280px; background: var(--sidebar-bg); height: 100vh; position: fixed; color: white; display: flex; flex-direction: column; z-index: 1000; }
+      .logo-area { padding: 2rem 1.5rem; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+      .logo-icon { width: 35px; height: 35px; background: white; color: var(--primary-color); border-radius: 8px; display: grid; place-items: center; font-size: 1rem; }
+      .nav-link { padding: 0.8rem 1.5rem; color: rgba(255, 255, 255, 0.6); display: flex; align-items: center; gap: 12px; font-weight: 500; transition: all 0.2s; text-decoration: none; }
+      .nav-link:hover { color: white; background: rgba(255, 255, 255, 0.05); }
+      .nav-link.active { color: white; background: var(--primary-color); border-radius: 0 50px 50px 0; margin-right: 1.5rem; }
+      
+      .main-content { margin-left: 280px; padding: 2.5rem; flex: 1; }
+      .form-card { background: white; border-radius: 24px; box-shadow: var(--card-shadow); border: none; overflow: hidden; margin-bottom: 2rem; }
+      .form-header { background: #f8fafc; padding: 2rem; border-bottom: 1px solid #e2e8f0; }
+      .form-body { padding: 2.5rem; }
+      
+      .section-divider { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-color); font-weight: 700; margin: 1.5rem 0; display: flex; align-items: center; gap: 10px; }
+      .section-divider::after { content: ""; flex: 1; height: 1px; background: #e2e8f0; }
+
+      .badge-applied { background-color: #6366f1; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+      .btn-view-action { color: var(--primary-color); border: 1px solid var(--primary-color); background: white; padding: 4px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; }
+      .btn-view-action:hover { background: var(--primary-color); color: white; }
+    </style>
+  </head>
+  <body>
+    <nav class="sidebar">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fa-solid fa-file-invoice"></i></div>
+        <div>
+          <h6 class="mb-0 fw-bold">IT3B Inc.</h6>
+          <small class="text-white-50">HR Management</small>
+        </div>
+      </div>
+      <div class="py-4">
+        <a href="hr_dashboard.html" class="nav-link"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+        <div class="px-3 mt-4 mb-2 small text-uppercase opacity-50 fw-bold">Talent Operations</div>
+        <a href="job_opening_form.html" class="nav-link"><i class="fa-solid fa-file-circle-plus"></i> Job Opening</a>
+        <a href="job_application_form.html" class="nav-link active"><i class="fa-solid fa-user-pen"></i> Job Application</a>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <div class="form-card">
+        <div class="form-header">
+          <h4 class="fw-bold mb-1">New Job Application</h4>
+          <p class="text-muted mb-0 small">Capture candidate details and link them to an active job opening.</p>
+        </div>
+        <div class="form-body">
+          <form id="jobAppForm" class="needs-validation" novalidate>
+            <div class="section-divider">Candidate Information</div>
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="form-label">Applicant Full Name</label>
+                <input type="text" id="appName" class="form-control" placeholder="e.g. Jane Smith" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="appEmail" class="form-control" placeholder="jane.smith@example.com" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" id="appPhone" class="form-control" placeholder="+63 9XX XXX XXXX" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">LinkedIn Profile URL</label>
+                <input type="url" id="appLinkedIn" class="form-control" placeholder="https://linkedin.com/in/username" />
+              </div>
+            </div>
+
+            <div class="section-divider">Application Details</div>
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="form-label">Applied For</label>
+                <select id="appliedJob" class="form-select" required>
+                  <option value="" selected disabled>Select Job Opening...</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Application Source</label>
+                <select id="appSource" class="form-select" required>
+                  <option>LinkedIn</option>
+                  <option>Company Website</option>
+                  <option>Referral</option>
+                  <option>Job Board</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Resume / CV Upload (.pdf only)</label>
+                <input type="file" id="appResume" class="form-control" accept="application/pdf" required />
+                <div class="form-text text-danger" id="fileError" style="display:none;">File too large! Please use a PDF under 1MB for this demo.</div>
+              </div>
+            </div>
+
+            <div class="mt-5 d-flex justify-content-end gap-3">
+              <button type="reset" class="btn btn-light px-4 py-2 fw-bold" style="border-radius: 12px">Reset</button>
+              <button type="submit" id="submitBtn" class="btn btn-primary px-5 py-2 fw-bold" style="border-radius: 12px">Submit Application</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-body">
+          <h5 class="fw-bold mb-1">Recent Job Applications</h5>
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="bg-light">
+                <tr class="small text-uppercase fw-bold text-muted">
+                  <th class="py-3">Applicant Name</th>
+                  <th class="py-3">Position Applied</th>
+                  <th class="py-3">Contact Details</th>
+                  <th class="py-3">Status</th>
+                  <th class="py-3 text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="modal fade" id="viewAppModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+          <div class="modal-header border-0 pt-4 px-4">
+            <h5 class="fw-bold mb-0">Candidate Profile</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4" id="appModalBody"></div>
+          <div class="modal-footer border-0 pb-4 px-4">
+            <button type="button" class="btn btn-light fw-bold w-100" style="border-radius: 12px" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      let applicationDb = JSON.parse(localStorage.getItem('hr_applications')) || [];
+      let jobOpeningDb = JSON.parse(localStorage.getItem('hr_job_openings')) || [];
+      const appModal = new bootstrap.Modal(document.getElementById('viewAppModal'));
+
+      window.onload = () => {
+        syncJobDropdown();
+        renderAppTable();
+      };
+
+      function syncJobDropdown() {
+        const jobSelect = document.getElementById("appliedJob");
+        jobOpeningDb.forEach(job => {
+          let opt = document.createElement("option");
+          opt.value = job.title;
+          opt.textContent = job.title;
+          jobSelect.appendChild(opt);
+        });
+      }
+
+      function renderAppTable() {
+        const tableBody = document.getElementById("tableBody");
+        tableBody.innerHTML = "";
+        applicationDb.forEach((app, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td class="fw-medium">${app.name}</td>
+            <td>${app.job}</td>
+            <td class="small text-muted">${app.email}<br>${app.phone}</td>
+            <td><span class="badge-applied">New Applied</span></td>
+            <td class="text-end">
+              <button class="btn btn-view-action" onclick="viewApplication(${index})">View</button>
+            </td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      // Logic to trigger the PDF download
+      function triggerDownload(index) {
+        const app = applicationDb[index];
+        if (!app.resumeData) {
+            alert("No PDF file found.");
+            return;
+        }
+
+        const link = document.createElement('a');
+        link.href = app.resumeData;
+        link.download = `${app.name}_Resume.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      function viewApplication(index) {
+        const app = applicationDb[index];
+        const modalBody = document.getElementById("appModalBody");
+
+        modalBody.innerHTML = `
+          <div class="text-center mb-4">
+            <div class="bg-primary text-white rounded-circle d-inline-grid place-items-center mb-3" style="width: 60px; height: 60px; font-size: 1.5rem; display: grid; margin: 0 auto;">
+              ${app.name.charAt(0)}
+            </div>
+            <h4 class="fw-bold text-dark mb-1">${app.name}</h4>
+            <p class="text-primary fw-semibold mb-0">${app.job}</p>
+          </div>
+
+          <div class="p-3 bg-light rounded-4 border mb-3 text-center">
+            <p class="small text-muted mb-2">Application Received: <b>${app.timestamp}</b></p>
+            <p class="small text-muted mb-0">Source: <b>${app.source}</b></p>
+          </div>
+
+          <div class="mt-4">
+            <button onclick="triggerDownload(${index})" class="btn btn-primary w-100 py-3 fw-bold" style="border-radius: 12px;">
+              <i class="fa-solid fa-file-pdf me-2"></i> Download Resume (.pdf)
+            </button>
+          </div>
+        `;
+        appModal.show();
+      }
+
+      document.getElementById("jobAppForm").onsubmit = function(e) {
+        e.preventDefault();
+        const form = this;
+        const submitBtn = document.getElementById("submitBtn");
+        const fileInput = document.getElementById("appResume");
+        const file = fileInput.files[0];
+
+        if (form.checkValidity()) {
+          // Check for size (Max 1MB to avoid LocalStorage quota issues)
+          if (file.size > 1048576) { 
+            document.getElementById("fileError").style.display = "block";
+            return;
+          }
+
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = "Processing...";
+
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            const newApp = {
+              name: document.getElementById("appName").value,
+              email: document.getElementById("appEmail").value,
+              phone: document.getElementById("appPhone").value,
+              linkedin: document.getElementById("appLinkedIn").value,
+              job: document.getElementById("appliedJob").value,
+              source: document.getElementById("appSource").value,
+              timestamp: new Date().toLocaleDateString(),
+              resumeData: event.target.result // PDF saved as Base64
+            };
+
+            applicationDb.push(newApp);
+            
+            try {
+              localStorage.setItem('hr_applications', JSON.stringify(applicationDb));
+              renderAppTable();
+              alert("Application successfully submitted!");
+              form.reset();
+              form.classList.remove("was-validated");
+            } catch (err) {
+              alert("System Storage Full. Please clear previous applications.");
+            } finally {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = "Submit Application";
+            }
+          };
+
+          reader.readAsDataURL(file);
+        } else {
+          form.classList.add("was-validated");
+        }
+      };
+    </script>
+  </body>
+</html>

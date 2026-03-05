@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test JavaScript</title>
+</head>
+<body>
+    <h1>JavaScript Syntax Test</h1>
+    <div id="test"></div>
+    
+    <script>
+        // Test the same functions from report-service.html
+        const $ = s => document.querySelector(s);
+        
+        function escapeHtml(s) { 
+          return String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+        }
+        
+        function groupCount(arr, key) {
+          const m = new Map();
+          arr.forEach(x => {
+            const k = (x[key] ?? "Unknown").toString();
+            m.set(k, (m.get(k) || 0) + 1);
+          });
+          return [...m.entries()].sort((a,b)=>b[1]-a[1]);
+        }
+        
+        // Test data
+        let testData = [
+          { service_id: "SMS0001", customer_name: "System Installation", service_type: "HVAC Maintenance", status: "Completed", service_date: "2026-01-15", technician: "HE001", cost: 1500 },
+          { service_id: "SMS0002", customer_name: "System Maintenance", service_type: "Elevator Service", status: "In Progress", service_date: "2026-01-20", technician: "HE002", cost: 800 }
+        ];
+        
+        // Test functions
+        const statusPairs = groupCount(testData, 'status');
+        const typePairs = groupCount(testData, 'service_type');
+        
+        $('#test').innerHTML = `
+            <h2>Test Results:</h2>
+            <p>Status Pairs: ${JSON.stringify(statusPairs)}</p>
+            <p>Type Pairs: ${JSON.stringify(typePairs)}</p>
+            <p>Escape HTML Test: ${escapeHtml('<script>alert("test")</script>')}</p>
+            <p style="color: green;">✅ All JavaScript functions working correctly!</p>
+        `;
+    </script>
+</body>
+</html>

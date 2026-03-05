@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Material Request - IT3B Inc.</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../universal.css" />
+  <style>
+    .line-item-row:hover {
+      background: #f1f5f9;
+    }
+
+    .read-only-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.5);
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="sidebar">
+    <div class="logo-area">
+      <div class="logo-icon"><i class="fa-solid fa-cube"></i></div>
+      <div>
+        <h6 class="mb-0 fw-bold">IT3B Inc.</h6>
+        <small class="text-white-50">Enterprise Edition</small>
+      </div>
+    </div>
+    <div class="py-4">
+      <a href="buying.html" class="nav-link"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+      <div class="px-3 mt-4 mb-2 small text-uppercase opacity-50 fw-bold">
+        Analytics
+      </div>
+      <a href="buying_reports.html" class="nav-link"><i class="fa-solid fa-chart-bar"></i> Reports</a>
+      <div class="px-3 mt-4 mb-2 small text-uppercase opacity-50 fw-bold">
+        Procurement Cycle
+      </div>
+      <a href="material_request_form.html" class="nav-link active"><i class="fa-solid fa-file-invoice"></i> Material
+        Request</a>
+      <a href="rfq_form.html" class="nav-link"><i class="fa-solid fa-magnifying-glass-dollar"></i> RFQ</a>
+      <a href="supplier_quotation_form.html" class="nav-link"><i class="fa-solid fa-hand-holding-dollar"></i>
+        Quotation</a>
+      <a href="purchase_order_form.html" class="nav-link"><i class="fa-solid fa-file-signature"></i> Purchase Order</a>
+      <div style="padding-top: 100px">
+        <a href="../login.html" class="nav-link text-danger"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="row g-4">
+      <!-- Main Form Section -->
+      <div class="col-12">
+        <div class="form-card position-relative">
+          <div id="readOnlyOverlay" class="read-only-overlay"></div>
+          <div class="form-header d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="fw-bold mb-1">Material Request</h4>
+              <p class="text-muted mb-0 small">
+                Internal Requisition (Header & Lines)
+              </p>
+            </div>
+            <div class="text-end">
+              <span id="mrStatusBadge" class="badge bg-secondary p-2 px-3">DRAFT</span>
+            </div>
+          </div>
+          <div class="form-body p-4">
+            <form id="mrForm" class="needs-validation" novalidate>
+              <!-- Header Info -->
+              <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                  <label class="form-label">MR ID</label>
+                  <div class="input-group">
+                    <input type="text" id="mr_id" name="id" class="form-control" placeholder="BMR0001" required
+                      readonly />
+                    <button type="button" class="btn btn-outline-primary" id="btnGenId">
+                      Gen
+                    </button>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Requested By</label>
+                  <input type="text" name="employee_id" class="form-control" required />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Date</label>
+                  <input type="date" name="request_date" class="form-control" id="reqDate" required />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Workflow Status</label>
+                  <select name="status_id" id="statusSelect" class="form-select" required></select>
+                </div>
+              </div>
+
+              <!-- Line Items Table -->
+              <div class="card p-0 mb-4 overflow-hidden border">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center p-3">
+                  <h6 class="fw-bold mb-0">Item Lines</h6>
+                  <button type="button" class="btn btn-sm btn-premium" id="btnAddLine">
+                    <i class="fa-solid fa-plus me-1"></i> Add Item
+                  </button>
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-hover align-middle mb-0" id="linesTable">
+                    <thead class="bg-light small">
+                      <tr>
+                        <th style="width: 40%">Item Selection</th>
+                        <th style="width: 20%">Qty</th>
+                        <th style="width: 20%">UOM</th>
+                        <th style="width: 10%">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="linesTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Remarks</label>
+                <textarea name="remarks" class="form-control" rows="2"></textarea>
+              </div>
+
+              <div class="mt-4 d-flex justify-content-between gap-3">
+                <button type="button" class="btn btn-light" id="btnReset">
+                  New Request / Reset
+                </button>
+                <button type="submit" class="btn btn-primary px-5 py-2">
+                  Save Material Request
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registry List Section -->
+      <div class="col-12">
+        <div class="card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0">Recent Material Requests</h5>
+            <div class="d-flex gap-2">
+              <input type="text" id="tableSearch" class="form-control" placeholder="Search MRs..."
+                style="width: 250px" />
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>By</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="registryTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/id_generator.js"></script>
+  <script src="../js/auth_guard.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!window.Store) return;
+
+      const form = document.getElementById("mrForm");
+      const linesTableBody = document.getElementById("linesTableBody");
+      const registryTableBody = document.getElementById("registryTableBody");
+      const statusSelect = document.getElementById("statusSelect");
+      const searchInput = document.getElementById("tableSearch");
+      const readOnlyOverlay = document.getElementById("readOnlyOverlay");
+
+      // Populate Status
+      const statuses = window.Store.getTable("buying_mr_status");
+      statusSelect.innerHTML = statuses
+        .map((s) => `<option value="${s.id}">${s.name}</option>`)
+        .join("");
+
+      // Item Master Data for dropdowns
+      const items = window.Store.getTable("buying_items");
+
+      const addLine = (data = {}) => {
+        const rowId =
+          "row_" + Date.now() + Math.random().toString(36).substr(2, 5);
+        const row = document.createElement("tr");
+        row.id = rowId;
+        row.className = "line-item-row";
+        row.innerHTML = `
+            <td>
+              <select class="form-select item-select" required>
+                <option value="">Choose item...</option>
+                ${items.map((i) => `<option value="${i.id}" ${data.item_id === i.id ? "selected" : ""}>${i.name}</option>`).join("")}
+              </select>
+            </td>
+            <td><input type="number" class="form-control item-qty" min="1" value="${data.qty || 1}" required /></td>
+            <td><input type="text" class="form-control item-uom" value="${data.uom || "pcs"}" required /></td>
+            <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()"><i class="fa-solid fa-times"></i></button></td>
+          `;
+        linesTableBody.appendChild(row);
+      };
+
+      const renderRegistry = (filter = "") => {
+        const mrs = window.Store.getTable("buying_material_request");
+        const filtered = mrs.filter(
+          (m) =>
+            m.id.toLowerCase().includes(filter.toLowerCase()) ||
+            m.employee_id.toLowerCase().includes(filter.toLowerCase()),
+        );
+
+        registryTableBody.innerHTML = filtered
+          .map((m) => {
+            const status =
+              statuses.find((s) => s.id === m.status_id)?.name || m.status_id;
+            return `
+              <tr>
+                <td class="fw-bold">${m.id}</td>
+                <td>${m.employee_id}</td>
+                <td>${m.request_date}</td>
+                <td><span class="badge ${m.status_id === "SMR03" ? "bg-success" : m.status_id === "SMR05" ? "bg-dark" : "bg-primary"}">${status}</span></td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary btn-view" data-id="${m.id}"><i class="fa-solid fa-folder-open"></i></button>
+                  <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${m.id}"><i class="fa-solid fa-trash-can"></i></button>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        document
+          .querySelectorAll(".btn-view")
+          .forEach((btn) =>
+            btn.addEventListener("click", () => viewMR(btn.dataset.id)),
+          );
+        document
+          .querySelectorAll(".btn-delete")
+          .forEach((btn) =>
+            btn.addEventListener("click", () => deleteMR(btn.dataset.id)),
+          );
+      };
+
+      const viewMR = (id) => {
+        const m = window.Store.find("buying_material_request", id);
+        if (!m) return;
+
+        form.id.value = m.id;
+        form.employee_id.value = m.employee_id;
+        form.request_date.value = m.request_date;
+        form.status_id.value = m.status_id;
+        form.remarks.value = m.remarks || "";
+
+        // Render lines
+        linesTableBody.innerHTML = "";
+        const lines = window.Store.getTable(
+          "buying_material_request_line",
+        ).filter((l) => l.mr_id === id);
+        lines.forEach((l) => addLine(l));
+
+        // Workflow locking
+        if (m.status_id === "SMR05" || m.status_id === "SMR04") {
+          readOnlyOverlay.style.display = "block";
+          form.querySelector('button[type="submit"]').disabled = true;
+        } else {
+          readOnlyOverlay.style.display = "none";
+          form.querySelector('button[type="submit"]').disabled = false;
+        }
+
+        document.getElementById("mrStatusBadge").textContent =
+          statuses.find((s) => s.id === m.status_id)?.name.toUpperCase() ||
+          "DRAFT";
+        document.getElementById("btnGenId").disabled = true;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+
+      const deleteMR = (id) => {
+        if (confirm("Delete this MR and all its line items?")) {
+          window.Store.delete("buying_material_request", id);
+          renderRegistry();
+        }
+      };
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+          form.classList.add("was-validated");
+          return;
+        }
+
+        const data = Object.fromEntries(new FormData(form).entries());
+        const lineItems = Array.from(linesTableBody.rows).map((row) => ({
+          id: "BMRL" + Date.now() + Math.random().toString(36).substr(2, 4),
+          mr_id: data.id,
+          item_id: row.querySelector(".item-select").value,
+          item_name:
+            row.querySelector(".item-select").selectedOptions[0].text,
+          qty: parseFloat(row.querySelector(".item-qty").value),
+          uom: row.querySelector(".item-uom").value,
+        }));
+
+        const existing = window.Store.find(
+          "buying_material_request",
+          data.id,
+        );
+        if (existing) {
+          window.Store.update("buying_material_request", data.id, data);
+          // Simple replace lines strategy: delete old, add new
+          const db = window.Store.getDB();
+          db.buying_material_request_line =
+            db.buying_material_request_line.filter(
+              (l) => l.mr_id !== data.id,
+            );
+          db.buying_material_request_line.push(...lineItems);
+          window.Store.saveDB(db);
+        } else {
+          window.Store.create("buying_material_request", data);
+          lineItems.forEach((li) =>
+            window.Store.create("buying_material_request_line", li),
+          );
+        }
+
+        alert("Material Request saved successfully!");
+        resetPage();
+      });
+
+      const resetPage = () => {
+        form.reset();
+        linesTableBody.innerHTML = "";
+        readOnlyOverlay.style.display = "none";
+        form.querySelector('button[type="submit"]').disabled = false;
+        document.getElementById("btnGenId").disabled = false;
+        document.getElementById("mrStatusBadge").textContent = "DRAFT";
+        document.getElementById("reqDate").valueAsDate = new Date();
+        renderRegistry();
+      };
+
+      document.getElementById("btnGenId").addEventListener("click", () => {
+        document.getElementById("mr_id").value = window.IDGenerator.generate(
+          "buying_material_request",
+        );
+      });
+      document
+        .getElementById("btnAddLine")
+        .addEventListener("click", () => addLine());
+      document
+        .getElementById("btnReset")
+        .addEventListener("click", resetPage);
+      searchInput.addEventListener("input", (e) =>
+        renderRegistry(e.target.value),
+      );
+
+      // Initial setup
+      resetPage();
+      addLine(); // Start with one empty line
+
+      // Logout handler
+      document
+        .querySelector('a[href="../login.html"]')
+        ?.addEventListener("click", (e) => {
+          e.preventDefault();
+          AuthGuard.logout();
+        });
+    });
+  </script>
+</body>
+
+</html>

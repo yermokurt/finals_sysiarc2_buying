@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service System - Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --sidebar-bg: #1e293b;
+      --bg-color: #badcfd;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --card-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    html, body {
+    
+      height: 100%;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: var(--bg-color);
+      color: var(--text-dark);
+    }
+
+    /* ===== LAYOUT ===== */
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR FRAME ===== */
+    .sidebar-frame {
+      width: 280px;
+      height: 100vh;
+      border: none;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    /* ===== MAIN CONTENT (mapped to your HTML) ===== */
+    .main {
+      padding: 2.5rem;
+      overflow-y: auto;
+      max-height: 100vh;
+      margin-left: 0;
+      min-height: 100vh;
+    }
+
+    /* top header area */
+    .topbar {
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .title h1 {
+      font-weight: 700;
+      color: var(--text-dark);
+      font-size: 1.75rem;
+      margin: 0 0 0.25rem;
+      letter-spacing: 0;
+    }
+
+    .title p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* ===== CARDS (mapped) ===== */
+    .overview {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .mini-card {
+      background: white;
+      border-radius: 20px;
+      padding: 1.5rem;
+      border: none;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s;
+      width: 240px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .mini-card:hover { transform: translateY(-5px); }
+
+    .mini-ic {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(37, 99, 235, 0.12);
+      color: var(--primary-color);
+      font-weight: 900;
+    }
+
+    .mini-title {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--text-dark);
+      margin: 0;
+    }
+
+    .mini-sub {
+      margin: 2px 0 0;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* ===== PANELS / CHART CARDS ===== */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+      border: none;
+    }
+
+    .panel h2 {
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+    }
+
+    .panel .sub {
+      margin: 0 0 12px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .chart-wrap {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    canvas {
+      width: 240px;
+      height: 240px;
+      border-radius: 16px;
+      border: 1px solid rgba(30, 41, 59, 0.12);
+      background: #fff;
+    }
+
+    .legend {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 240px;
+      overflow: auto;
+      padding-right: 6px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid rgba(30, 41, 59, 0.10);
+      border-radius: 14px;
+      background: #f8fafc;
+    }
+
+    .legend-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .swatch { width: 12px; height: 12px; border-radius: 4px; border: 1px solid rgba(2,6,23,.10); }
+    .legend-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-dark);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 240px;
+    }
+    .legend-count { font-size: 12px; font-weight: 800; color: var(--text-dark); white-space: nowrap; }
+
+    /* ===== BAR SECTIONS ===== */
+    .bar-section {
+      margin: 24px 0 10px;
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+      border: none;
+    }
+
+    .bar-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dark);
+    }
+
+    .bar-title span { font-size: 22px; }
+
+    .bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bar-label {
+      width: 200px;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-dark);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .bar-fill-bg {
+      flex: 1;
+      height: 30px;
+      background: #eaf1ff;
+      border-radius: 40px;
+      overflow: hidden;
+      border: 1px solid rgba(37,99,235,0.25);
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--primary-color);
+      width: 0%;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-right: 12px;
+      color: white;
+      font-weight: 800;
+      font-size: 12px;
+      transition: width 0.2s;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .bar-count {
+      min-width: 90px;
+      text-align: right;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .bar-summary {
+      margin-top: 16px;
+      padding: 12px;
+      background: #eff6ff;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+      border: 1px solid rgba(37,99,235,0.25);
+    }
+
+    /* ===== ACTIONS (added) ===== */
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 10px rgba(0,0,0,.08);
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .btn-primary { background: var(--primary-color); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-soft { background: #eff6ff; color: var(--primary-color); border: 1px solid rgba(37,99,235,.25); }
+    .btn-soft:hover { background: #dbeafe; }
+
+    /* ===== LIFECYCLE SECTION ===== */
+    .lifecycle-section {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 18px;
+      border: none;
+    }
+
+    .lifecycle-header {
+      margin-bottom: 2rem;
+    }
+
+    .lifecycle-header h2 {
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lifecycle-header .sub {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .lifecycle-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      overflow-x: auto;
+      padding: 1rem 0;
+    }
+
+    .lifecycle-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 120px;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .lifecycle-step:hover {
+      transform: translateY(-4px);
+    }
+
+    .lifecycle-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 40px;
+      right: -20px;
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+      border-radius: 1px;
+    }
+
+    .lifecycle-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 12px;
+      position: relative;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .lifecycle-step:hover .lifecycle-icon {
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .lifecycle-step.completed .lifecycle-icon {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+    }
+
+    .lifecycle-step.active .lifecycle-icon {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+      color: white;
+      animation: pulse 2s infinite;
+    }
+
+    .lifecycle-step.pending .lifecycle-icon {
+      background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+      color: var(--text-muted);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .lifecycle-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .lifecycle-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .lifecycle-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ef4444;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border: 2px solid white;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; }
+      .main { max-height: none; }
+      .grid { grid-template-columns: 1fr; }
+      .chart-wrap { grid-template-columns: 1fr; }
+      canvas { width: 100%; height: auto; max-height: 280px; }
+      .bar-label { width: 140px; }
+      .actions { justify-content: flex-start; }
+      
+      /* Lifecycle responsive styles */
+      .lifecycle-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+      }
+      
+      .lifecycle-step {
+        flex-direction: row;
+        min-width: auto;
+        padding: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background: #f8fafc;
+      }
+      
+      .lifecycle-step:not(:last-child)::after {
+        display: none;
+      }
+      
+      .lifecycle-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+        margin-bottom: 0;
+        margin-right: 1rem;
+      }
+      
+      .lifecycle-title {
+        text-align: left;
+        margin-bottom: 4px;
+      }
+      
+      .lifecycle-desc {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <iframe src="sidebar.html" class="sidebar-frame" frameborder="0"></iframe>
+
+    <main class="main" id="main-content">
+      <!-- DASHBOARD (overview) -->
+      <section class="view active" id="view-dashboard">
+        <div class="topbar">
+          <div class="title">
+            <h1>Overview Dashboard</h1>
+            <p>All 20 records per module (Excel)</p>
+          </div>
+        </div>
+
+        <div class="overview" id="overviewCards"></div>
+
+        <!-- Service/Support Life Cycle -->
+        <div class="lifecycle-section">
+          <div class="lifecycle-header">
+            <h2>🔄 Service Lifecycle Progression</h2>
+            <p class="sub">Maintenance Service → Maintenance Visit → Issue → Warranty</p>
+          </div>
+          <div class="lifecycle-container" id="serviceLifecycle"></div>
+        </div>
+
+        <!-- Issue & Status Section -->
+        <div class="grid">
+          <section class="panel">
+            <h2>Issue & Status</h2>
+            <p class="sub">by status (rows)</p>
+            <div class="chart-wrap">
+              <canvas id="dashIssueStatusPie" width="240" height="240"></canvas>
+              <div class="legend" id="dashIssueStatusLegend"></div>
+            </div>
+          </section>
+
+          <!-- Issue & Type Section -->
+          <section class="panel">
+            <h2>Issue & Type</h2>
+            <p class="sub">by type (rows)</p>
+            <div class="chart-wrap">
+              <canvas id="dashIssueTypePie" width="240" height="240"></canvas>
+              <div class="legend" id="dashIssueTypeLegend"></div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Other Dashboard Sections -->
+        <div class="grid">
+          <section class="panel">
+            <h2>Maintenance Service • Status</h2>
+            <p class="sub">by status (rows)</p>
+            <div class="chart-wrap">
+              <canvas id="dashSvcStatusPie" width="240" height="240"></canvas>
+              <div class="legend" id="dashSvcStatusLegend"></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>Maintenance Service • Customer</h2>
+            <p class="sub">by Cust (rows)</p>
+            <div class="chart-wrap">
+              <canvas id="dashSvcTypePie" width="240" height="240"></canvas>
+              <div class="legend" id="dashSvcTypeLegend"></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="grid">
+          <section class="panel">
+            <h2>Maintenance Visit • Status</h2>
+            <p class="sub">by status (rows)</p>
+            <div class="chart-wrap">
+              <canvas id="dashVisitStatusPie" width="240" height="240"></canvas>
+              <div class="legend" id="dashVisitStatusLegend"></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>Maintenance Visit • Customer</h2>
+            <p class="sub">by Customer (rows)</p>
+            <div class="chart-wrap">
+              <canvas id="dashVisitTypePie" width="240" height="240"></canvas>
+              <div class="legend" id="dashVisitTypeLegend"></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="grid">
+          <section class="panel">
+            <h2>Warranty • Status</h2>
+            <p class="sub">by status (rows)</p>
+            <div class="chart-wrap">
+              <canvas id="dashWarrantyStatusPie" width="240" height="240"></canvas>
+              <div class="legend" id="dashWarrantyStatusLegend"></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>Warranty • Type</h2>
+            <p class="sub">by type (rows)</p>
+            <div class="chart-wrap">
+              <canvas id="dashWarrantyTypePie" width="240" height="240"></canvas>
+              <div class="legend" id="dashWarrantyTypeLegend"></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="bar-section">
+          <div class="bar-title"><span>📊</span> Status distribution (detailed)</div>
+          <div class="bar-container" id="dashStatusBars"></div>
+        </div>
+
+        <div class="bar-section">
+          <div class="bar-title"><span>📊</span> Customer List</div>
+          <div class="bar-container" id="dashTypeBars"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ---------- LOOKUP TABLES (from Excel) ----------
+    const SERVICE_TYPES = {
+      "SST0001": "System Installation", "SST0002": "System Maintenance", "SST0003": "System Repair",
+      "SST0004": "Ana Lopez", "SST0005": "Mark Villanueva", "SST0006": "Jessa Mendoza",
+      "SST0007": "Carlo Reyes", "SST0008": "Angelica Bautista", "SST0009": "Paul Fernandez",
+      "SST0010": "Kristine Navarro", "SST0011": "John Michael Aquino", "SST0012": "Rose Ann Castillo",
+      "SST0013": "Bryan Flores", "SST0014": "Michelle Gomez", "SST0015": "Daniel Perez",
+      "SST0016": "Katrina Salazar", "SST0017": "Patrick Lim", "SST0018": "Joy Marie Cruz",
+      "SST0019": "Anthony Valdez", "SST0020": "Lea Rodriguez"
+    };
+
+    const ISSUE_TYPES = {
+      "SIT0001": "Installation", "SIT0002": "Maintenance", "SIT0003": "Consultation",
+      "SIT0004": "Repair", "SIT0005": "Upgrade", "SIT0006": "Troubleshooting",
+      "SIT0007": "Configuration", "SIT0008": "Network Issue", "SIT0009": "Software Bug",
+      "SIT0010": "Hardware Failure", "SIT0011": "Data Backup", "SIT0012": "Data Recovery",
+      "SIT0013": "Security Incident", "SIT0014": "Performance Issue", "SIT0015": "Account Access Issue",
+      "SIT0016": "System Downtime", "SIT0017": "User Training", "SIT0018": "License Management",
+      "SIT0019": "System Audit", "SIT0020": "Decommissioning"
+    };
+
+    const WARRANTY_TYPES = {
+      "SWT0001": "Manufacturing Defect", "SWT0002": "Parts Failure", "SWT0003": "Labor Coverage",
+      "SWT0004": "Extended Coverage", "SWT0005": "Accidental Damage", "SWT0006": "Water Damage",
+      "SWT0007": "Electrical Failure", "SWT0008": "Mechanical Breakdown", "SWT0009": "Component Replacement",
+      "SWT0010": "Repair Service", "SWT0011": "Warranty Extension", "SWT0012": "Full Replacement",
+      "SWT0013": "Partial Refund", "SWT0014": "Full Refund", "SWT0015": "Credit Issuance",
+      "SWT0016": "Shipping Coverage", "SWT0017": "Installation Service", "SWT0018": "Technical Support",
+      "SWT0019": "Premium Protection", "SWT0020": "Item Swap"
+    };
+
+    const SERVICE_STATUS = {
+      "SSS0001": "Pending", "SSS0002": "Received", "SSS0003": "Verified",
+      "SSS0004": "Scheduled", "SSS0005": "Assigned", "SSS0006": "In Progress",
+      "SSS0007": "On Hold", "SSS0008": "Awaiting Parts", "SSS0009": "Awaiting Approval",
+      "SSS0010": "Rescheduled", "SSS0011": "Escalated", "SSS0012": "Under Review",
+      "SSS0013": "Testing", "SSS0014": "Completed", "SSS0015": "Closed",
+      "SSS0016": "Cancelled", "SSS0017": "Rejected", "SSS0018": "Failed",
+      "SSS0019": "Reopened", "SSS0020": "Archived"
+    };
+
+    const CLAIM_STATUS = {
+      "SCS0001": "Pending", "SCS0002": "Approved", "SCS0003": "Rejected",
+      "SCS0004": "In Progress", "SCS0005": "Completed", "SCS0006": "Cancelled",
+      "SCS0007": "On Hold", "SCS0008": "For Review", "SCS0009": "Under Verification",
+      "SCS0010": "Verified", "SCS0011": "Returned", "SCS0012": "Resubmitted",
+      "SCS0013": "Processing", "SCS0014": "Failed", "SCS0015": "Successful",
+      "SCS0016": "Archived", "SCS0017": "Expired", "SCS0018": "Draft",
+      "SCS0019": "Active", "SCS0020": "Inactive"
+    };
+
+    const ISSUE_STATUS = {
+      "SIS0001": "Open", "SIS0002": "In Progress", "SIS0003": "Resolved",
+      "SIS0004": "Pending", "SIS0005": "On Hold", "SIS0006": "Assigned",
+      "SIS0007": "Reopened", "SIS0008": "Escalated", "SIS0009": "Waiting for User",
+      "SIS0010": "Waiting for Vendor", "SIS0011": "Under Review", "SIS0012": "Scheduled",
+      "SIS0013": "Deferred", "SIS0014": "Cancelled", "SIS0015": "Closed",
+      "SIS0016": "Completed", "SIS0017": "Approved", "SIS0018": "Rejected",
+      "SIS0019": "Testing", "SIS0020": "Monitoring"
+    };
+
+    // ---------- RAW DATA (exact 20 rows each from Excel) ----------
+    const MAINTENANCE_SERVICES = [
+      {maintenance_service_id:"SMS0001", service_no:"SMS0001", customer_id:"SC0001", sales_order_id:"SSO0001", project_id:"PP0001", service_type_id:"SST0001", status_id:"SSS0001", created_at:"2026-01-30 9:00:00"},
+      {maintenance_service_id:"SMS0002", service_no:"SMS0002", customer_id:"SC0002", sales_order_id:"SSO0002", project_id:"PP0002", service_type_id:"SST0002", status_id:"SSS0002", created_at:"2026-01-30 9:15:00"},
+      {maintenance_service_id:"SMS0003", service_no:"SMS0003", customer_id:"SC0003", sales_order_id:"SSO0003", project_id:"PP0003", service_type_id:"SST0003", status_id:"SSS0003", created_at:"2026-01-30 9:30:00"},
+      {maintenance_service_id:"SMS0004", service_no:"SMS0004", customer_id:"SC0004", sales_order_id:"SSO0004", project_id:"PP0004", service_type_id:"SST0004", status_id:"SSS0004", created_at:"2026-01-30 9:45:00"},
+      {maintenance_service_id:"SMS0005", service_no:"SMS0005", customer_id:"SC0005", sales_order_id:"SSO0005", project_id:"PP0005", service_type_id:"SST0005", status_id:"SSS0005", created_at:"2026-01-30 10:00:00"},
+      {maintenance_service_id:"SMS0006", service_no:"SMS0006", customer_id:"SC0006", sales_order_id:"SSO0006", project_id:"PP0006", service_type_id:"SST0006", status_id:"SSS0006", created_at:"2026-01-30 10:15:00"},
+      {maintenance_service_id:"SMS0007", service_no:"SMS0007", customer_id:"SC0007", sales_order_id:"SSO0007", project_id:"PP0007", service_type_id:"SST0007", status_id:"SSS0007", created_at:"2026-01-30 10:30:00"},
+      {maintenance_service_id:"SMS0008", service_no:"SMS0008", customer_id:"SC0008", sales_order_id:"SSO0008", project_id:"PP0008", service_type_id:"SST0008", status_id:"SSS0008", created_at:"2026-01-30 10:45:00"},
+      {maintenance_service_id:"SMS0009", service_no:"SMS0009", customer_id:"SC0009", sales_order_id:"SSO0009", project_id:"PP0009", service_type_id:"SST0009", status_id:"SSS0009", created_at:"2026-01-30 11:00:00"},
+      {maintenance_service_id:"SMS0010", service_no:"SMS0010", customer_id:"SC0010", sales_order_id:"SSO0010", project_id:"PP0010", service_type_id:"SST0010", status_id:"SSS0010", created_at:"2026-01-30 11:15:00"},
+      {maintenance_service_id:"SMS0011", service_no:"SMS0011", customer_id:"SC0011", sales_order_id:"SSO0011", project_id:"PP0011", service_type_id:"SST0011", status_id:"SSS0011", created_at:"2026-01-30 11:30:00"},
+      {maintenance_service_id:"SMS0012", service_no:"SMS0012", customer_id:"SC0012", sales_order_id:"SSO0012", project_id:"PP0012", service_type_id:"SST0012", status_id:"SSS0012", created_at:"2026-01-30 11:45:00"},
+      {maintenance_service_id:"SMS0013", service_no:"SMS0013", customer_id:"SC0013", sales_order_id:"SSO0013", project_id:"PP0013", service_type_id:"SST0013", status_id:"SSS0013", created_at:"2026-01-30 12:00:00"},
+      {maintenance_service_id:"SMS0014", service_no:"SMS0014", customer_id:"SC0014", sales_order_id:"SSO0014", project_id:"PP0014", service_type_id:"SST0014", status_id:"SSS0014", created_at:"2026-01-30 12:15:00"},
+      {maintenance_service_id:"SMS0015", service_no:"SMS0015", customer_id:"SC0015", sales_order_id:"SSO0015", project_id:"PP0015", service_type_id:"SST0015", status_id:"SSS0015", created_at:"2026-01-30 12:30:00"},
+      {maintenance_service_id:"SMS0016", service_no:"SMS0016", customer_id:"SC0016", sales_order_id:"SSO0016", project_id:"PP0016", service_type_id:"SST0016", status_id:"SSS0016", created_at:"2026-01-30 12:45:00"},
+      {maintenance_service_id:"SMS0017", service_no:"SMS0017", customer_id:"SC0017", sales_order_id:"SSO0017", project_id:"PP0017", service_type_id:"SST0017", status_id:"SSS0017", created_at:"2026-01-30 13:00:00"},
+      {maintenance_service_id:"SMS0018", service_no:"SMS0018", customer_id:"SC0018", sales_order_id:"SSO0018", project_id:"PP0018", service_type_id:"SST0018", status_id:"SSS0018", created_at:"2026-01-30 13:15:00"},
+      {maintenance_service_id:"SMS0019", service_no:"SMS0019", customer_id:"SC0019", sales_order_id:"SSO0019", project_id:"PP0019", service_type_id:"SST0019", status_id:"SSS0019", created_at:"2026-01-30 13:30:00"},
+      {maintenance_service_id:"SMS0020", service_no:"SMS0020", customer_id:"SC0020", sales_order_id:"SSO0020", project_id:"PP0020", service_type_id:"SST0020", status_id:"SSS0020", created_at:"2026-01-30 13:45:00"}
+    ];
+
+    const MAINTENANCE_VISITS = [
+      {maintenance_visit_id:"SMV0001", maintenance_service_id:"SMS0001", visit_date:"2026-01-30", site_engineer_employee_id:"HE0001", notes:"Regular maintenance check", service_type_id:"SST0001", status_id:"SSS0001", created_at:"2026-01-30 9:00:00"},
+      {maintenance_visit_id:"SMV0002", maintenance_service_id:"SMS0002", visit_date:"2026-01-30", site_engineer_employee_id:"HE0002", notes:"Emergency repair", service_type_id:"SST0002", status_id:"SSS0002", created_at:"2026-01-30 9:15:00"},
+      {maintenance_visit_id:"SMV0003", maintenance_service_id:"SMS0003", visit_date:"2026-01-30", site_engineer_employee_id:"HE0003", notes:"Preventive maintenance", service_type_id:"SST0003", status_id:"SSS0003", created_at:"2026-01-30 9:30:00"},
+      {maintenance_visit_id:"SMV0004", maintenance_service_id:"SMS0004", visit_date:"2026-01-30", site_engineer_employee_id:"HE0004", notes:"System inspection", service_type_id:"SST0004", status_id:"SSS0004", created_at:"2026-01-30 9:45:00"},
+      {maintenance_visit_id:"SMV0005", maintenance_service_id:"SMS0005", visit_date:"2026-01-30", site_engineer_employee_id:"HE0005", notes:"Equipment calibration", service_type_id:"SST0005", status_id:"SSS0005", created_at:"2026-01-30 10:00:00"},
+      {maintenance_visit_id:"SMV0006", maintenance_service_id:"SMS0006", visit_date:"2026-01-30", site_engineer_employee_id:"HE0006", notes:"Software update", service_type_id:"SST0006", status_id:"SSS0006", created_at:"2026-01-30 10:15:00"},
+      {maintenance_visit_id:"SMV0007", maintenance_service_id:"SMS0007", visit_date:"2026-01-30", site_engineer_employee_id:"HE0007", notes:"Hardware replacement", service_type_id:"SST0007", status_id:"SSS0007", created_at:"2026-01-30 10:30:00"},
+      {maintenance_visit_id:"SMV0008", maintenance_service_id:"SMS0008", visit_date:"2026-01-30", site_engineer_employee_id:"HE0008", notes:"Network configuration", service_type_id:"SST0008", status_id:"SSS0008", created_at:"2026-01-30 10:45:00"},
+      {maintenance_visit_id:"SMV0009", maintenance_service_id:"SMS0009", visit_date:"2026-01-30", site_engineer_employee_id:"HE0009", notes:"Security audit", service_type_id:"SST0009", status_id:"SSS0009", created_at:"2026-01-30 11:00:00"},
+      {maintenance_visit_id:"SMV0010", maintenance_service_id:"SMS0010", visit_date:"2026-01-30", site_engineer_employee_id:"HE0010", notes:"Performance optimization", service_type_id:"SST0010", status_id:"SSS0010", created_at:"2026-01-30 11:15:00"},
+      {maintenance_visit_id:"SMV0011", maintenance_service_id:"SMS0011", visit_date:"2026-01-30", site_engineer_employee_id:"HE0011", notes:"Data backup verification", service_type_id:"SST0011", status_id:"SSS0011", created_at:"2026-01-30 11:30:00"},
+      {maintenance_visit_id:"SMV0012", maintenance_service_id:"SMS0012", visit_date:"2026-01-30", site_engineer_employee_id:"HE0012", notes:"System health check", service_type_id:"SST0012", status_id:"SSS0012", created_at:"2026-01-30 11:45:00"},
+      {maintenance_visit_id:"SMV0013", maintenance_service_id:"SMS0013", visit_date:"2026-01-30", site_engineer_employee_id:"HE0013", notes:"User training session", service_type_id:"SST0013", status_id:"SSS0013", created_at:"2026-01-30 12:00:00"},
+      {maintenance_visit_id:"SMV0014", maintenance_service_id:"SMS0014", visit_date:"2026-01-30", site_engineer_employee_id:"HE0014", notes:"Documentation update", service_type_id:"SST0014", status_id:"SSS0014", created_at:"2026-01-30 12:15:00"},
+      {maintenance_visit_id:"SMV0015", maintenance_service_id:"SMS0015", visit_date:"2026-01-30", site_engineer_employee_id:"HE0015", notes:"License renewal", service_type_id:"SST0015", status_id:"SSS0015", created_at:"2026-01-30 12:30:00"},
+      {maintenance_visit_id:"SMV0016", maintenance_service_id:"SMS0016", visit_date:"2026-01-30", site_engineer_employee_id:"HE0016", notes:"Compliance check", service_type_id:"SST0016", status_id:"SSS0016", created_at:"2026-01-30 12:45:00"},
+      {maintenance_visit_id:"SMV0017", maintenance_service_id:"SMS0017", visit_date:"2026-01-30", site_engineer_employee_id:"HE0017", notes:"Capacity planning", service_type_id:"SST0017", status_id:"SSS0017", created_at:"2026-01-30 13:00:00"},
+      {maintenance_visit_id:"SMV0018", maintenance_service_id:"SMS0018", visit_date:"2026-01-30", site_engineer_employee_id:"HE0018", notes:"Disaster recovery test", service_type_id:"SST0018", status_id:"SSS0018", created_at:"2026-01-30 13:15:00"},
+      {maintenance_visit_id:"SMV0019", maintenance_service_id:"SMS0019", visit_date:"2026-01-30", site_engineer_employee_id:"HE0019", notes:"Inventory audit", service_type_id:"SST0019", status_id:"SSS0019", created_at:"2026-01-30 13:30:00"},
+      {maintenance_visit_id:"SMV0020", maintenance_service_id:"SMS0020", visit_date:"2026-01-30", site_engineer_employee_id:"HE0020", notes:"Final inspection", service_type_id:"SST0020", status_id:"SSS0020", created_at:"2026-01-30 13:45:00"}
+    ];
+
+    let WARRANTY_CLAIMS = [
+      {warranty_claim_id:"SWC0001", customer_id:"SC0001", sales_invoice_id:"ASI0001", issue_type_id:"SIT0001", status:"Pending", claim_date:"2026-01-30 9:00:00"},
+      {warranty_claim_id:"SWC0002", customer_id:"SC0002", sales_invoice_id:"ASI0002", issue_type_id:"SIT0002", status:"Pending", claim_date:"2026-01-30 9:15:00"},
+      {warranty_claim_id:"SWC0003", customer_id:"SC0003", sales_invoice_id:"ASI0003", issue_type_id:"SIT0003", status:"Pending", claim_date:"2026-01-30 9:30:00"},
+      {warranty_claim_id:"SWC0004", customer_id:"SC0004", sales_invoice_id:"ASI0004", issue_type_id:"SIT0004", status:"Pending", claim_date:"2026-01-30 9:45:00"},
+      {warranty_claim_id:"SWC0005", customer_id:"SC0005", sales_invoice_id:"ASI0005", issue_type_id:"SIT0005", status:"Pending", claim_date:"2026-01-30 10:00:00"},
+      {warranty_claim_id:"SWC0006", customer_id:"SC0006", sales_invoice_id:"ASI0006", issue_type_id:"SIT0006", status:"Pending", claim_date:"2026-01-30 10:15:00"},
+      {warranty_claim_id:"SWC0007", customer_id:"SC0007", sales_invoice_id:"ASI0007", issue_type_id:"SIT0007", status:"Pending", claim_date:"2026-01-30 10:30:00"},
+      {warranty_claim_id:"SWC0008", customer_id:"SC0008", sales_invoice_id:"ASI0008", issue_type_id:"SIT0008", status:"Pending", claim_date:"2026-01-30 10:45:00"},
+      {warranty_claim_id:"SWC0009", customer_id:"SC0009", sales_invoice_id:"ASI0009", issue_type_id:"SIT0009", status:"Pending", claim_date:"2026-01-30 11:00:00"},
+      {warranty_claim_id:"SWC0010", customer_id:"SC0010", sales_invoice_id:"ASI0010", issue_type_id:"SIT0010", status:"Pending", claim_date:"2026-01-30 11:15:00"},
+      {warranty_claim_id:"SWC0011", customer_id:"SC0011", sales_invoice_id:"ASI0011", issue_type_id:"SIT0011", status:"Pending", claim_date:"2026-01-30 11:30:00"},
+      {warranty_claim_id:"SWC0012", customer_id:"SC0012", sales_invoice_id:"ASI0012", issue_type_id:"SIT0012", status:"Pending", claim_date:"2026-01-30 11:45:00"},
+      {warranty_claim_id:"SWC0013", customer_id:"SC0013", sales_invoice_id:"ASI0013", issue_type_id:"SIT0013", status:"Pending", claim_date:"2026-01-30 12:00:00"},
+      {warranty_claim_id:"SWC0014", customer_id:"SC0014", sales_invoice_id:"ASI0014", issue_type_id:"SIT0014", status:"Pending", claim_date:"2026-01-30 12:15:00"},
+      {warranty_claim_id:"SWC0015", customer_id:"SC0015", sales_invoice_id:"ASI0015", issue_type_id:"SIT0015", status:"Pending", claim_date:"2026-01-30 12:30:00"},
+      {warranty_claim_id:"SWC0016", customer_id:"SC0016", sales_invoice_id:"ASI0016", issue_type_id:"SIT0016", status:"Pending", claim_date:"2026-01-30 12:45:00"},
+      {warranty_claim_id:"SWC0017", customer_id:"SC0017", sales_invoice_id:"ASI0017", issue_type_id:"SIT0017", status:"Pending", claim_date:"2026-01-30 13:00:00"},
+      {warranty_claim_id:"SWC0018", customer_id:"SC0018", sales_invoice_id:"ASI0018", issue_type_id:"SIT0018", status:"Pending", claim_date:"2026-01-30 13:15:00"},
+      {warranty_claim_id:"SWC0019", customer_id:"SC0019", sales_invoice_id:"ASI0019", issue_type_id:"SIT0019", status:"Pending", claim_date:"2026-01-30 13:30:00"},
+      {warranty_claim_id:"SWC0020", customer_id:"SC0020", sales_invoice_id:"ASI0020", issue_type_id:"SIT0020", status:"Pending", claim_date:"2026-01-30 13:45:00"}
+    ];
+
+    const ISSUES = [
+      {issue_id:"SI0001", issue_no:"SI0001", customer_id:"SC0001", issue_type_id:"SIT0001", status_id:"SIS0001", reported_at:"2026-01-30 9:00:00", description:"Installation request for new system setup"},
+      {issue_id:"SI0002", issue_no:"SI0002", customer_id:"SC0002", issue_type_id:"SIT0002", status_id:"SIS0002", reported_at:"2026-01-30 9:15:00", description:"Maintenance request for system optimization"},
+      {issue_id:"SI0003", issue_no:"SI0003", customer_id:"SC0003", issue_type_id:"SIT0003", status_id:"SIS0003", reported_at:"2026-01-30 9:30:00", description:"Consultation for system configuration"},
+      {issue_id:"SI0004", issue_no:"SI0004", customer_id:"SC0004", issue_type_id:"SIT0004", status_id:"SIS0004", reported_at:"2026-01-30 9:45:00", description:"Repair request for hardware malfunction"},
+      {issue_id:"SI0005", issue_no:"SI0005", customer_id:"SC0005", issue_type_id:"SIT0005", status_id:"SIS0005", reported_at:"2026-01-30 10:00:00", description:"Upgrade request for system enhancement"},
+      {issue_id:"SI0006", issue_no:"SI0006", customer_id:"SC0006", issue_type_id:"SIT0006", status_id:"SIS0006", reported_at:"2026-01-30 10:15:00", description:"Troubleshooting for system connectivity"},
+      {issue_id:"SI0007", issue_no:"SI0007", customer_id:"SC0007", issue_type_id:"SIT0007", status_id:"SIS0007", reported_at:"2026-01-30 10:30:00", description:"Configuration issue with system settings"},
+      {issue_id:"SI0008", issue_no:"SI0008", customer_id:"SC0008", issue_type_id:"SIT0008", status_id:"SIS0008", reported_at:"2026-01-30 10:45:00", description:"Network issue affecting system performance"},
+      {issue_id:"SI0009", issue_no:"SI0009", customer_id:"SC0009", issue_type_id:"SIT0009", status_id:"SIS0009", reported_at:"2026-01-30 11:00:00", description:"Software bug causing system crashes"},
+      {issue_id:"SI0010", issue_no:"SI0010", customer_id:"SC0010", issue_type_id:"SIT0010", status_id:"SIS0010", reported_at:"2026-01-30 11:15:00", description:"Hardware failure requiring replacement"},
+      {issue_id:"SI0011", issue_no:"SI0011", customer_id:"SC0011", issue_type_id:"SIT0011", status_id:"SIS0011", reported_at:"2026-01-30 11:30:00", description:"Data backup process failure"},
+      {issue_id:"SI0012", issue_no:"SI0012", customer_id:"SC0012", issue_type_id:"SIT0012", status_id:"SIS0012", reported_at:"2026-01-30 11:45:00", description:"Data recovery from corrupted storage"},
+      {issue_id:"SI0013", issue_no:"SI0013", customer_id:"SC0013", issue_type_id:"SIT0013", status_id:"SIS0013", reported_at:"2026-01-30 12:00:00", description:"Security incident requiring investigation"},
+      {issue_id:"SI0014", issue_no:"SI0014", customer_id:"SC0014", issue_type_id:"SIT0014", status_id:"SIS0014", reported_at:"2026-01-30 12:15:00", description:"Performance issue slowing system response"},
+      {issue_id:"SI0015", issue_no:"SI0015", customer_id:"SC0015", issue_type_id:"SIT0015", status_id:"SIS0015", reported_at:"2026-01-30 12:30:00", description:"Account access issue for user authentication"},
+      {issue_id:"SI0016", issue_no:"SI0016", customer_id:"SC0016", issue_type_id:"SIT0016", status_id:"SIS0016", reported_at:"2026-01-30 12:45:00", description:"System downtime affecting business operations"},
+      {issue_id:"SI0017", issue_no:"SI0017", customer_id:"SC0017", issue_type_id:"SIT0017", status_id:"SIS0017", reported_at:"2026-01-30 13:00:00", description:"User training request for new system features"},
+      {issue_id:"SI0018", issue_no:"SI0018", customer_id:"SC0018", issue_type_id:"SIT0018", status_id:"SIS0018", reported_at:"2026-01-30 13:15:00", description:"License management for software compliance"},
+      {issue_id:"SI0019", issue_no:"SI0019", customer_id:"SC0019", issue_type_id:"SIT0019", status_id:"SIS0019", reported_at:"2026-01-30 13:30:00", description:"System audit for compliance verification"},
+      {issue_id:"SI0020", issue_no:"SI0020", customer_id:"SC0020", issue_type_id:"SIT0020", status_id:"SIS0020", reported_at:"2026-01-30 13:45:00", description:"Decommissioning of outdated system components"}
+    ];
+
+    // ---------- HELPER FUNCTIONS ----------
+    function groupCount(arr, key) {
+      const m = new Map();
+      arr.forEach(x => {
+        const k = (x[key] ?? "Unknown").toString();
+        m.set(k, (m.get(k) || 0) + 1);
+      });
+      return [...m.entries()].sort((a,b)=>b[1]-a[1]);
+    }
+
+    function countBy(arr, key, map) {
+      return arr.reduce((acc, item) => {
+        const raw = item[key];
+        const label = map[raw] || raw;
+        acc[label] = (acc[label] || 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    function computeDATA() {
+      return {
+        counts: {
+          maintenance_services: MAINTENANCE_SERVICES.length,
+          maintenance_visits: MAINTENANCE_VISITS.length,
+          issues: ISSUES.length,
+          warranties: WARRANTY_CLAIMS.length
+        },
+        status: {
+          maintenance_services: countBy(MAINTENANCE_SERVICES, 'status_id', SERVICE_STATUS),
+          maintenance_visits: countBy(MAINTENANCE_VISITS, 'status_id', SERVICE_STATUS),
+          issues: countBy(ISSUES, 'status_id', ISSUE_STATUS),
+          warranties: countBy(WARRANTY_CLAIMS, 'status', CLAIM_STATUS)
+        },
+        type: {
+          maintenance_services: countBy(MAINTENANCE_SERVICES, 'service_type_id', SERVICE_TYPES),
+          maintenance_visits: countBy(MAINTENANCE_VISITS, 'service_type_id', SERVICE_TYPES),
+          issues: countBy(ISSUES, 'issue_type_id', ISSUE_TYPES),
+          warranties: countBy(WARRANTY_CLAIMS, 'issue_type_id', ISSUE_TYPES)
+        }
+      };
+    }
+
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    function escapeHtml(s) { return String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m]); }
+    function fmtNum(x) { return Number(x).toLocaleString(); }
+    function makeColors(n) { let a=[]; for(let i=0;i<n;i++) a.push(`hsl(${i*360/Math.max(n,1)},70%,55%)`); return a; }
+
+    // Dashboard functionality
+    function drawPie(canvasSel, legendSel, obj, centerLabel='total') {
+      const canvas = $(canvasSel); const legend = $(legendSel);
+      if (!canvas||!legend) return [];
+      const entries = Object.entries(obj).map(([k,v])=>[k,Number(v)]).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1]);
+      const total = entries.reduce((s,e)=>s+e[1],0)||1;
+      const colors = makeColors(entries.length);
+      const ctx = canvas.getContext('2d'); const dpr = window.devicePixelRatio||1;
+      const w = canvas.clientWidth||240, h = canvas.clientHeight||240;
+      canvas.width = w*dpr; canvas.height = h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+      const cx = w/2, cy = h/2, r = Math.min(w,h)*0.4;
+      ctx.clearRect(0,0,w,h);
+      ctx.beginPath(); ctx.arc(cx,cy,r+18,0,2*Math.PI); ctx.fillStyle="rgba(15,23,42,.03)"; ctx.fill();
+      let start = -Math.PI/2;
+      entries.forEach(([name,val],i)=>{
+        const angle = (val/total)*2*Math.PI; const end = start+angle;
+        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,start,end); ctx.closePath();
+        ctx.fillStyle = colors[i]; ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,.78)"; ctx.lineWidth=2; ctx.stroke();
+        start = end;
+      });
+      ctx.beginPath(); ctx.arc(cx,cy,r*0.55,0,2*Math.PI); ctx.fillStyle="#fff"; ctx.fill();
+      ctx.strokeStyle = "rgba(226,232,240,1)"; ctx.lineWidth=1; ctx.stroke();
+      ctx.fillStyle = "rgba(15,23,42,.85)"; ctx.textAlign="center"; ctx.textBaseline="middle";
+      const canvasFontFamily = "Plus Jakarta Sans, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
+      ctx.font = `800 12px ${canvasFontFamily}`; ctx.fillText(String(centerLabel).toUpperCase(), cx, cy-10);
+      ctx.font = `900 18px ${canvasFontFamily}`; ctx.fillText(fmtNum(total), cx, cy+12);
+
+      legend.innerHTML = entries.map(([name,val],i)=>`
+        <div class="legend-item">
+          <div class="legend-left">
+            <span class="swatch" style="background:${colors[i]};"></span>
+            <span class="legend-name" title="${escapeHtml(name)}">${escapeHtml(name)}</span>
+          </div>
+          <div class="legend-count">${fmtNum(val)} • ${Math.round(val/total*100)}%</div>
+        </div>
+      `).join("");
+
+      return entries;
+    }
+
+    function renderStatusBars(containerSel, dataObj) {
+      const container = $(containerSel);
+      if (!container) return;
+      const entries = Object.entries(dataObj).map(([k,v])=>[k, Number(v)]).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1]);
+      const total = entries.reduce((s,e)=>s+e[1],0)||1;
+
+      let displayEntries = entries;
+      if (entries.length > 6) {
+        const top5 = entries.slice(0, 5);
+        const others = entries.slice(5);
+        const othersSum = others.reduce((s,e)=>s+e[1],0);
+        displayEntries = [...top5, ["Others", othersSum]];
+      }
+
+      container.innerHTML = displayEntries.map(([name,val])=>{
+        const pct = Math.round(val/total*100);
+        return `<div class="bar-row">
+          <span class="bar-label" title="${escapeHtml(name)}">${escapeHtml(name)}</span>
+          <div class="bar-fill-bg"><div class="bar-fill" style="width:${pct}%">${pct}%</div></div>
+          <span class="bar-count">${fmtNum(val)} (${pct}%)</span>
+        </div>`;
+      }).join('');
+
+      const summaryDiv = document.createElement('div');
+      summaryDiv.classList.add('bar-summary');
+      summaryDiv.innerHTML = `📊 Total: ${fmtNum(total)} items | Showing top ${Math.max(displayEntries.length-1, 0)} of ${entries.length} categories`;
+
+      const oldSummary = container.nextElementSibling;
+      if (oldSummary && oldSummary.classList && oldSummary.classList.contains('bar-summary')) oldSummary.remove();
+      container.parentNode.insertBefore(summaryDiv, container.nextSibling);
+    }
+
+    function renderTypeBars(containerSel, dataObj) {
+      const container = $(containerSel);
+      if (!container) return;
+      const entries = Object.entries(dataObj).map(([k,v])=>[k, Number(v)]).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1]);
+      container.innerHTML = entries.map(([name,val])=>{
+        return `<div class="bar-row">
+          <span class="bar-label" title="${escapeHtml(name)}">${escapeHtml(name)}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function renderServiceLifecycle() {
+      const container = $('#serviceLifecycle');
+      if (!container) return;
+
+      // Define the maintenance service lifecycle steps
+      const lifecycleSteps = [
+        {
+          id: 'maintenance-service',
+          title: 'Maintenance Service',
+          description: 'Schedule and manage maintenance services',
+          icon: '🔧',
+          status: 'completed',
+          count: 20
+        },
+        {
+          id: 'maintenance-visit',
+          title: 'Maintenance Visit',
+          description: 'Execute on-site maintenance work',
+          icon: '🚗',
+          status: 'active',
+          count: 15
+        },
+        {
+          id: 'issue-resolution',
+          title: 'Issue Resolution',
+          description: 'Track and resolve service issues',
+          icon: '🔍',
+          status: 'active',
+          count: 12
+        },
+        {
+          id: 'warranty-claim',
+          title: 'Warranty Claim',
+          description: 'Process warranty claims & replacements',
+          icon: '🛡️',
+          status: 'pending',
+          count: 8
+        }
+      ];
+
+      // Generate HTML for lifecycle steps
+      const lifecycleHTML = lifecycleSteps.map(step => `
+        <div class="lifecycle-step ${step.status}">
+          <div class="lifecycle-icon">
+            ${step.icon}
+            ${step.count > 0 ? `<div class="lifecycle-count">${step.count}</div>` : ''}
+          </div>
+          <div class="lifecycle-title">${step.title}</div>
+          <div class="lifecycle-desc">${step.description}</div>
+        </div>
+      `).join('');
+
+      container.innerHTML = lifecycleHTML;
+    }
+
+    function initDashboard() {
+      const DATA = computeDATA();
+
+      const overviewEl = $('#overviewCards');
+      if (overviewEl) {
+        overviewEl.innerHTML = `
+          <div class="mini-card"><div class="mini-ic">S</div><div><div class="mini-title">${fmtNum(DATA.counts.maintenance_services)}</div><div class="mini-sub">Maintenance Services</div></div></div>
+          <div class="mini-card"><div class="mini-ic">V</div><div><div class="mini-title">${fmtNum(DATA.counts.maintenance_visits)}</div><div class="mini-sub">Maintenance Visits</div></div></div>
+          <div class="mini-card"><div class="mini-ic">I</div><div><div class="mini-title">${fmtNum(DATA.counts.issues)}</div><div class="mini-sub">Issues</div></div></div>
+          <div class="mini-card"><div class="mini-ic">W</div><div><div class="mini-title">${fmtNum(DATA.counts.warranties)}</div><div class="mini-sub">Warranty Claims</div></div></div>
+        `;
+      }
+
+      // Service/Support Life Cycle
+      renderServiceLifecycle();
+
+      // Dashboard pies
+      drawPie('#dashIssueStatusPie','#dashIssueStatusLegend', DATA.status.issues, String(DATA.counts.issues));
+      drawPie('#dashIssueTypePie','#dashIssueTypeLegend', DATA.type.issues, String(DATA.counts.issues));
+
+      drawPie('#dashSvcStatusPie','#dashSvcStatusLegend', DATA.status.maintenance_services, String(DATA.counts.maintenance_services));
+      drawPie('#dashSvcTypePie','#dashSvcTypeLegend', DATA.type.maintenance_services, String(DATA.counts.maintenance_services));
+
+
+      drawPie('#dashVisitStatusPie','#dashVisitStatusLegend', DATA.status.maintenance_visits, String(DATA.counts.maintenance_visits));
+      drawPie('#dashVisitTypePie','#dashVisitTypeLegend', DATA.type.maintenance_visits, String(DATA.counts.maintenance_visits));
+
+      drawPie('#dashWarrantyStatusPie','#dashWarrantyStatusLegend', DATA.status.warranties, String(DATA.counts.warranties));
+      drawPie('#dashWarrantyTypePie','#dashWarrantyTypeLegend', DATA.type.warranties, String(DATA.counts.warranties));
+
+      // Bars
+      renderStatusBars('#dashStatusBars', DATA.status.maintenance_services);
+      renderTypeBars('#dashTypeBars', DATA.type.maintenance_services);
+    }
+
+    function initNav() {
+      const nav = $('#nav');
+      if (!nav) return;
+
+      nav.addEventListener('click', e => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        
+        // Only handle internal navigation links
+        if (!a.getAttribute('data-view') && !a.getAttribute('href')?.includes('.html')) return;
+        
+        // Add ripple effect
+        createRippleEffect(a, e);
+        
+        // Handle internal view switching
+        if (a.getAttribute('data-view')) {
+          e.preventDefault();
+          
+          // Remove active class with animation
+          const activeLinks = $$('.nav a.active');
+          activeLinks.forEach(link => {
+            link.classList.remove('active');
+            link.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+              link.style.animation = '';
+            }, 300);
+          });
+          
+          // Add active class with animation
+          setTimeout(() => {
+            a.classList.add('active');
+            a.style.animation = 'activeSlide 0.4s ease';
+            setTimeout(() => {
+              a.style.animation = '';
+            }, 400);
+          }, 100);
+
+          const view = a.getAttribute('data-view');
+          $$('.view').forEach(v => v.classList.remove('active'));
+
+          const target = $('#view-' + view);
+          if (target) target.classList.add('active');
+        }
+      });
+
+      // Add hover sound effect (visual feedback)
+      nav.addEventListener('mouseenter', e => {
+        const a = e.target.closest('a');
+        if (a && !a.classList.contains('active')) {
+          a.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        }
+      }, true);
+    }
+
+    function createRippleEffect(element, event) {
+      const ripple = document.createElement('span');
+      const rect = element.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = event.clientX - rect.left - size / 2;
+      const y = event.clientY - rect.top - size / 2;
+      
+      ripple.style.cssText = `
+        position: absolute;
+        width: ${size}px;
+        height: ${size}px;
+        left: ${x}px;
+        top: ${y}px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: scale(0);
+        animation: ripple 0.6s ease-out;
+        pointer-events: none;
+      `;
+      
+      element.style.position = 'relative';
+      element.style.overflow = 'hidden';
+      element.appendChild(ripple);
+      
+      setTimeout(() => {
+        ripple.remove();
+      }, 600);
+    }
+
+    // Initialize everything when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      initDashboard();
+      initNav();
+    });
+  </script>
+</body>
+</html>
