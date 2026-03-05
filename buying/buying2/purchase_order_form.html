@@ -64,15 +64,12 @@
       <div class="col-12">
         <div class="form-card position-relative">
           <div id="readOnlyOverlay" class="read-only-overlay"></div>
-          <div class="form-header bg-dark text-white d-flex justify-content-between align-items-center p-4">
             <div>
               <h4 class="fw-bold mb-1">Purchase Order (PO)</h4>
               <p class="mb-0 small opacity-75">
                 Final authorized purchasing command for goods/services.
               </p>
             </div>
-            <span id="poStatusBadge" class="badge bg-primary p-2 px-3">DRAFT</span>
-          </div>
           <div class="form-body p-4">
             <form id="poForm" class="needs-validation" novalidate>
               <div class="row g-3 mb-4">
@@ -147,7 +144,7 @@
               </div>
 
               <div class="mt-4 d-flex justify-content-between">
-                <button type="button" class="btn btn-light" id="btnReset">
+                <button type="button" class="btn btn-primary px-5 py-2" id="btnReset">
                   New Purchase Order
                 </button>
                 <button type="submit" class="btn btn-primary px-5 py-2">
@@ -319,9 +316,12 @@
           form.querySelector('button[type="submit"]').disabled = false;
         }
 
-        document.getElementById("poStatusBadge").textContent = statuses
-          .find((s) => s.id === p.status_id)
-          ?.name.toUpperCase();
+        const statusBadge = document.getElementById("poStatusBadge");
+        if (statusBadge) {
+          statusBadge.textContent = statuses
+            .find((s) => s.id === p.status_id)
+            ?.name.toUpperCase();
+        }
         document.getElementById("btnGenId").disabled = true;
         window.scrollTo({ top: 0, behavior: "smooth" });
       };
@@ -394,7 +394,10 @@
         readOnlyOverlay.style.display = "none";
         form.querySelector('button[type="submit"]').disabled = false;
         document.getElementById("btnGenId").disabled = false;
-        document.getElementById("poStatusBadge").textContent = "DRAFT";
+        
+        const statusBadge = document.getElementById("poStatusBadge");
+        if (statusBadge) statusBadge.textContent = "DRAFT";
+        
         document.getElementById("poDate").valueAsDate = new Date();
         renderRegistry();
       };
